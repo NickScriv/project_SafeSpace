@@ -15,6 +15,8 @@ public class OpenableDoor : MonoBehaviour
     // Smoothly open a door
     public float doorOpenAngle = 90.0f; //Set either positive or negative number to open the door inwards or outwards
     public float openSpeed = 2.0f; //Increasing this value will make the door open faster
+    public AudioSource source;
+    public AudioClip clip;
 
     bool open = false;
     bool enter = false;
@@ -43,6 +45,7 @@ public class OpenableDoor : MonoBehaviour
             open = !open;
             currentRotationAngle = transform.localEulerAngles.y;
             openTime = 0;
+	    source.PlayOneShot(clip);
         }
     }
 
