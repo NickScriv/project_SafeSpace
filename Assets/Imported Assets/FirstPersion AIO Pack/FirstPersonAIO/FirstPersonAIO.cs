@@ -881,7 +881,7 @@ public class BETA_SETTINGS{
                 GUI.enabled = t.playerCanMove; EditorGUI.indentLevel --;
                 EditorGUILayout.Space();
                 t.advanced.gravityMultiplier = EditorGUILayout.Slider(new GUIContent("Gravity Multiplier","Determines how much the physics engine's gravitational force is multiplied."),t.advanced.gravityMultiplier,0.1f,5);
-                t.advanced._maxSlopeAngle = EditorGUILayout.Slider(new GUIContent("Max Slope Angle","Determines the maximum angle the player can walk up. If left 0, the slope detection/limiting system will not be used."),t.advanced._maxSlopeAngle,0,70);
+                t.advanced._maxSlopeAngle = EditorGUILayout.Slider(new GUIContent("Max Slope Angle","Determines the maximum angle the player can walk up. If left 0, the slope detection/limiting system will not be used."),t.advanced._maxSlopeAngle,0,90);
                 t.advanced.maxStepHeight = EditorGUILayout.Slider(new GUIContent("Max Step Height","EXPERIMENTAL! Determines if a small ledge is a stair by comparing it to this value. Values over 0.5 produces     odd results."),t.advanced.maxStepHeight,0,1);
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
