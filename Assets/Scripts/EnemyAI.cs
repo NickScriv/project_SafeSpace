@@ -38,16 +38,16 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GetComponent<Rigidbody>().velocity.magnitude <= 0)
+       /* if(GetComponent<Rigidbody>().velocity.magnitude <= 0)
         {
             agent.updateRotation = false;
-            //GetComponent<Rigidbody>().freezeRotation = true;
+
         }
         else
         {
             agent.updateRotation = true;
-           // GetComponent<Rigidbody>().freezeRotation = false;
-        }
+
+        }*/
         
         Debug.Log(state);
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
