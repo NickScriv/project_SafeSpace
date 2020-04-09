@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class EnemyAI : MonoBehaviour
 {
     public AudioClip [] screams;
+    public AudioClip[] footsteps;
     NavMeshAgent agent;
     Transform player;
     Animator anim;
@@ -20,7 +21,10 @@ public class EnemyAI : MonoBehaviour
     float searchRadius = 20f;
     public GameObject deathcam;
     public Transform camPos;
-    //TODO: Change tags of walls to "Barrier"
+    public Camera mainCamera;
+    Rigidbody BossRb;
+    Rigidbody PlayerRb;
+    //TODO: Change tags of walls to "Barrier" in the final version of the maps
 
     // Start is called before the first frame update
     void Start()
@@ -32,23 +36,16 @@ public class EnemyAI : MonoBehaviour
         sound = GetComponent<AudioSource>();
         agent.speed = 1.2f;
         agent.updateRotation = true;
-      
+        BossRb = GetComponent<Rigidbody>();
+        PlayerRb = player.GetComponent<Rigidbody>();
+
+
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        /* if(GetComponent<Rigidbody>().velocity.magnitude <= 0)
-         {
-             agent.updateRotation = false;
-
-         }
-         else
-         {
-             agent.updateRotation = true;
-
-         }*/
 
         Debug.Log(searchRadius);
         Debug.Log(state);
@@ -109,7 +106,6 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        //TODO: Implement a shout state
         if (state == "shout")
         {
             agent.ResetPath();
@@ -132,7 +128,7 @@ public class EnemyAI : MonoBehaviour
                 state = "hunt";
             }
 
-            else if (distance <= 1.7f)
+            else if (distance <= 2.3f)//TODO: alter this number for refinment (or adjust camPos position) depending on how tall the player is and how far the boss can reach.
             {
                 RaycastHit hit;
                 if (Physics.Linecast(vision.position, player.transform.position, out hit))
@@ -140,14 +136,22 @@ public class EnemyAI : MonoBehaviour
                     if (hit.collider.gameObject.tag == "Player")
                     {
                         agent.isStopped = true;
+                        agent.ResetPath();
                         GetComponent<Rigidbody>().freezeRotation = true;
+                        BossRb.velocity = Vector3.zero;
+                        BossRb.angularVelocity = Vector3.zero;
+                        transform.LookAt(player.transform.position);
+            
                         state = "kill";
                         player.GetComponent<FirstPersonAIO>().enabled = false;
-                        deathcam.SetActive(true);
-                        deathcam.transform.position = Camera.main.transform.position;
-                        deathcam.transform.rotation = Camera.main.transform.rotation;
-                        Camera.main.gameObject.SetActive(false);
+                        PlayerRb.velocity = Vector3.zero;
+                        PlayerRb.angularVelocity = Vector3.zero;
+                        // deathcam.SetActive(true);
+                        //deathcam.transform.position = Camera.main.transform.position;
+                        //deathcam.transform.rotation = Camera.main.transform.rotation;
+                        //Camera.main.gameObject.SetActive(false);
                         anim.SetTrigger("AttackPlayer");
+                        anim.speed = .8f;
                     }
                 }
             }
@@ -170,8 +174,10 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "kill")
         {
-            deathcam.transform.position = Vector3.Slerp(deathcam.transform.position, camPos.position, 20f * Time.deltaTime);
-            deathcam.transform.rotation = Quaternion.Slerp(deathcam.transform.rotation, camPos.rotation, 20f * Time.deltaTime);
+            //deathcam.transform.position = Vector3.Slerp(deathcam.transform.position, camPos.position, 20f * Time.deltaTime);
+            //deathcam.transform.rotation = Quaternion.Slerp(deathcam.transform.rotation, camPos.rotation, 20f * Time.deltaTime);
+            Quaternion lookOnLook = Quaternion.LookRotation(camPos.transform.position - player.transform.position);
+            mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, lookOnLook, 5f * Time.deltaTime);
 
         }
 
@@ -180,13 +186,6 @@ public class EnemyAI : MonoBehaviour
 
     }
 
-    private void LateUpdate()
-    {
-        /*if (agent.velocity.sqrMagnitude > Mathf.Epsilon)
-        {
-            transform.rotation = Quaternion.LookRotation(agent.velocity.normalized);
-        }*/
-    }
 
     void reset()
     {
@@ -203,11 +202,7 @@ public class EnemyAI : MonoBehaviour
 
             if(hit.collider.gameObject.tag == "Player")
             {
-               /* if(state != "chase" && state != "kill")//TODO: change this when I add a shout state
-                {
-                    scream.Play();
-
-                }*/
+            
 
                 if(state == "search" || state == "walk")
                 {
@@ -218,9 +213,10 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    public void footstep()
+    public void footstep(int num)
     {
-        /*sound.clip = footSounds;
+
+       /* sound.clip = footsteps[num];
         sound.Play();*/
     }
 
