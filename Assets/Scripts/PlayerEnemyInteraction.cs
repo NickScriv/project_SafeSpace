@@ -24,4 +24,54 @@ public class PlayerEnemyInteraction : MonoBehaviour
             other.transform.parent.GetComponent<EnemyAI>().sight();
         }
     }
+
+    public void playerSound(string type)
+    {
+        float dist = 0f;
+
+        if (type == "foot")
+        {
+            if (gameObject.GetComponent<FirstPersonAIO>().isSprinting)
+            {
+                dist = 10f;
+            }
+            else if(gameObject.GetComponent<FirstPersonAIO>().isCrouching)
+            {
+                dist = 1f;
+            }
+            else
+            {
+                dist = 5f;
+            }
+        }
+        else if (type == "jump")
+        {
+            dist = 7f;
+
+        }
+        else if (type == "land")
+        {
+
+            dist = 10f;
+        }
+
+
+        if (dist > 0f)
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, dist);
+            int i = 0;
+            while (i < hitColliders.Length)
+            {
+                if (hitColliders[i].gameObject.name == "Vision")
+                {
+                    hitColliders[i].transform.parent.GetComponent<EnemyAI>().sight();
+                    return;
+                }
+                i++;
+            }
+        }
+
+    }   
+
+   
 }

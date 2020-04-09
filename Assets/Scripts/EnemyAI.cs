@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class EnemyAI : MonoBehaviour
 {
-    public AudioSource scream;
+    public AudioClip [] screams;
     NavMeshAgent agent;
     Transform player;
     Animator anim;
@@ -20,7 +20,7 @@ public class EnemyAI : MonoBehaviour
     float searchRadius = 20f;
     public GameObject deathcam;
     public Transform camPos;
-
+    //TODO: Change tags of walls to "Barrier"
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +31,7 @@ public class EnemyAI : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         sound = GetComponent<AudioSource>();
         agent.speed = 1.2f;
+        agent.updateRotation = true;
       
 
     }
@@ -38,17 +39,18 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       /* if(GetComponent<Rigidbody>().velocity.magnitude <= 0)
-        {
-            agent.updateRotation = false;
+        /* if(GetComponent<Rigidbody>().velocity.magnitude <= 0)
+         {
+             agent.updateRotation = false;
 
-        }
-        else
-        {
-            agent.updateRotation = true;
+         }
+         else
+         {
+             agent.updateRotation = true;
 
-        }*/
-        
+         }*/
+
+        Debug.Log(searchRadius);
         Debug.Log(state);
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
@@ -62,7 +64,7 @@ public class EnemyAI : MonoBehaviour
             if (highAlert)
             {
                 NavMesh.SamplePosition(player.transform.position + randomPos, out navHit, 20f, NavMesh.AllAreas);
-                searchRadius += 5f;
+                searchRadius += 2.5f;
 
                 if (searchRadius > 20f)
                 {
@@ -73,6 +75,7 @@ public class EnemyAI : MonoBehaviour
             agent.SetDestination(navHit.position);
             state = "walk";
         }
+
         if (state == "walk")
         {
             if (agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
@@ -84,10 +87,17 @@ public class EnemyAI : MonoBehaviour
 
         }
 
-        if (state == "search")
+        if (state == "search")//How long he stops for and looks around
         {
-           
-
+            RaycastHit hit;
+            if (Physics.Raycast(vision.position, vision.forward, out hit, 3.5f))
+            {
+                if(hit.collider.gameObject.tag == "Barrier")
+                {
+                    Debug.Log("SOmewhere else");
+                    state = "idle";
+                }
+            }
 
             if (waitSearch > 0f)
             {
@@ -100,33 +110,46 @@ public class EnemyAI : MonoBehaviour
         }
 
         //TODO: Implement a shout state
+        if (state == "shout")
+        {
+            agent.ResetPath();
+            anim.SetTrigger("scream");
+            playScream(Random.Range(0, 4));
+            state = "shouting";
+ 
+
+        }
 
         if (state == "chase")
         {
-            agent.speed = 2.5f;
-            //anim.speed = 3.5f;
+            agent.speed = 3f;
             chaseTime -= Time.deltaTime;
             agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
 
-            if (distance > 10f || chaseTime <= 0)
+            if (distance > 25f || chaseTime <= 0)
             {
                 state = "hunt";
             }
 
             else if (distance <= 1.7f)
             {
-                agent.isStopped = true;
-                GetComponent<Rigidbody>().freezeRotation = true;
-                state = "kill";
-                player.GetComponent<FirstPersonAIO>().enabled = false;
-                deathcam.SetActive(true);
-                deathcam.transform.position = Camera.main.transform.position;
-                deathcam.transform.rotation = Camera.main.transform.rotation;
-                Camera.main.gameObject.SetActive(false);
-                //TODO: Make monster do sound
-                anim.SetTrigger("AttackPlayer");
-                //Invoke("reset", .884f);//TODO: Chnage this to function that displays Game over screen
+                RaycastHit hit;
+                if (Physics.Linecast(vision.position, player.transform.position, out hit))
+                {
+                    if (hit.collider.gameObject.tag == "Player")
+                    {
+                        agent.isStopped = true;
+                        GetComponent<Rigidbody>().freezeRotation = true;
+                        state = "kill";
+                        player.GetComponent<FirstPersonAIO>().enabled = false;
+                        deathcam.SetActive(true);
+                        deathcam.transform.position = Camera.main.transform.position;
+                        deathcam.transform.rotation = Camera.main.transform.rotation;
+                        Camera.main.gameObject.SetActive(false);
+                        anim.SetTrigger("AttackPlayer");
+                    }
+                }
             }
             sight();
 
@@ -180,17 +203,15 @@ public class EnemyAI : MonoBehaviour
 
             if(hit.collider.gameObject.tag == "Player")
             {
-                if(state != "chase" && state != "kill")//TODO: change this when I add a shout state
+               /* if(state != "chase" && state != "kill")//TODO: change this when I add a shout state
                 {
                     scream.Play();
 
-                }
+                }*/
 
-                if(state != "kill")
+                if(state == "search" || state == "walk")
                 {
-                   
-                    chaseTime = 15f;
-                    state = "chase";
+                    state = "shout";
                     
                }
             }
@@ -201,5 +222,17 @@ public class EnemyAI : MonoBehaviour
     {
         /*sound.clip = footSounds;
         sound.Play();*/
+    }
+
+    public void endShout()
+    {
+        chaseTime = 15f;
+        state = "chase";
+    }
+
+    public void playScream(int num)
+    {
+        sound.clip = screams[num];
+        sound.Play();
     }
 }
