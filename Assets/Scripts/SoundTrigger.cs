@@ -8,7 +8,7 @@ public AudioClip clip;
 
 void OnTriggerEnter(Collider coll){
  if(coll.tag=="Player"){
-	 
+            Debug.Log("Play");
 	 source.PlayOneShot(clip);
 	 GetComponent<Collider>().enabled = false;
  }
