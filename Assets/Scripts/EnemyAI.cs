@@ -12,7 +12,8 @@ public class EnemyAI : MonoBehaviour
     Transform player;
     Animator anim;
     public AudioClip footSounds;
-    AudioSource sound;
+    public AudioSource sound;
+    public AudioSource soundFoot;
     string state = "idle";
     public Transform vision;
     float waitSearch = 0f;
@@ -33,7 +34,6 @@ public class EnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        sound = GetComponent<AudioSource>();
         agent.speed = 1.2f;
         agent.updateRotation = true;
         BossRb = GetComponent<Rigidbody>();
@@ -215,10 +215,12 @@ public class EnemyAI : MonoBehaviour
 
     public void footstep(int num)
     {
-
-       /* sound.clip = footsteps[num];
-        sound.Play();*/
+      
+       soundFoot.PlayOneShot(footsteps[Random.Range(0,5)]);
+        
     }
+
+
 
     public void endShout()
     {
