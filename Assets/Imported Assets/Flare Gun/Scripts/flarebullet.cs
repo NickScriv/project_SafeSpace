@@ -28,9 +28,17 @@ public class flarebullet : MonoBehaviour {
 		
 	
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "Boss")
+        {
+            other.transform.GetComponent<EnemyAI>().hitByFlare();
+        }
+    }
+
+    // Update is called once per frame
+    void Update () {
 
 		
 		if (myCoroutine == true)

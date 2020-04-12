@@ -43,6 +43,8 @@ public class EnemyAI : MonoBehaviour
 
     }
 
+
+
     // Update is called once per frame
     void Update()
     {
@@ -65,6 +67,7 @@ public class EnemyAI : MonoBehaviour
 
                 if (searchRadius > 20f)
                 {
+                    Debug.Log("WWWWWWWWWWWWWWWWWOOOOOOOOOOOOOOOOOOWWWWWWWWWWWWWWWW");
                     highAlert = false;
                     agent.speed = 1.2f;
                 }
@@ -111,7 +114,7 @@ public class EnemyAI : MonoBehaviour
             agent.ResetPath();
             anim.SetTrigger("scream");
             playScream(Random.Range(0, 4));
-            state = "shouting";
+            state = "stay";
  
 
         }
@@ -232,5 +235,25 @@ public class EnemyAI : MonoBehaviour
     {
         sound.clip = screams[num];
         sound.Play();
+    }
+
+    public void hitByFlare()
+    {
+        agent.ResetPath();
+        agent.isStopped = true;
+        BossRb.velocity = Vector3.zero;
+        BossRb.angularVelocity = Vector3.zero;
+        anim.SetTrigger("hit");
+        state = "stay";
+        Invoke("endHit", 15f);
+    }
+
+    public void endHit()
+    {
+        agent.isStopped = false;
+        searchRadius = 21f;
+        highAlert = true;
+        state = "idle";
+        anim.SetTrigger("backToIdle");
     }
 }
