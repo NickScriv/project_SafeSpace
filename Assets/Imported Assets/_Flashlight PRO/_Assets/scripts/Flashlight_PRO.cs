@@ -17,7 +17,7 @@ public class Flashlight_PRO : MonoBehaviour
 	private Light spotlight;
 	private Material ambient_light_material;
 	private Color ambient_mat_color;
-	private bool is_enabled = false;
+	public bool is_enabled = false;
 
 
 	void Update(){

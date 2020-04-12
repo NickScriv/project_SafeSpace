@@ -19,11 +19,14 @@ public class SmallAI : MonoBehaviour
     bool highAlert = false;
     float searchRadius = 20f;
     public GameObject deathcam;
+    public GameObject flashlight;
     public Camera mainCamera;
     public int Health;
     Rigidbody BugRb;
     Rigidbody PlayerRb;
     public Transform camPos;
+    int multiplier;
+    public float range;
     //TODO: Change tags of walls to "Barrier"
 
     // Start is called before the first frame update
@@ -38,7 +41,8 @@ public class SmallAI : MonoBehaviour
         PlayerRb = player.GetComponent<Rigidbody>();
         agent.speed = 1.2f;
         agent.updateRotation = true;
-
+        multiplier = 1;
+        //range = 10;
 
     }
 
@@ -175,11 +179,32 @@ public class SmallAI : MonoBehaviour
                             }
                         }
                     }
+
                 }
+            }
+            if (flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
+            {
+                state = "runAway";
             }
             sight();
 
 
+        }
+        if (state == "runAway")
+        {
+            Vector3 runTo = transform.position + ((transform.position - player.position) * multiplier);
+            float distance = Vector3.Distance(transform.position, player.position);
+            if (distance < range)
+            {
+                if (flashlight.GetComponent<Flashlight_PRO>().is_enabled != true)
+                {
+                    state = "chase";
+                }
+                agent.SetDestination(runTo);
+            }
+
+            if (distance > range) state = "search";
+            
         }
 
         if (state == "hunt")
