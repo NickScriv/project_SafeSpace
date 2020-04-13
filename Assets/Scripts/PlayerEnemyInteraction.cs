@@ -23,6 +23,7 @@ public class PlayerEnemyInteraction : MonoBehaviour
         {
             other.transform.parent.GetComponent<EnemyAI>().sight();
         }
+
     }
 
     public void playerSound(string type)
@@ -67,6 +68,7 @@ public class PlayerEnemyInteraction : MonoBehaviour
                     hitColliders[i].transform.parent.GetComponent<EnemyAI>().sight();
                     return;
                 }
+
                 i++;
             }
         }
@@ -75,3 +77,7 @@ public class PlayerEnemyInteraction : MonoBehaviour
 
    
 }
+
+
+
+
