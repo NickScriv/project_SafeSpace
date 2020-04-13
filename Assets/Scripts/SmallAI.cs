@@ -20,6 +20,8 @@ public class SmallAI : MonoBehaviour
     float searchRadius = 20f;
     public GameObject deathcam;
     public GameObject flashlight;
+    //public GameObject FlareGun;
+    Transform FlareBullet;
     public Camera mainCamera;
     public int Health;
     Rigidbody BugRb;
@@ -136,7 +138,7 @@ public class SmallAI : MonoBehaviour
             chaseTime -= Time.deltaTime;
             agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
-
+            
             if (distance > 25f || chaseTime <= 0)
             {
                 state = "hunt";
@@ -186,6 +188,18 @@ public class SmallAI : MonoBehaviour
             {
                 state = "runAway";
             }
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
+            int i = 0;
+            while (i < hitColliders.Length)
+            {
+                if (hitColliders[i].gameObject.tag == "FlareBullet")
+                {
+                    FlareBullet= hitColliders[i].gameObject.transform;
+                    state = "runAway2";
+                    break;
+                }
+                i++;
+            }
             sight();
 
 
@@ -198,13 +212,32 @@ public class SmallAI : MonoBehaviour
             {
                 if (flashlight.GetComponent<Flashlight_PRO>().is_enabled != true)
                 {
-                    state = "chase";
+                    
+                        state = "chase";
+                    
                 }
                 agent.SetDestination(runTo);
             }
 
             if (distance > range) state = "search";
             
+        }
+        if (state == "runAway2")
+        {
+            Vector3 runTo = transform.position + ((transform.position - FlareBullet.position) * multiplier);
+            float distance = Vector3.Distance(transform.position, FlareBullet.position);
+            if (distance < range)
+            {
+                
+                    if (FlareBullet != true)
+                    {
+                        state = "chase";
+                    }
+                agent.SetDestination(runTo);
+            }
+
+            if (distance > range) state = "search";
+
         }
 
         if (state == "hunt")
