@@ -121,7 +121,7 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "chase")
         {
-            agent.speed = 3f;
+            agent.speed = 3.5f;
             chaseTime -= Time.deltaTime;
             agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);

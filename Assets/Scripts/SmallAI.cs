@@ -153,7 +153,7 @@ public class SmallAI : MonoBehaviour
                 {
                     if (hit.collider.gameObject.tag == "Player")
                     {
-                        //TO DO: incorporate the Player health function
+                        //TODO: incorporate the Player health function
                         if (Health == 0)
                         {
                             agent.isStopped = true;
@@ -279,14 +279,6 @@ public class SmallAI : MonoBehaviour
 
     }
 
-    private void LateUpdate()
-    {
-        /*if (agent.velocity.sqrMagnitude > Mathf.Epsilon)
-        {
-            transform.rotation = Quaternion.LookRotation(agent.velocity.normalized);
-        }*/
-    }
-
     void reset()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name); //TODO: Change this to transition to game over scene
@@ -303,11 +295,7 @@ public class SmallAI : MonoBehaviour
 
             if (hit.collider.gameObject.tag == "Player")
             {
-                /* if(state != "chase" && state != "kill")//TODO: change this when I add a shout state
-                 {
-                     scream.Play();
-
-                 }*/
+                
 
                 if (state == "search" || state == "walk")
                 {
@@ -340,6 +328,6 @@ public class SmallAI : MonoBehaviour
     public void playScream(int num)
     {
         sound.clip = screams[num];
-        sound.Play();
+        sound.PlayOneShot(sound.clip);
     }
 }
