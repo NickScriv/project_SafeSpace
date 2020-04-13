@@ -124,10 +124,12 @@ public class SmallAI : MonoBehaviour
         //TODO: Implement a shout state
         if (state == "shout")
         {
-            agent.ResetPath();
-            anim.SetTrigger("scream");
-            playScream(Random.Range(0, 4));
-            state = "shouting";
+            if (state != "runAway" && state != "runAway2") {
+                agent.ResetPath();
+                anim.SetTrigger("scream");
+                playScream(Random.Range(0, 4));
+                state = "shouting";
+                }
 
 
         }
@@ -177,7 +179,10 @@ public class SmallAI : MonoBehaviour
                             Debug.Log(Health);
                             if (Health != 0)
                             {
-                                state = "chase";
+                                if (state != "runAway" && state != "runAway2")
+                                {
+                                    state = "chase";
+                                }
                             }
                         }
                     }
@@ -192,7 +197,7 @@ public class SmallAI : MonoBehaviour
             int i = 0;
             while (i < hitColliders.Length)
             {
-                if (hitColliders[i].gameObject.tag == "FlareBullet")
+                if (hitColliders[i].gameObject.tag == "FlareBullet" && hitColliders[i].gameObject != null)
                 {
                     FlareBullet= hitColliders[i].gameObject.transform;
                     state = "runAway2";
@@ -224,19 +229,26 @@ public class SmallAI : MonoBehaviour
         }
         if (state == "runAway2")
         {
-            Vector3 runTo = transform.position + ((transform.position - FlareBullet.position) * multiplier);
-            float distance = Vector3.Distance(transform.position, FlareBullet.position);
-            if (distance < range)
+            if (FlareBullet != null)
             {
-                
-                    if (FlareBullet != true)
-                    {
-                        state = "chase";
-                    }
-                agent.SetDestination(runTo);
-            }
+                Vector3 runTo = transform.position + ((transform.position - FlareBullet.position) * multiplier);
+                float distance = Vector3.Distance(transform.position, FlareBullet.position);
+                if (distance < range)
+                {
 
-            if (distance > range) state = "search";
+                    //if (FlareBullet != true)
+                   // {
+                       // state = "chase";
+                   // }
+                    agent.SetDestination(runTo);
+                }
+
+                if (distance > range) state = "search";
+            }
+            else if (FlareBullet == null)
+            {
+                state = "search";
+            }
 
         }
 
@@ -282,6 +294,7 @@ public class SmallAI : MonoBehaviour
 
     public void sight()
     {
+
         RaycastHit hit;
 
         if (Physics.Linecast(vision.position, player.transform.position, out hit))
@@ -298,7 +311,10 @@ public class SmallAI : MonoBehaviour
 
                 if (state == "search" || state == "walk")
                 {
-                    state = "shout";
+                    if (state != "runAway" && state != "runAway2")
+                    {
+                        state = "shout";
+                    }
 
                 }
             }
@@ -314,7 +330,11 @@ public class SmallAI : MonoBehaviour
     public void endShout()
     {
         chaseTime = 15f;
-        state = "chase";
+        if (state != "runAway" && state != "runAway2")
+        {
+            state = "chase";
+        }
+        //state = "chase";
     }
 
     public void playScream(int num)
