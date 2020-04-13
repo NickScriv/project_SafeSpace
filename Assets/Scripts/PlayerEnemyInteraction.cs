@@ -24,6 +24,10 @@ public class PlayerEnemyInteraction : MonoBehaviour
             other.transform.parent.GetComponent<EnemyAI>().sight();
         }
 
+        if (other.gameObject.name == "BugVision")
+        {
+            other.transform.parent.GetComponent<SmallAI>().sight();
+        }
     }
 
     public void playerSound(string type)
@@ -69,6 +73,11 @@ public class PlayerEnemyInteraction : MonoBehaviour
                     return;
                 }
 
+                if (hitColliders[i].gameObject.name == "BugVision")
+                {
+                    hitColliders[i].transform.parent.GetComponent<SmallAI>().sight();
+                    return;
+                }
                 i++;
             }
         }

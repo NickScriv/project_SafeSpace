@@ -13,8 +13,8 @@ public class flaregun : MonoBehaviour {
 	public int maxSpareRounds = 5;
 	public int spareRounds = 3;
 	public int currentRound = 0;
-	
-	
+	public Rigidbody bulletInstance;
+
 
 
 	// Use this for initialization
@@ -56,7 +56,7 @@ public class flaregun : MonoBehaviour {
 			GetComponent<AudioSource>().PlayOneShot(flareShotSound);
 		
 			
-			Rigidbody bulletInstance;			
+						
 			bulletInstance = Instantiate(flareBullet,barrelEnd.position,barrelEnd.rotation) as Rigidbody; //INSTANTIATING THE FLARE PROJECTILE
 			
 			
