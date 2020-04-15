@@ -103,7 +103,7 @@ public class EnemyAI : MonoBehaviour
                 if(hit.collider.gameObject.tag == "Barrier")
                 {
                     Debug.Log("SOmewhere else");
-                    waitSearch = 5f;
+                    //waitSearch = 5f;
                     searching = false;
                     state = "idle";
                 }

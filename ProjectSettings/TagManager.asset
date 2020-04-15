@@ -7,10 +7,15 @@ TagManager:
   - Boss
   - Barrier
 <<<<<<< HEAD
+<<<<<<< HEAD
   - FlareBullet
 =======
   - Key1
 >>>>>>> c277d9e7eec4c00ad6d1c728c15ccf1936a90b3a
+=======
+  - Arms
+  - Item
+>>>>>>> c767a37a77aa35773992bfc5f4f5fbffed7af44b
   layers:
   - Default
   - TransparentFX
@@ -22,7 +27,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Item
   - 
   - 
   - 

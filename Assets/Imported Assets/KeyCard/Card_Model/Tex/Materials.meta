@@ -1,6 +1,15 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 592b806036c660925b76bac544ff3f57
 folderAsset: yes
+=======
+<<<<<<< HEAD:Assets/Scenes/Demo/Win.unity.meta
+guid: e0990bf8012745f4f9810cbd8c3d0c5f
+=======
+guid: 48c809eb25c6a6345b5e72eee6ff8e46
+folderAsset: yes
+>>>>>>> c767a37a77aa35773992bfc5f4f5fbffed7af44b:Assets/Imported Assets/KeyCard/Card_Model/Tex/Materials.meta
+>>>>>>> c767a37a77aa35773992bfc5f4f5fbffed7af44b
 DefaultImporter:
   externalObjects: {}
   userData: 
