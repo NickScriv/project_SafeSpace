@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ItemSwitch : MonoBehaviour
 {
+    ItemPickup script;
 
     public int currentItem = 0;
     public int maxItems = 3;
@@ -72,25 +73,16 @@ public class ItemSwitch : MonoBehaviour
             currentItem = 2;
             SelectItem(currentItem);
         }
+
     }
 
     void SelectItem(int index)
     {
         for(int i = 0; i < transform.childCount; i++)
         {
-            //Activate specific item
-            if(i == index)
-            {
-                //Changes animator animations (WIP)
-                /*if (i == 3)
-                    animator.SetBool("HasItem", false);
-                else
-                    animator.SetBool("HasItem", true); */
-
-
+            //Check if item is picked up & activate it
+            if (i == index && transform.GetChild(i).gameObject.GetComponent<ItemPlayer>().pickedUp == true)
                 transform.GetChild(i).gameObject.SetActive(true);
-
-            }
             else
                 transform.GetChild(i).gameObject.SetActive(false);
         }
