@@ -25,6 +25,7 @@ public class EnemyAI : MonoBehaviour
     public Camera mainCamera;
     Rigidbody BossRb;
     Rigidbody PlayerRb;
+    bool searching = false;
     //TODO: Change tags of walls to "Barrier" in the final version of the maps
 
     // Start is called before the first frame update
@@ -48,11 +49,16 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(waitSearch);
 
-        Debug.Log(searchRadius);
+       // Debug.Log(searchRadius);
         Debug.Log(state);
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
-        anim.SetFloat("velocity", agent.velocity.magnitude);
+        anim.SetFloat("velocity", agent.desiredVelocity.magnitude);
+        // Debug.Log(agent.velocity.magnitude);
+
+
+     
 
         if (state == "idle")
         {
@@ -73,6 +79,7 @@ public class EnemyAI : MonoBehaviour
                 }
             }
             agent.SetDestination(navHit.position);
+            agent.isStopped = false;
             state = "walk";
         }
 
@@ -81,7 +88,8 @@ public class EnemyAI : MonoBehaviour
             if (agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
             {
                 state = "search";
-                waitSearch = 4f;
+                agent.isStopped = true;
+                waitSearch = 5f;
             }
 
 
@@ -95,16 +103,21 @@ public class EnemyAI : MonoBehaviour
                 if(hit.collider.gameObject.tag == "Barrier")
                 {
                     Debug.Log("SOmewhere else");
+                    waitSearch = 5f;
+                    searching = false;
                     state = "idle";
                 }
             }
+            
 
             if (waitSearch > 0f)
             {
+                searching = true;
                 waitSearch -= Time.deltaTime;
             }
             else
             {
+                searching = false;
                 state = "idle";
             }
         }
@@ -114,14 +127,14 @@ public class EnemyAI : MonoBehaviour
             agent.ResetPath();
             anim.SetTrigger("scream");
             playScream(Random.Range(0, 4));
-            state = "stay";
+            state = "shouting";
  
 
         }
 
         if (state == "chase")
         {
-            agent.speed = 3.5f;
+            agent.speed = 4f;
             chaseTime -= Time.deltaTime;
             agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
@@ -131,7 +144,7 @@ public class EnemyAI : MonoBehaviour
                 state = "hunt";
             }
 
-            else if (distance <= 2.3f)//TODO: alter this number for refinment (or adjust camPos position) depending on how tall the player is and how far the boss can reach.
+            else if (distance <= 2.3f)//TODO: alter this number for refinment (or adjust camPos position) depending on how tall the player is and how far the boss can reach. Stopping distance too
             {
                 RaycastHit hit;
                 if (Physics.Linecast(vision.position, player.transform.position, out hit))
@@ -239,13 +252,16 @@ public class EnemyAI : MonoBehaviour
 
     public void hitByFlare()
     {
-        agent.ResetPath();
-        agent.isStopped = true;
-        BossRb.velocity = Vector3.zero;
-        BossRb.angularVelocity = Vector3.zero;
         anim.SetTrigger("hit");
-        state = "stay";
-        Invoke("endHit", 15f);
+        if (state != "stay")
+        {
+            agent.ResetPath();
+            agent.isStopped = true;
+            BossRb.velocity = Vector3.zero;
+            BossRb.angularVelocity = Vector3.zero;
+            state = "stay";
+            Invoke("endHit", 15f);
+        }
     }
 
     public void endHit()
@@ -255,5 +271,10 @@ public class EnemyAI : MonoBehaviour
         highAlert = true;
         state = "idle";
         anim.SetTrigger("backToIdle");
+    }
+
+    public string getState()
+    {
+        return state;
     }
 }

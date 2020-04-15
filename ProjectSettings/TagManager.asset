@@ -6,7 +6,11 @@ TagManager:
   tags:
   - Boss
   - Barrier
+<<<<<<< HEAD
   - FlareBullet
+=======
+  - Key1
+>>>>>>> c277d9e7eec4c00ad6d1c728c15ccf1936a90b3a
   layers:
   - Default
   - TransparentFX
