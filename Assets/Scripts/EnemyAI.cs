@@ -25,7 +25,7 @@ public class EnemyAI : MonoBehaviour
     public Camera mainCamera;
     Rigidbody BossRb;
     Rigidbody PlayerRb;
-    bool searching = false;
+    float dizzyTime = 15f;
     //TODO: Change tags of walls to "Barrier" in the final version of the maps
 
     // Start is called before the first frame update
@@ -54,7 +54,7 @@ public class EnemyAI : MonoBehaviour
        // Debug.Log(searchRadius);
         Debug.Log(state);
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
-        anim.SetFloat("velocity", agent.desiredVelocity.magnitude);
+        anim.SetFloat("velocity", agent.velocity.magnitude);
         // Debug.Log(agent.velocity.magnitude);
 
 
@@ -79,7 +79,7 @@ public class EnemyAI : MonoBehaviour
                 }
             }
             agent.SetDestination(navHit.position);
-            agent.isStopped = false;
+            //agent.isStopped = false;
             state = "walk";
         }
 
@@ -88,7 +88,7 @@ public class EnemyAI : MonoBehaviour
             if (agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
             {
                 state = "search";
-                agent.isStopped = true;
+                //agent.isStopped = true;
                 waitSearch = 5f;
             }
 
@@ -103,8 +103,6 @@ public class EnemyAI : MonoBehaviour
                 if(hit.collider.gameObject.tag == "Barrier")
                 {
                     Debug.Log("SOmewhere else");
-                    //waitSearch = 5f;
-                    searching = false;
                     state = "idle";
                 }
             }
@@ -112,12 +110,10 @@ public class EnemyAI : MonoBehaviour
 
             if (waitSearch > 0f)
             {
-                searching = true;
                 waitSearch -= Time.deltaTime;
             }
             else
             {
-                searching = false;
                 state = "idle";
             }
         }
@@ -134,7 +130,7 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "chase")
         {
-            agent.speed = 4f;
+            agent.speed = 4.2f;
             chaseTime -= Time.deltaTime;
             agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
@@ -194,6 +190,20 @@ public class EnemyAI : MonoBehaviour
             //deathcam.transform.rotation = Quaternion.Slerp(deathcam.transform.rotation, camPos.rotation, 20f * Time.deltaTime);
             Quaternion lookOnLook = Quaternion.LookRotation(camPos.transform.position - player.transform.position);
             mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, lookOnLook, 5f * Time.deltaTime);
+
+        }
+
+        if (state == "stay")
+        {
+
+            if (dizzyTime > 0f)
+            {
+                dizzyTime -= Time.deltaTime;
+            }
+            else
+            {
+                state = "idle";
+            }
 
         }
 
@@ -260,8 +270,9 @@ public class EnemyAI : MonoBehaviour
             BossRb.velocity = Vector3.zero;
             BossRb.angularVelocity = Vector3.zero;
             state = "stay";
-            Invoke("endHit", 15f);
+            //Invoke("endHit", 15f);
         }
+        dizzyTime = 15f;
     }
 
     public void endHit()
