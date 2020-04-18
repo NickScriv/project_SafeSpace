@@ -49,16 +49,14 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(waitSearch);
+        //Debug.Log(waitSearch);
 
        // Debug.Log(searchRadius);
-        Debug.Log(state);
+        //Debug.Log(state);
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
         // Debug.Log(agent.velocity.magnitude);
 
-
-     
 
         if (state == "idle")
         {
@@ -79,7 +77,6 @@ public class EnemyAI : MonoBehaviour
                 }
             }
             agent.SetDestination(navHit.position);
-            //agent.isStopped = false;
             state = "walk";
         }
 
@@ -87,8 +84,17 @@ public class EnemyAI : MonoBehaviour
         {
             if (agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
             {
+                RaycastHit hit;
+                if (Physics.Raycast(vision.position, vision.forward, out hit, 3.5f))
+                {
+                    if (hit.collider.gameObject.tag == "Barrier")
+                    {
+                        Debug.Log("SOmewhere else");
+                        state = "idle";
+                        return;
+                    }
+                }
                 state = "search";
-                //agent.isStopped = true;
                 waitSearch = 5f;
             }
 
@@ -97,15 +103,7 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "search")//How long he stops for and looks around
         {
-            RaycastHit hit;
-            if (Physics.Raycast(vision.position, vision.forward, out hit, 3.5f))
-            {
-                if(hit.collider.gameObject.tag == "Barrier")
-                {
-                    Debug.Log("SOmewhere else");
-                    state = "idle";
-                }
-            }
+            
             
 
             if (waitSearch > 0f)
@@ -140,7 +138,7 @@ public class EnemyAI : MonoBehaviour
                 state = "hunt";
             }
 
-            else if (distance <= 2.3f)//TODO: alter this number for refinment (or adjust camPos position) depending on how tall the player is and how far the boss can reach. Stopping distance too
+            else if (distance <= 2.5f)//TODO: alter this number for refinment (or adjust camPos position) depending on how tall the player is and how far the boss can reach. Stopping distance too
             {
                 RaycastHit hit;
                 if (Physics.Linecast(vision.position, player.transform.position, out hit))
@@ -196,15 +194,13 @@ public class EnemyAI : MonoBehaviour
         if (state == "stay")
         {
 
-            if (dizzyTime > 0f)
-            {
-                dizzyTime -= Time.deltaTime;
-            }
-            else
-            {
-                state = "idle";
-            }
+            //Do Nothing
+        }
 
+        if (state == "shouting")
+        {
+
+            //Do Nothing
         }
 
 
@@ -263,23 +259,20 @@ public class EnemyAI : MonoBehaviour
     public void hitByFlare()
     {
         anim.SetTrigger("hit");
-        if (state != "stay")
-        {
-            agent.ResetPath();
-            agent.isStopped = true;
-            BossRb.velocity = Vector3.zero;
-            BossRb.angularVelocity = Vector3.zero;
-            state = "stay";
-            //Invoke("endHit", 15f);
-        }
-        dizzyTime = 15f;
+        StopCoroutine("endHit");
+        StartCoroutine("endHit", 15f);
+        agent.ResetPath();
+        agent.isStopped = true;
+        BossRb.velocity = Vector3.zero;
+        BossRb.angularVelocity = Vector3.zero;
+        state = "stay";
     }
 
-    public void endHit()
+    public IEnumerator endHit(float time)
     {
+        yield return new WaitForSeconds(time);
+        Debug.Log("execute end hit");
         agent.isStopped = false;
-        searchRadius = 21f;
-        highAlert = true;
         state = "idle";
         anim.SetTrigger("backToIdle");
     }
