@@ -227,8 +227,8 @@ ModelImporter:
       name: Reload
       takeName: Take 001
       internalID: 0
-      firstFrame: 33
-      lastFrame: 59
+      firstFrame: 15
+      lastFrame: 35
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

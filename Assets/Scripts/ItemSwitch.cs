@@ -28,6 +28,8 @@ public class ItemSwitch : MonoBehaviour
 
             SelectItem(currentItem);
         }
+
+         //Commented out due to there being a glitch - Won't show flare arm for some reason.
         /*else if(Input.GetAxis("Mouse ScrollWheel") < 0)
         {
             if (currentItem - 1 <= maxItems)
