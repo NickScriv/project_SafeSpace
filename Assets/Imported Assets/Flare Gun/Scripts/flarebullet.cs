@@ -28,17 +28,9 @@ public class flarebullet : MonoBehaviour {
 		
 	
 	}
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.tag == "Boss")
-        {
-            other.transform.GetComponent<EnemyAI>().hitByFlare();
-        }
-    }
-
-    // Update is called once per frame
-    void Update () {
+	
+	// Update is called once per frame
+	void Update () {
 
 		
 		if (myCoroutine == true)
@@ -59,8 +51,16 @@ public class flarebullet : MonoBehaviour {
 
 			
 	}
-	
-	IEnumerator flareLightoff()
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Boss")
+        {
+            collision.gameObject.GetComponent<EnemyAI>().hitByFlare();
+        }
+    }
+
+    IEnumerator flareLightoff()
 	{
 		myCoroutine = true;
 		yield return new WaitForSeconds(flareTimer);
