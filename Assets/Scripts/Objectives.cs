@@ -6,20 +6,69 @@ using UnityEngine.UI;
 public class Objectives : MonoBehaviour
 {
     public GameObject itemPrefab;
+    public GameObject notification;
     void Start()
     {
-        for(int i = 0; i < 2; i++)
-        {
-            GameObject item = Instantiate<GameObject>(itemPrefab);
-            item.transform.GetChild(0).GetComponent<Text>().text = "Escape!";
-           // item.GetComponent<Text>().text = "Escape!";
-            item.transform.SetParent(transform, false);
-        }
+       // notification = GameObject.FindGameObjectWithTag("Notification");
+       // popNotification("Escape!");
+       
+        
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void  collectedKey(int index)
+    {
+        if (index != 0)
+        { 
+            GameObject Go = transform.GetChild(transform.childCount - 1).gameObject;
+            Color temp = Go.transform.GetChild(0).GetComponent<Text>().color;
+            temp.a = .35f;
+            Go.transform.GetChild(0).GetComponent<Text>().color = temp;
+        }
+
+        if (index == 1)
+        {
+            popNotification("Find the second key");
+        }
+        else if (index == 2)
+        {
+            popNotification("Find the third key");
+        }
+        else if (index == 0)
+        {
+            popNotification("Find the first key");
+            return;
+        }
+
+
+        
+
+      
+
+
+    }
+
+    public void popNotification(string text)
+    {
+        FindObjectOfType<SoundManager>().Play("Objective");
+        notification.transform.GetChild(0).GetComponent<Text>().text = text;
+        notification.SetActive(true);
+
+        GameObject item = Instantiate<GameObject>(itemPrefab);
+        item.transform.GetChild(0).GetComponent<Text>().text = "- " + text;
+        item.transform.SetParent(transform, false);
+        Invoke("diabaleNotification", 3f);
+    }
+
+    public void diabaleNotification()
+    {
+        Debug.Log("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+        notification.SetActive(false);
+
     }
 }
