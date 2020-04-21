@@ -117,8 +117,14 @@ ModelImporter:
     - serializedVersion: 16
       name: Reload
       takeName: Take 001
+<<<<<<< HEAD
       firstFrame: 33
       lastFrame: 59
+=======
+      internalID: 0
+      firstFrame: 15
+      lastFrame: 35
+>>>>>>> bfde5d4f860acc1c5375ac24d028545a146f54ed
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -169,7 +175,11 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
+<<<<<<< HEAD
     globalScale: 1
+=======
+    globalScale: 0.033
+>>>>>>> bfde5d4f860acc1c5375ac24d028545a146f54ed
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
@@ -201,6 +211,10 @@ ModelImporter:
     armStretch: .0500000007
     legStretch: .0500000007
     feetSpacing: 0
+<<<<<<< HEAD
+=======
+    globalScale: 0.033
+>>>>>>> bfde5d4f860acc1c5375ac24d028545a146f54ed
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 1

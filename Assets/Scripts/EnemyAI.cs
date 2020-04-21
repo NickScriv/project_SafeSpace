@@ -85,7 +85,7 @@ public class EnemyAI : MonoBehaviour
             if (agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
             {
                 RaycastHit hit;
-                if (Physics.Raycast(vision.position, vision.forward, out hit, 3.5f))
+                if (Physics.Raycast(vision.position, vision.forward, out hit, 5f))
                 {
                     if (hit.collider.gameObject.tag == "Barrier")
                     {
@@ -113,6 +113,7 @@ public class EnemyAI : MonoBehaviour
             else
             {
                 state = "idle";
+                return;
             }
         }
 
@@ -211,7 +212,7 @@ public class EnemyAI : MonoBehaviour
 
     void reset()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); //TODO: Change this to transition to game over scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); //TODO: Change this to transition to game over scene, maybe???
     }
 
     public void sight()

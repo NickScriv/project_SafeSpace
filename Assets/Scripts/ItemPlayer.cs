@@ -5,5 +5,5 @@ using UnityEngine;
 public class ItemPlayer : MonoBehaviour
 {
     public bool pickedUp = false;
-    public bool slotLocked = true;
+    public bool isSelected = true;
 }

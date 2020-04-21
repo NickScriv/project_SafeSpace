@@ -4,16 +4,14 @@ using UnityEngine;
 
 public class ItemSwitch : MonoBehaviour
 {
-    ItemPickup script;
-
     public int currentItem = 0;
-    public int maxItems = 3;
+    public int maxItems = 2;
     Animator animator;
 
     // Start is called before the first frame update
     void Awake()
     {
-        SelectItem(3);
+        SelectItem(0);
     }
 
     // Update is called once per frame
@@ -30,7 +28,9 @@ public class ItemSwitch : MonoBehaviour
 
             SelectItem(currentItem);
         }
-        else if(Input.GetAxis("Mouse ScrollWheel") < 0)
+
+         //Commented out due to there being a glitch - Won't show flare arm for some reason.
+        /*else if(Input.GetAxis("Mouse ScrollWheel") < 0)
         {
             if (currentItem - 1 <= maxItems)
                 currentItem--;
@@ -38,7 +38,7 @@ public class ItemSwitch : MonoBehaviour
                 currentItem = maxItems;
 
             SelectItem(currentItem);
-        }
+        }*/
 
 
         //Barrier to not go above or under
@@ -68,11 +68,6 @@ public class ItemSwitch : MonoBehaviour
             SelectItem(currentItem);
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            currentItem = 2;
-            SelectItem(currentItem);
-        }
 
     }
 
@@ -82,9 +77,17 @@ public class ItemSwitch : MonoBehaviour
         {
             //Check if item is picked up & activate it
             if (i == index && transform.GetChild(i).gameObject.GetComponent<ItemPlayer>().pickedUp == true)
+            {
                 transform.GetChild(i).gameObject.SetActive(true);
+                transform.GetChild(i).gameObject.GetComponent<ItemPlayer>().isSelected = true;
+            }
+
+
             else
+            {
                 transform.GetChild(i).gameObject.SetActive(false);
+                transform.GetChild(i).gameObject.GetComponent<ItemPlayer>().isSelected = false;
+            }
         }
     }
 }

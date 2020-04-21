@@ -124,12 +124,13 @@ public class SmallAI : MonoBehaviour
         //TODO: Implement a shout state
         if (state == "shout")
         {
-            if (state != "runAway" && state != "runAway2") {
+            if (state != "runAway" && state != "runAway2")
+            {
                 agent.ResetPath();
                 anim.SetTrigger("scream");
                 playScream(Random.Range(0, 4));
                 state = "shouting";
-                }
+             }
 
 
         }
