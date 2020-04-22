@@ -7,10 +7,10 @@ public class Objectives : MonoBehaviour
 {
     public GameObject itemPrefab;
     public GameObject notification;
+    public Animator anim;
     void Start()
     {
-       // notification = GameObject.FindGameObjectWithTag("Notification");
-       // popNotification("Escape!");
+       // anim = GetComponent<Animator>();
        
         
     }
@@ -62,7 +62,15 @@ public class Objectives : MonoBehaviour
         GameObject item = Instantiate<GameObject>(itemPrefab);
         item.transform.GetChild(0).GetComponent<Text>().text = "- " + text;
         item.transform.SetParent(transform, false);
-        Invoke("diabaleNotification", 3f);
+        Invoke("FadeOut", 6f);
+    }
+
+    public void FadeOut()
+    {
+
+        anim.SetTrigger("FadeOut");
+        Invoke("diabaleNotification", 1.5f);
+
     }
 
     public void diabaleNotification()

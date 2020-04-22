@@ -12,13 +12,19 @@ public class PlayerInfo : MonoBehaviour
     private void Start()
     {
         objectiveScript = objective.GetComponent<Objectives>();
-        //objectiveScript.popNotification("Escape!");
+        Invoke("escapeNotify", 5f);
+        
+    }
+
+    void escapeNotify()
+    {
+        objectiveScript.popNotification("Escape!");
     }
 
     void Update()
     {
       
-        /*if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             //ApplyDamage(30);
             objectiveScript.collectedKey(2);
@@ -37,7 +43,7 @@ public class PlayerInfo : MonoBehaviour
         {
             //ApplyDamage(30);
             objectiveScript.collectedKey(3);
-        }*/
+        }
     }
 
     public void ApplyDamage(int damage)
