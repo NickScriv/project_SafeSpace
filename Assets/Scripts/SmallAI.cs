@@ -29,6 +29,7 @@ public class SmallAI : MonoBehaviour
     public Transform camPos;
     int multiplier;
     public float range;
+    float countdown = 0f;
     //TODO: Change tags of walls to "Barrier"
 
     // Start is called before the first frame update
@@ -106,7 +107,7 @@ public class SmallAI : MonoBehaviour
             {
                 if (hit.collider.gameObject.tag == "Barrier")
                 {
-                    Debug.Log("SOmewhere else");
+                    //Debug.Log("SOmewhere else");
                     state = "idle";
                 }
             }
@@ -142,7 +143,7 @@ public class SmallAI : MonoBehaviour
             agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
             
-            if (distance > 25f || chaseTime <= 0)
+            if (distance > 10f || chaseTime <= 0)
             {
                 state = "hunt";
             }
@@ -176,15 +177,15 @@ public class SmallAI : MonoBehaviour
                         }
                         else if(Health != 0)
                         {
-                            Health = Health - 1;
+                            agent.isStopped = true;
+                            agent.ResetPath();
                             Debug.Log(Health);
-                            if (Health != 0)
+                            if (state != "runAway" && state != "runAway2")
                             {
-                                if (state != "runAway" && state != "runAway2")
-                                {
-                                    state = "chase";
-                                }
+                                    state = "Attacking";
+                                
                             }
+                            
                         }
                     }
 
@@ -209,6 +210,41 @@ public class SmallAI : MonoBehaviour
             sight();
 
 
+        }
+        if (state == "Attacking")
+        {
+            if (Health == 0)
+            {
+                agent.isStopped = true;
+                agent.ResetPath();
+                GetComponent<Rigidbody>().freezeRotation = true;
+                BugRb.velocity = Vector3.zero;
+                BugRb.angularVelocity = Vector3.zero;
+                transform.LookAt(player.transform.position);
+                state = "kill";
+                player.GetComponent<FirstPersonAIO>().enabled = false;
+                PlayerRb.velocity = Vector3.zero;
+                PlayerRb.angularVelocity = Vector3.zero;
+                //deathcam.SetActive(true);
+                //deathcam.transform.position = Camera.main.transform.position;
+                //deathcam.transform.rotation = Camera.main.transform.rotation;
+                //Camera.main.gameObject.SetActive(false);
+                anim.SetTrigger("AttackPlayer");
+                anim.speed = 0.8f;
+            }
+            agent.isStopped = true;
+            agent.ResetPath();
+            countdown -= Time.deltaTime;
+            //Debug.Log(countdown);
+            if (countdown <= 0)
+            {
+                countdown = 3f;
+                anim.SetTrigger("AttackPlayer");
+            }
+            //if (Vector3.Distance(player.transform.position, transform.position) > 1.7)
+            //{
+                Invoke("changeState",2);
+            //}
         }
         if (state == "runAway")
         {
@@ -330,5 +366,21 @@ public class SmallAI : MonoBehaviour
     {
         sound.clip = screams[num];
         sound.PlayOneShot(sound.clip);
+
+        //sound.Play();
+    }
+
+    public void dealDamage()
+    {
+        Health = Health - 1;
+    }
+
+    void changeState()
+    {
+        if (Vector3.Distance(player.transform.position, transform.position) > 1.7)
+        {
+            state = "chase";
+            countdown = 0f;
+        }
     }
 }
