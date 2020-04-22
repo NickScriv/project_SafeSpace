@@ -231,6 +231,22 @@ public class SmallAI : MonoBehaviour
                 anim.SetTrigger("AttackPlayer");
                 anim.speed = 0.8f;
             }
+            if (flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
+            {
+                state = "runAway";
+            }
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
+            int i = 0;
+            while (i < hitColliders.Length)
+            {
+                if (hitColliders[i].gameObject.tag == "FlareBullet" && hitColliders[i].gameObject != null)
+                {
+                    FlareBullet = hitColliders[i].gameObject.transform;
+                    state = "runAway2";
+                    break;
+                }
+                i++;
+            }
             agent.isStopped = true;
             agent.ResetPath();
             countdown -= Time.deltaTime;
