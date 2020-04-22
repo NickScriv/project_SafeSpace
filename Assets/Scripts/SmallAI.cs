@@ -30,7 +30,7 @@ public class SmallAI : MonoBehaviour
     int multiplier;
     public float range;
     float countdown = 0f;
-    //TODO: Change tags of walls to "Barrier"
+
 
     // Start is called before the first frame update
     void Start()
@@ -63,8 +63,8 @@ public class SmallAI : MonoBehaviour
 
          }*/
 
-        Debug.Log(searchRadius);
-        Debug.Log(state);
+        Debug.Log(Health);
+       // Debug.Log(state);
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
 
@@ -191,10 +191,12 @@ public class SmallAI : MonoBehaviour
 
                 }
             }
+
             if (flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
             {
                 state = "runAway";
             }
+
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
             int i = 0;
             while (i < hitColliders.Length)
@@ -238,7 +240,7 @@ public class SmallAI : MonoBehaviour
             //Debug.Log(countdown);
             if (countdown <= 0)
             {
-                countdown = 3f;
+                countdown = 2f;
                 anim.SetTrigger("AttackPlayer");
             }
             //if (Vector3.Distance(player.transform.position, transform.position) > 1.7)
@@ -246,6 +248,7 @@ public class SmallAI : MonoBehaviour
                 Invoke("changeState",2);
             //}
         }
+
         if (state == "runAway")
         {
             Vector3 runTo = transform.position + ((transform.position - player.position) * multiplier);
@@ -264,6 +267,7 @@ public class SmallAI : MonoBehaviour
             if (distance > range) state = "search";
             
         }
+
         if (state == "runAway2")
         {
             if (FlareBullet != null)
@@ -372,7 +376,7 @@ public class SmallAI : MonoBehaviour
 
     public void dealDamage()
     {
-        Health = Health - 1;
+        Health = Health - 100;
     }
 
     void changeState()
