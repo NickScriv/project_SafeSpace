@@ -60,23 +60,6 @@ public class Flashlight_PRO : MonoBehaviour
 		ambient_mat_color = ambient_light_material.GetColor ("_TintColor");
 	}
 
-    void OnTriggerStay(Collider other)
-    {
-        if (other.gameObject.tag == "Bug" && is_enabled == true)
-        {
-            Debug.Log("hit Bug!");
-            other.gameObject.GetComponent<SmallAI>().setState("runAway");
-            other.gameObject.GetComponent<SmallAI>().inFlashlightZone = true;
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.tag == "Bug")
-        {
-            other.gameObject.GetComponent<SmallAI>().inFlashlightZone = false;
-        }
-    }
 
 
     /// <summary>

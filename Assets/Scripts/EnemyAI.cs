@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -26,12 +27,13 @@ public class EnemyAI : MonoBehaviour
     Rigidbody BossRb;
     Rigidbody PlayerRb;
     float dizzyTime = 15f;
+    public Text stateText;
     //TODO: Change tags of walls to "Barrier" in the final version of the maps
 
     // Start is called before the first frame update
     void Start()
     {
-
+       
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -56,10 +58,41 @@ public class EnemyAI : MonoBehaviour
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
         // Debug.Log(agent.velocity.magnitude);
+        stateText.text = state;
+
+     
+
+       RaycastHit rayhit;
+        if ( (state == "idle" || state == "search"))
+        {
+
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position + new Vector3(0, 1f, 0), 1.5f);
+            int i = 0;
+            while (i < hitColliders.Length)
+            {
+                if (hitColliders[i].gameObject.tag == "Barrier" && hitColliders[i].gameObject != null)
+                {
+
+                    agent.ResetPath();
+                    Debug.Log("SOmewhere else");
+                    state = "idle";
+                    break;
+                }
+                i++;
+            }
+           /* if (rayhit.collider.gameObject.tag == "Barrier")
+            {
+                agent.ResetPath();
+                Debug.Log("SOmewhere else");
+                state = "idle";
+            }*/
+        }
+
+        
 
 
         if (state == "idle")
-        {
+            {
             Vector3 randomPos = Random.insideUnitSphere * searchRadius;
             NavMeshHit navHit;
             NavMesh.SamplePosition(transform.position + randomPos, out navHit, 20f, NavMesh.AllAreas);
@@ -84,7 +117,7 @@ public class EnemyAI : MonoBehaviour
         {
             if (agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
             {
-                RaycastHit hit;
+               /*RaycastHit hit;
                 if (Physics.Raycast(vision.position, vision.forward, out hit, 5f))
                 {
                     if (hit.collider.gameObject.tag == "Barrier")
@@ -93,7 +126,7 @@ public class EnemyAI : MonoBehaviour
                         state = "idle";
                         return;
                     }
-                }
+                }*/
                 state = "search";
                 waitSearch = 5f;
             }
@@ -204,7 +237,11 @@ public class EnemyAI : MonoBehaviour
             //Do Nothing
         }
 
+    
+        
 
+
+        
 
 
     }
@@ -281,5 +318,12 @@ public class EnemyAI : MonoBehaviour
     public string getState()
     {
         return state;
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        // Draw a yellow sphere at the transform's position
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(transform.position + new Vector3(0, 1f, 0), 1.5f);
     }
 }

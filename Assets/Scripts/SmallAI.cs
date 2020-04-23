@@ -8,10 +8,11 @@ using UnityEngine.UI;
 public class SmallAI : MonoBehaviour
 {
     public AudioClip[] screams;
+    public AudioClip hit;
     NavMeshAgent agent;
     Transform player;
     Animator anim;
-    public AudioClip footSounds;
+    public AudioClip[] footSounds;
     AudioSource sound;
     string state = "idle";
     public Transform vision;
@@ -24,7 +25,7 @@ public class SmallAI : MonoBehaviour
     //public GameObject FlareGun;
     Transform FlareBullet;
     public Camera mainCamera;
-    public int Health;
+   int Health = 1000;
     Rigidbody BugRb;
     Rigidbody PlayerRb;
     public Transform camPos;
@@ -55,24 +56,24 @@ public class SmallAI : MonoBehaviour
  
 
 
-    /*void OnTriggerStay(Collider other)
+   void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.name == "FlashCollider" && flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
+        if (other.gameObject.tag == "Player")
         {
-            Debug.Log("hit Bug!");
-            state = "runAway";
-            inFlashlightZone = true;
+
+            other.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
     }
 
-    void OnTriggerExit(Collider other)
+   /* void OnCollisionExit(Collision other)
     {
-        if (other.gameObject.name == "FlashCollider")
+        if (other.gameObject.tag == "Player")
         {
-            inFlashlightZone = false;
+
+            other.gameObject.GetComponent<Rigidbody>().isKinematic = false;
         }
     }*/
-
+    
     // Update is called once per frame
     void Update()
     {
@@ -88,7 +89,7 @@ public class SmallAI : MonoBehaviour
          }*/
 
 
-        // Debug.Log(Health);
+        Debug.Log(Health);
         stateText.text = state;
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
@@ -173,7 +174,7 @@ public class SmallAI : MonoBehaviour
                 state = "hunt";
             }
 
-            else if (distance <= 1.7f)
+            else if (distance <= 1f)
             {
                 RaycastHit hit;
                 if (Physics.Linecast(vision.position, player.transform.position, out hit))
@@ -240,8 +241,9 @@ public class SmallAI : MonoBehaviour
         }
         if (state == "Attacking")
         {
-            if (Health == 0)
+            if (Health <= 0)
             {
+
                 agent.isStopped = true;
                 agent.ResetPath();
                 GetComponent<Rigidbody>().freezeRotation = true;
@@ -259,10 +261,7 @@ public class SmallAI : MonoBehaviour
                 anim.SetTrigger("AttackPlayer");
                 anim.speed = 0.8f;
             }
-           /* if (flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
-            {
-                state = "runAway";
-            }*/
+
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
             int i = 0;
             while (i < hitColliders.Length)
@@ -275,8 +274,10 @@ public class SmallAI : MonoBehaviour
                 }
                 i++;
             }
+
             agent.isStopped = true;
             agent.ResetPath();
+            RotateTowards(player);
             countdown -= Time.deltaTime;
             //Debug.Log(countdown);
             if (countdown <= 0)
@@ -284,10 +285,12 @@ public class SmallAI : MonoBehaviour
                 countdown = 2f;
                 anim.SetTrigger("AttackPlayer");
             }
-            //if (Vector3.Distance(player.transform.position, transform.position) > 1.7)
-            //{
-                Invoke("changeState",2);
-            //}
+            if (Vector3.Distance(player.transform.position, transform.position) > .8f)
+            {
+                state = "chase";
+                countdown = 0f;
+                //Invoke("changeState",2);
+            }
         }
 
         if (state == "runAway")
@@ -353,6 +356,7 @@ public class SmallAI : MonoBehaviour
             //deathcam.transform.rotation = Quaternion.Slerp(deathcam.transform.rotation, camPos.rotation, 20f * Time.deltaTime);
             Quaternion lookOnLook = Quaternion.LookRotation(camPos.transform.position - player.transform.position);
             mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, lookOnLook, 5f * Time.deltaTime);
+            Invoke("reset", 2f);
             
         }
 
@@ -361,9 +365,9 @@ public class SmallAI : MonoBehaviour
 
     }
 
-    void reset()
+    void reset()//TODO: change this to checkpoint in final build!
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); //TODO: Change this to transition to game over scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
     }
 
     public void sight()
@@ -391,10 +395,10 @@ public class SmallAI : MonoBehaviour
         }
     }
 
-    public void footstep()
+    public void footsteps()
     {
-        sound.clip = footSounds;
-        sound.Play();
+       // sound.clip = footSounds[Random.Range(0, 4)];
+        sound.PlayOneShot(footSounds[Random.Range(0, 4)]);
     }
 
     public void endShout()
@@ -415,14 +419,23 @@ public class SmallAI : MonoBehaviour
         //sound.Play();
     }
 
+    public void playHit()
+    {
+
+        sound.PlayOneShot(hit);
+
+        //sound.Play();
+    }
+
     public void dealDamage()
     {
+        Debug.Log(Health);
         Health = Health - 100;
     }
 
     void changeState()
     {
-        if (Vector3.Distance(player.transform.position, transform.position) > 1.7)
+        if (Vector3.Distance(player.transform.position, transform.position) > .8f)
         {
             state = "chase";
             countdown = 0f;
@@ -433,4 +446,14 @@ public class SmallAI : MonoBehaviour
     {
         state = newState;
     }
+
+    private void RotateTowards(Transform target)
+    {
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
+    }
+
+
+
 }

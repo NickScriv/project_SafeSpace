@@ -6,13 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class sceneLoader : MonoBehaviour
 {
-    public string scene;
-    void OnTriggerEnter(Collider coll){
- if(coll.tag=="Player"){
-	 
-	 SceneManager.LoadScene(scene);
- }
-}
+    public void loadScene(string sceneName){
+      SceneManager.LoadScene(sceneName);
+    }
+
     public void quit(){
       Application.Quit();
     }

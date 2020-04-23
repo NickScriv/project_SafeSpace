@@ -275,7 +275,7 @@ public class BETA_SETTINGS{
 
     private void Start()
     {
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
         #region Look Settings - Start
 
         if(autoCrosshair || drawStaminaMeter){
