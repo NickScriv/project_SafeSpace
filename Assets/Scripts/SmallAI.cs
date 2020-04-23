@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SmallAI : MonoBehaviour
 {
@@ -30,6 +31,8 @@ public class SmallAI : MonoBehaviour
     int multiplier;
     public float range;
     float countdown = 0f;
+    public Text stateText;
+    public bool inFlashlightZone = false;
 
 
     // Start is called before the first frame update
@@ -49,6 +52,27 @@ public class SmallAI : MonoBehaviour
 
     }
 
+ 
+
+
+    /*void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.name == "FlashCollider" && flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
+        {
+            Debug.Log("hit Bug!");
+            state = "runAway";
+            inFlashlightZone = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.name == "FlashCollider")
+        {
+            inFlashlightZone = false;
+        }
+    }*/
+
     // Update is called once per frame
     void Update()
     {
@@ -63,8 +87,9 @@ public class SmallAI : MonoBehaviour
 
          }*/
 
-        Debug.Log(Health);
-       // Debug.Log(state);
+
+        // Debug.Log(Health);
+        stateText.text = state;
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
 
@@ -179,7 +204,7 @@ public class SmallAI : MonoBehaviour
                         {
                             agent.isStopped = true;
                             agent.ResetPath();
-                            Debug.Log(Health);
+                            //Debug.Log(Health);
                             if (state != "runAway" && state != "runAway2")
                             {
                                     state = "Attacking";
@@ -192,10 +217,10 @@ public class SmallAI : MonoBehaviour
                 }
             }
 
-            if (flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
+           /* if (flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
             {
                 state = "runAway";
-            }
+            }*/
 
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
             int i = 0;
@@ -234,10 +259,10 @@ public class SmallAI : MonoBehaviour
                 anim.SetTrigger("AttackPlayer");
                 anim.speed = 0.8f;
             }
-            if (flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
+           /* if (flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
             {
                 state = "runAway";
-            }
+            }*/
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
             int i = 0;
             while (i < hitColliders.Length)
@@ -271,7 +296,7 @@ public class SmallAI : MonoBehaviour
             float distance = Vector3.Distance(transform.position, player.position);
             if (distance < range)
             {
-                if (flashlight.GetComponent<Flashlight_PRO>().is_enabled != true)
+                if (flashlight.GetComponent<Flashlight_PRO>().is_enabled != true || !inFlashlightZone)
                 {
                     
                         state = "chase";
@@ -402,5 +427,10 @@ public class SmallAI : MonoBehaviour
             state = "chase";
             countdown = 0f;
         }
+    }
+
+    public void setState(string newState)
+    {
+        state = newState;
     }
 }

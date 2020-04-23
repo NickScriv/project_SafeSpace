@@ -13,6 +13,9 @@ TagManager:
   - Flesh
   - Interact
   - Notification
+  - Blood
+  - Bug
+  - BugVision
   layers:
   - Default
   - TransparentFX
