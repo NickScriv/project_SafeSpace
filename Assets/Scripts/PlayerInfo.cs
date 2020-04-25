@@ -18,13 +18,36 @@ public class PlayerInfo : MonoBehaviour
 
     void escapeNotify()
     {
+        objectiveScript.popNotification("Find the exit");
+        objectiveScript.setObjective("Find the exit");
+    }
+
+    public void collectedKey(bool lastKey)
+    {
+        objectiveScript.popNotification("Key Collected");
+
+
+        if (lastKey)
+        {
+            objectiveScript.objectiveCompleted(1);
+            StartCoroutine("escape");
+        }
+
+    }
+
+    IEnumerator escape()
+    {
+        yield return new WaitForSeconds(7f);
+        objectiveScript.setObjective("Escape!");
         objectiveScript.popNotification("Escape!");
+
+
     }
 
     void Update()
     {
       
-        if (Input.GetKeyDown(KeyCode.B))
+       /* if (Input.GetKeyDown(KeyCode.B))
         {
             //ApplyDamage(30);
             objectiveScript.collectedKey(2);
@@ -43,7 +66,7 @@ public class PlayerInfo : MonoBehaviour
         {
             //ApplyDamage(30);
             objectiveScript.collectedKey(3);
-        }
+        }*/
     }
 
     public void ApplyDamage(int damage)

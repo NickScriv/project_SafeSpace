@@ -6,12 +6,12 @@ using UnityEngine.SceneManagement;
 public class Pause : MonoBehaviour
 {
     public static bool isPaused = false;
-    public GameObject player;
+    GameObject player;
     public GameObject pauseMenu;
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        //player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -33,7 +33,7 @@ public class Pause : MonoBehaviour
 
     public void Resume()
     {
-        player.GetComponent<FirstPersonAIO>().lockAndHideCursor = true;
+        //player.GetComponent<FirstPersonAIO>().lockAndHideCursor = true;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         pauseMenu.SetActive(false);
@@ -44,7 +44,7 @@ public class Pause : MonoBehaviour
     public void  QuitGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene(0);
         Debug.Log("quit game");
     }
 

@@ -27,7 +27,7 @@ public class EnemyAI : MonoBehaviour
     Rigidbody BossRb;
     Rigidbody PlayerRb;
     float dizzyTime = 15f;
-    public Text stateText;
+
     //TODO: Change tags of walls to "Barrier" in the final version of the maps
 
     // Start is called before the first frame update
@@ -58,7 +58,7 @@ public class EnemyAI : MonoBehaviour
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
         // Debug.Log(agent.velocity.magnitude);
-        stateText.text = state;
+  
 
      
 

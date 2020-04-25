@@ -45,7 +45,7 @@ public class OpenableDoor : MonoBehaviour
             open = !open;
             currentRotationAngle = transform.localEulerAngles.y;
             openTime = 0;
-	    source.PlayOneShot(clip);
+	         source.PlayOneShot(clip);
         }
     }
 

@@ -21,48 +21,31 @@ public class Objectives : MonoBehaviour
         
     }
 
-    public void  collectedKey(int index)
-    {
-        if (index != 0)
-        { 
-            GameObject Go = transform.GetChild(transform.childCount - 1).gameObject;
-            Color temp = Go.transform.GetChild(0).GetComponent<Text>().color;
-            temp.a = .35f;
-            Go.transform.GetChild(0).GetComponent<Text>().color = temp;
-        }
-
-        if (index == 1)
-        {
-            popNotification("Find the second key");
-        }
-        else if (index == 2)
-        {
-            popNotification("Find the third key");
-        }
-        else if (index == 0)
-        {
-            popNotification("Find the first key");
-            return;
-        }
-
-
-        
-
-      
-
-
-    }
+  
 
     public void popNotification(string text)
     {
         FindObjectOfType<SoundManager>().Play("Objective");
         notification.transform.GetChild(0).GetComponent<Text>().text = text;
         notification.SetActive(true);
+        Invoke("FadeOut", 6f);
 
+       
+        
+    }
+    public void setObjective(string text)
+    {
         GameObject item = Instantiate<GameObject>(itemPrefab);
         item.transform.GetChild(0).GetComponent<Text>().text = "- " + text;
         item.transform.SetParent(transform, false);
-        Invoke("FadeOut", 6f);
+    }
+
+    public void objectiveCompleted(int index)
+    {
+        GameObject Go = transform.GetChild(transform.childCount - 1).gameObject;
+        Color temp = Go.transform.GetChild(index).GetComponent<Text>().color;
+        temp.a = .35f;
+        Go.transform.GetChild(index).GetComponent<Text>().color = temp;
     }
 
     public void FadeOut()

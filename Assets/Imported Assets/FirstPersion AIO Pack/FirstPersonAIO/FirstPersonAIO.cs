@@ -57,7 +57,7 @@ using System.Collections.Generic;
 
 public class FirstPersonAIO : MonoBehaviour {
 
-
+  
     #region Variables
 
     #region Input Settings
@@ -65,6 +65,7 @@ public class FirstPersonAIO : MonoBehaviour {
     #endregion
 
     #region Look Settings
+
     public bool enableCameraMovement = true;
     public enum InvertMouseInput{None,X,Y,Both}
     public InvertMouseInput mouseInputInversion = InvertMouseInput.None;
@@ -82,6 +83,7 @@ public class FirstPersonAIO : MonoBehaviour {
 
     public bool autoCrosshair = false;
     public bool drawStaminaMeter = true;
+
     float smoothRef;
     Image StaminaMeter;
     Image StaminaMeterBG;
@@ -119,7 +121,9 @@ public class FirstPersonAIO : MonoBehaviour {
         public KeyCode crouchKey = KeyCode.LeftControl;
         public float crouchWalkSpeedMultiplier = 0.5f;
         public float crouchJumpPowerMultiplier = 0f;
+        public float crouchHeight = 2f;
         public bool crouchOverride;
+        
         internal float colliderHeight;
         
     }
@@ -473,7 +477,7 @@ public class BETA_SETTINGS{
         if(_crouchModifiers.useCrouch) {
             
             if(isCrouching) {
-                    capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight/1.5f, 5*Time.deltaTime);
+                    capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight/ _crouchModifiers.crouchHeight, 5*Time.deltaTime);
                         walkSpeedInternal = walkSpeed*_crouchModifiers.crouchWalkSpeedMultiplier;
                         jumpPowerInternal = jumpPower* _crouchModifiers.crouchJumpPowerMultiplier;
 
@@ -886,7 +890,8 @@ public class BETA_SETTINGS{
                 t._crouchModifiers.toggleCrouch = EditorGUILayout.ToggleLeft(new GUIContent("Toggle Crouch?","Determines if the crouching behaviour is on a toggle or momentary basis."),t._crouchModifiers.toggleCrouch);
                 t._crouchModifiers.crouchWalkSpeedMultiplier = EditorGUILayout.Slider(new GUIContent("Crouch Movement Speed Multiplier","Determines how fast the player can move while crouching."),t._crouchModifiers.crouchWalkSpeedMultiplier,0.01f,1.5f);
                 t._crouchModifiers.crouchJumpPowerMultiplier = EditorGUILayout.Slider(new GUIContent("Crouching Jump Power Mult.","Determines how much the player's jumping power is increased or reduced while crouching."),t._crouchModifiers.crouchJumpPowerMultiplier,0,1.5f);
-                t._crouchModifiers.crouchOverride = EditorGUILayout.ToggleLeft(new GUIContent("Force Crouch Override","A Toggle that will override the crouch key to force player to crouch."),t._crouchModifiers.crouchOverride);
+            t._crouchModifiers.crouchHeight = EditorGUILayout.Slider(new GUIContent("Crouch Height", "Determines at which height the player crouches to"), t._crouchModifiers.crouchHeight, 0, 5f);
+            t._crouchModifiers.crouchOverride = EditorGUILayout.ToggleLeft(new GUIContent("Force Crouch Override","A Toggle that will override the crouch key to force player to crouch."),t._crouchModifiers.crouchOverride);
             }
             GUI.enabled = t.playerCanMove;
             EditorGUILayout.EndFoldoutHeaderGroup();      
