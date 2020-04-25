@@ -19,30 +19,57 @@ public class Flashlight_PRO : MonoBehaviour
 	private Color ambient_mat_color;
 	private bool is_enabled = false;
 
+	public float maxEnergy;
+	public float currentEnergy;
+	public float usedEnergy;
 
-	void Update(){
-	if(Input.GetKeyDown("e"))
-	Switch();
-
-	}
-
-
-
-
-
+	public int batteries;
 
 	// Use this for initialization
-	void Start ()
+	void Start()
 	{
 		// cache components
-		spotlight = Lights.transform.Find ("Spotlight").GetComponent<Light> ();
-		ambient_light_material = Lights.transform.Find ("ambient").GetComponent<Renderer> ().material;
-		ambient_mat_color = ambient_light_material.GetColor ("_TintColor");
+		spotlight = Lights.transform.Find("Spotlight").GetComponent<Light>();
+		ambient_light_material = Lights.transform.Find("ambient").GetComponent<Renderer>().material;
+		ambient_mat_color = ambient_light_material.GetColor("_TintColor");
+
+		currentEnergy = maxEnergy;
+		maxEnergy = 50 * batteries;
+
 	}
 
 
+	void Update()
+	{
+		maxEnergy = 50 * batteries;
+		currentEnergy = maxEnergy;
 
+		if (Input.GetKeyDown("e"))
+			Switch();
 
+		if (is_enabled)
+        {
+			if (currentEnergy <= 0)
+            {
+				Lights.SetActive(false);
+				batteries = 0;
+            }
+
+			if(currentEnergy > 0)
+            {
+				Lights.SetActive(true);
+				currentEnergy -= 0.5f * Time.deltaTime;
+				usedEnergy += 0.5f * Time.deltaTime;
+			}
+
+            if (usedEnergy >= 50)
+            {
+				batteries -= 1;
+				usedEnergy = 0;
+            }
+
+		}
+	}
 
 
 	/// <summary>
@@ -60,8 +87,6 @@ public class Flashlight_PRO : MonoBehaviour
 	}
 
 
-
-
 	/// <summary>
 	/// switch current state  ON / OFF.
 	/// call this from other scripts.
@@ -75,10 +100,6 @@ public class Flashlight_PRO : MonoBehaviour
 		if (switch_sound != null)
 			switch_sound.Play ();
 	}
-
-
-
-
 
 	/// <summary>
 	/// enables the particles.

@@ -11,15 +11,18 @@ public class ItemSwitch : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        //Auto starts the character with the flashlight & the animation of him pulling it out
+        transform.GetChild(0).gameObject.GetComponent<ItemPlayer>().pickedUp = true;
         SelectItem(0);
     }
 
+ 
     // Update is called once per frame
     void Update()
     {
 
         //Updating item choosen with scroll wheel
-        if (Input.GetAxis("Mouse ScrollWheel") > 0)
+        if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
             if (currentItem + 1 <= maxItems)
                 currentItem++;
@@ -30,7 +33,7 @@ public class ItemSwitch : MonoBehaviour
         }
 
          //Commented out due to there being a glitch - Won't show flare arm for some reason.
-        /*else if(Input.GetAxis("Mouse ScrollWheel") < 0)
+        /*else if(Input.GetAxis("Mouse ScrollWheel") > 0)
         {
             if (currentItem - 1 <= maxItems)
                 currentItem--;
@@ -71,7 +74,7 @@ public class ItemSwitch : MonoBehaviour
 
     }
 
-    void SelectItem(int index)
+    public void SelectItem(int index)
     {
         for(int i = 0; i < transform.childCount; i++)
         {
@@ -79,14 +82,12 @@ public class ItemSwitch : MonoBehaviour
             if (i == index && transform.GetChild(i).gameObject.GetComponent<ItemPlayer>().pickedUp == true)
             {
                 transform.GetChild(i).gameObject.SetActive(true);
-                transform.GetChild(i).gameObject.GetComponent<ItemPlayer>().isSelected = true;
             }
 
 
             else
             {
                 transform.GetChild(i).gameObject.SetActive(false);
-                transform.GetChild(i).gameObject.GetComponent<ItemPlayer>().isSelected = false;
             }
         }
     }

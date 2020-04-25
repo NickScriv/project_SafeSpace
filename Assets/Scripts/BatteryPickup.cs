@@ -2,28 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemPickup : MonoBehaviour
+public class BatteryPickup : MonoBehaviour
 {
     public AudioSource source;
     public AudioClip clip;
-    public GameObject item;
-    public GameObject itemPlayer;
-
-    ItemPlayer script;
+    public GameObject battery;
+    public GameObject flashlight;
 
     bool enter = false;
-
-    void Start()
-    {
-        script = itemPlayer.GetComponent<ItemPlayer>();
-    }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F) && enter)
         {
-            item.SetActive(false);
-            script.pickedUp = true;
+            Destroy(battery);
+            flashlight.GetComponent<Flashlight_PRO>().batteries += 1;
             source.PlayOneShot(clip);
         }
     }

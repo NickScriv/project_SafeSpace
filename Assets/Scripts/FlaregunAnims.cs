@@ -18,7 +18,7 @@ public class FlaregunAnims : MonoBehaviour
     void Update()
     {
         //Shooting animations - WIP to make it not animate when gun has no rounds.
-        if (Input.GetMouseButtonDown(0) && hasBullet == true)
+        if (Input.GetMouseButtonDown(0) && hasBullet)
         {
             anim.SetTrigger("Shoot");
         }
