@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class ItemPickup : MonoBehaviour
 {
-    //public AudioSource source;
-   // public AudioClip clip;
     public GameObject item;
     public GameObject itemPlayer;
+
     ItemPlayer script;
 
     bool enter = false;
@@ -19,17 +18,18 @@ public class ItemPickup : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F) && enter)
+        if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
             item.SetActive(false);
             script.pickedUp = true;
             //source.PlayOneShot(clip);
+            FindObjectOfType<SoundManager>().Play("PickUp");
         }
     }
 
     void OnGUI()
     {
-        if (enter)
+        if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
             GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to pick up");
         }

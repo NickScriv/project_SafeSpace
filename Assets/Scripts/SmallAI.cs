@@ -10,7 +10,7 @@ public class SmallAI : MonoBehaviour
     public AudioClip[] screams;
     public AudioClip hit;
     NavMeshAgent agent;
-    Transform player;
+    public Transform player;
     Animator anim;
     public AudioClip[] footSounds;
     AudioSource sound;
@@ -32,8 +32,10 @@ public class SmallAI : MonoBehaviour
     int multiplier;
     public float range;
     float countdown = 0f;
-    public Text stateText;
+    // public Text stateText;
+    public Transform [] runAwayPos;
     public bool inFlashlightZone = false;
+    float attackRange = 1.3f;
 
 
     // Start is called before the first frame update
@@ -42,7 +44,6 @@ public class SmallAI : MonoBehaviour
 
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
         sound = GetComponent<AudioSource>();
         BugRb = GetComponent<Rigidbody>();
         PlayerRb = player.GetComponent<Rigidbody>();
@@ -77,6 +78,13 @@ public class SmallAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (GameManager.Instance.isEnd)
+        {
+            agent.enabled = false;
+            gameObject.SetActive(false);
+        }
+          
         /* if(GetComponent<Rigidbody>().velocity.magnitude <= 0)
          {
              agent.updateRotation = false;
@@ -88,11 +96,34 @@ public class SmallAI : MonoBehaviour
 
          }*/
 
+        if (state != "kill" && state != "DoNothing" && GameManager.Instance.playerDead)
+        {
+            state = "DoNothing";
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
 
-        Debug.Log(Health);
-        stateText.text = state;
+
+        Debug.Log(state);
+        //stateText.text = state;
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
+
+        if (!GameManager.Instance.playerDead && state != "kill" && state != "shouting" && state != "kill" && state != "shout")
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
+            int i = 0;
+            while (i < hitColliders.Length)
+            {
+                if (hitColliders[i].gameObject.tag == "FlareBullet" && hitColliders[i].gameObject != null)
+                {
+                    FlareBullet = hitColliders[i].gameObject.transform;
+                    state = "runAway2";
+                    break;
+                }
+                i++;
+            }
+        }
 
         if (state == "idle")
         {
@@ -113,6 +144,7 @@ public class SmallAI : MonoBehaviour
             }
             agent.SetDestination(navHit.position);
             state = "walk";
+            return;
         }
 
         if (state == "walk")
@@ -121,6 +153,7 @@ public class SmallAI : MonoBehaviour
             {
                 state = "search";
                 waitSearch = 4f;
+                return;
             }
 
 
@@ -135,6 +168,7 @@ public class SmallAI : MonoBehaviour
                 {
                     //Debug.Log("SOmewhere else");
                     state = "idle";
+                    return;
                 }
             }
 
@@ -145,6 +179,7 @@ public class SmallAI : MonoBehaviour
             else
             {
                 state = "idle";
+                return;
             }
         }
 
@@ -153,10 +188,12 @@ public class SmallAI : MonoBehaviour
         {
             if (state != "runAway" && state != "runAway2")
             {
+                agent.isStopped = true;
                 agent.ResetPath();
                 anim.SetTrigger("scream");
                 playScream(Random.Range(0, 4));
                 state = "shouting";
+               
              }
 
 
@@ -172,120 +209,61 @@ public class SmallAI : MonoBehaviour
             if (distance > 10f || chaseTime <= 0)
             {
                 state = "hunt";
+             
             }
-
-            else if (distance <= 1f)
+            else if (distance <= attackRange)
             {
                 RaycastHit hit;
                 if (Physics.Linecast(vision.position, player.transform.position, out hit))
                 {
-                    if (hit.collider.gameObject.tag == "Player")
-                    {
-                        //TODO: incorporate the Player health function
-                        if (Health == 0)
-                        {
-                            agent.isStopped = true;
-                            agent.ResetPath();
-                            GetComponent<Rigidbody>().freezeRotation = true;
-                            BugRb.velocity = Vector3.zero;
-                            BugRb.angularVelocity = Vector3.zero;
-                            transform.LookAt(player.transform.position);
-                            state = "kill";
-                            player.GetComponent<FirstPersonAIO>().enabled = false;
-                            PlayerRb.velocity = Vector3.zero;
-                            PlayerRb.angularVelocity = Vector3.zero;
-                            //deathcam.SetActive(true);
-                            //deathcam.transform.position = Camera.main.transform.position;
-                            //deathcam.transform.rotation = Camera.main.transform.rotation;
-                            //Camera.main.gameObject.SetActive(false);
-                            anim.SetTrigger("AttackPlayer");
-                            anim.speed = 0.8f;
-                        }
-                        else if(Health != 0)
-                        {
-                            agent.isStopped = true;
-                            agent.ResetPath();
-                            //Debug.Log(Health);
-                            if (state != "runAway" && state != "runAway2")
-                            {
-                                    state = "Attacking";
-                                
-                            }
-                            
-                        }
-                    }
+                    agent.isStopped = true;
+                    agent.ResetPath();
+                    state = "Attacking";
+                    countdown = 0f;
+
 
                 }
-            }
 
-           /* if (flashlight.GetComponent<Flashlight_PRO>().is_enabled == true)
-            {
-                state = "runAway";
-            }*/
+             }
+          
 
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
-            int i = 0;
-            while (i < hitColliders.Length)
-            {
-                if (hitColliders[i].gameObject.tag == "FlareBullet" && hitColliders[i].gameObject != null)
-                {
-                    FlareBullet= hitColliders[i].gameObject.transform;
-                    state = "runAway2";
-                    break;
-                }
-                i++;
-            }
+           
             sight();
 
 
         }
+
         if (state == "Attacking")
         {
-            if (Health <= 0)
+           
+            if (player.GetComponent<PlayerInfo>().currentHealth <= 0)
             {
 
-                agent.isStopped = true;
-                agent.ResetPath();
+               
+                state = "kill";
                 GetComponent<Rigidbody>().freezeRotation = true;
                 BugRb.velocity = Vector3.zero;
                 BugRb.angularVelocity = Vector3.zero;
                 transform.LookAt(player.transform.position);
-                state = "kill";
                 player.GetComponent<FirstPersonAIO>().enabled = false;
                 PlayerRb.velocity = Vector3.zero;
                 PlayerRb.angularVelocity = Vector3.zero;
-                //deathcam.SetActive(true);
-                //deathcam.transform.position = Camera.main.transform.position;
-                //deathcam.transform.rotation = Camera.main.transform.rotation;
-                //Camera.main.gameObject.SetActive(false);
+                GameManager.Instance.playerDead = true;
                 anim.SetTrigger("AttackPlayer");
-                anim.speed = 0.8f;
+                anim.speed = 0.6f;
+                return;
             }
 
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
-            int i = 0;
-            while (i < hitColliders.Length)
-            {
-                if (hitColliders[i].gameObject.tag == "FlareBullet" && hitColliders[i].gameObject != null)
-                {
-                    FlareBullet = hitColliders[i].gameObject.transform;
-                    state = "runAway2";
-                    break;
-                }
-                i++;
-            }
 
-            agent.isStopped = true;
-            agent.ResetPath();
             RotateTowards(player);
             countdown -= Time.deltaTime;
-            //Debug.Log(countdown);
+            Debug.Log(countdown);
             if (countdown <= 0)
             {
-                countdown = 2f;
+                countdown = 1f;
                 anim.SetTrigger("AttackPlayer");
             }
-            if (Vector3.Distance(player.transform.position, transform.position) > .8f)
+            if (Vector3.Distance(player.transform.position, transform.position) > attackRange)
             {
                 state = "chase";
                 countdown = 0f;
@@ -295,44 +273,69 @@ public class SmallAI : MonoBehaviour
 
         if (state == "runAway")
         {
-            Vector3 runTo = transform.position + ((transform.position - player.position) * multiplier);
+            agent.speed = 3f;
+            Vector3 runTo = transform.position + ((transform.position - player.position) * 2);
             float distance = Vector3.Distance(transform.position, player.position);
             if (distance < range)
             {
+               
                 if (flashlight.GetComponent<Flashlight_PRO>().is_enabled != true || !inFlashlightZone)
                 {
-                    
-                        state = "chase";
-                    
+                    Debug.Log("runnnnnnnnnnnnnnnnnnn");
+                    state = "chase";
+                    return;
+
+
                 }
-                agent.SetDestination(runTo);
+                else
+                {
+
+                    RunAway(null);
+
+                }
             }
 
-            if (distance > range) state = "search";
+            if (distance >= range)
+            {
+                state = "idle";
+                searchRadius = 22f;
+                highAlert = false;
+
+
+
+            }
             
         }
 
         if (state == "runAway2")
         {
+            agent.speed = 3f;
             if (FlareBullet != null)
             {
-                Vector3 runTo = transform.position + ((transform.position - FlareBullet.position) * multiplier);
+               //Vector3 runTo = transform.position + ((transform.position - FlareBullet.position) * multiplier);
                 float distance = Vector3.Distance(transform.position, FlareBullet.position);
                 if (distance < range)
                 {
 
-                    //if (FlareBullet != true)
-                   // {
-                       // state = "chase";
-                   // }
-                    agent.SetDestination(runTo);
+                    RunAway(FlareBullet);
+
                 }
 
-                if (distance > range) state = "search";
+                if (distance >= range)
+                {
+                    state = "idle";
+                    searchRadius = 22f;
+                    highAlert = false;
+
+
+                }
             }
             else if (FlareBullet == null)
             {
-                state = "search";
+                state = "idle";
+                searchRadius = 20f;
+                highAlert = false;
+                return;
             }
 
         }
@@ -356,7 +359,7 @@ public class SmallAI : MonoBehaviour
             //deathcam.transform.rotation = Quaternion.Slerp(deathcam.transform.rotation, camPos.rotation, 20f * Time.deltaTime);
             Quaternion lookOnLook = Quaternion.LookRotation(camPos.transform.position - player.transform.position);
             mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, lookOnLook, 5f * Time.deltaTime);
-            Invoke("reset", 2f);
+            Invoke("reset", 2.5f);
             
         }
 
@@ -365,9 +368,10 @@ public class SmallAI : MonoBehaviour
 
     }
 
-    void reset()//TODO: change this to checkpoint in final build!
+    void reset()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
+        Time.timeScale = 0;
+        GameManager.Instance.fadeInBug();
     }
 
     public void sight()
@@ -422,24 +426,54 @@ public class SmallAI : MonoBehaviour
     public void playHit()
     {
 
-        sound.PlayOneShot(hit);
-
-        //sound.Play();
+        FindObjectOfType<SoundManager>().Play("BugHit");
     }
 
     public void dealDamage()
     {
-        Debug.Log(Health);
-        Health = Health - 100;
+     
+        player.GetComponent<PlayerInfo>().ApplyDamage(26);
     }
 
     void changeState()
     {
-        if (Vector3.Distance(player.transform.position, transform.position) > .8f)
+        if (Vector3.Distance(player.transform.position, transform.position) > attackRange)
         {
             state = "chase";
             countdown = 0f;
         }
+    }
+    
+    public string getState()
+    {
+        return state;
+    }
+
+    public void RunAway(Transform flare)
+    {
+        float furthestDistanceSoFar = 0;
+        Vector3 runPosition = Vector3.zero;
+
+        foreach (Transform point in runAwayPos)
+        {
+            float currentCheckDistance;
+            if(flare == null)
+            {
+                currentCheckDistance = Vector3.Distance(player.position, point.position);
+            }
+            else
+            {
+                currentCheckDistance = Vector3.Distance(flare.position, point.position);
+            }
+            
+            if (currentCheckDistance > furthestDistanceSoFar)
+            {
+                furthestDistanceSoFar = currentCheckDistance;
+                runPosition = point.position;
+            }
+        }
+        //Set the right destination for the furthest spot
+        agent.SetDestination(runPosition);
     }
 
     public void setState(string newState)

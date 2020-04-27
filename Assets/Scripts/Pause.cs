@@ -17,7 +17,7 @@ public class Pause : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if(Input.GetKeyDown(KeyCode.Escape) && !GameManager.Instance.playerDead)
         {
             Debug.Log("wowo");
             if(isPaused)
@@ -39,11 +39,15 @@ public class Pause : MonoBehaviour
         pauseMenu.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
+        GameManager.Instance.isPaused = false;
     }
 
     public void  QuitGame()
     {
+        GameManager.Instance.isPaused = false;
+        GameManager.Instance.playerDead = false;
         Time.timeScale = 1f;
+        FindObjectOfType<SoundManager>().Stop("Music");
         SceneManager.LoadScene(0);
         Debug.Log("quit game");
     }
@@ -56,5 +60,6 @@ public class Pause : MonoBehaviour
         pauseMenu.SetActive(true);
         Time.timeScale = 0;
         isPaused = true;
+        GameManager.Instance.isPaused = true;
     }
 }

@@ -97,10 +97,18 @@ public class ConeColliderFlashlight : MonoBehaviour {
         
     }
 
+    /*void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Bug" && transform.GetComponentInParent<Flashlight_PRO>().is_enabled == true && other.gameObject.GetComponent<SmallAI>().getState() != "shouting" && other.gameObject.GetComponent<SmallAI>().getState() != "shout")
+        {
+            other.gameObject.GetComponent<SmallAI>().setState("runAway");
+        }
+    }*/
+
 
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.tag == "Bug" && transform.GetComponentInParent<Flashlight_PRO>().is_enabled == true)
+        if (other.gameObject.tag == "Bug" && transform.GetComponentInParent<Flashlight_PRO>().is_enabled == true && other.gameObject.GetComponent<SmallAI>().getState() != "shouting" && other.gameObject.GetComponent<SmallAI>().getState() != "shout" && GetComponentInParent<Flashlight_PRO>().currentEnergy > 0)
         {
             Debug.Log("hit Bug!");
             other.gameObject.GetComponent<SmallAI>().setState("runAway");
@@ -120,9 +128,9 @@ public class ConeColliderFlashlight : MonoBehaviour {
     {
 
         Vector3 p = this.transform.localPosition;
-        p.y = 0f;
-        p.z = 0f;
-        p.x = 0.785f;
+        p.y = 0.256f;
+        p.z = 0.631f;
+        p.x = 0.34f;
         this.transform.localPosition = p;
     }
 

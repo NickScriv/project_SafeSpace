@@ -6,9 +6,11 @@ public class SpawnOffTrigger : MonoBehaviour
 {
     public GameObject spawn;
 
-    private void OnTriggerEnter()
+    private void OnTriggerEnter(Collider other)
     {
-        spawn.SetActive(false);
+        if (other.gameObject.name == "Player")
+            spawn.SetActive(false);
     }
+    
 
 }

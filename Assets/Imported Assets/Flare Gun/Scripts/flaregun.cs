@@ -27,8 +27,10 @@ public class flaregun : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		
-		if(Input.GetButtonDown("Fire1") && !GetComponent<Animation>().isPlaying)
+        if (GameManager.Instance.playerDead || GameManager.Instance.isPaused)
+            return;
+
+        if (Input.GetButtonDown("Fire1") && !GetComponent<Animation>().isPlaying)
 		{
 			if(currentRound > 0){
 				Shoot();
@@ -56,7 +58,7 @@ public class flaregun : MonoBehaviour {
 		
 		
 		
-			GetComponent<Animation>().CrossFade("Shoot");
+			//GetComponent<Animation>().CrossFade("Shoot");
 			GetComponent<AudioSource>().PlayOneShot(flareShotSound);
 		
 			
@@ -78,7 +80,7 @@ public class flaregun : MonoBehaviour {
 			anims.GetComponent<FlaregunAnims>().hasBullet = true;
 			spareRounds--;
 			currentRound++;
-			GetComponent<Animation>().CrossFade("Reload");
+			//GetComponent<Animation>().CrossFade("Reload");
 		}
 		
 	}

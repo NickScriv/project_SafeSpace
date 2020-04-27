@@ -30,8 +30,12 @@ public class flarebullet : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-
+	void Update ()
+    {
+        if(GameManager.Instance.playerDead)
+        {
+            Destroy(gameObject);
+        }
 		
 		if (myCoroutine == true)
 			

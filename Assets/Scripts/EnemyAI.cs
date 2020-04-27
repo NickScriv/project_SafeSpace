@@ -51,18 +51,37 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.isEnd)
+        {
+            agent.enabled = false;
+            gameObject.SetActive(false);
+        }
+
         //Debug.Log(waitSearch);
 
-       // Debug.Log(searchRadius);
+        // Debug.Log(searchRadius);
         //Debug.Log(state);
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
         // Debug.Log(agent.velocity.magnitude);
-  
 
-     
 
-       RaycastHit rayhit;
+        if (state != "kill" && state != "DoNothing" && GameManager.Instance.playerDead)
+        {
+            state = "DoNothing";
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
+        if(anim.GetCurrentAnimatorStateInfo(0).IsName("Dizzy"))
+        {
+            
+            Vector3 p = this.transform.position;
+            p.y += 0.198122f;
+            this.transform.position = p;
+        }
+
+
         if ( (state == "idle" || state == "search"))
         {
 
@@ -80,12 +99,7 @@ public class EnemyAI : MonoBehaviour
                 }
                 i++;
             }
-           /* if (rayhit.collider.gameObject.tag == "Barrier")
-            {
-                agent.ResetPath();
-                Debug.Log("SOmewhere else");
-                state = "idle";
-            }*/
+  
         }
 
         
@@ -117,16 +131,7 @@ public class EnemyAI : MonoBehaviour
         {
             if (agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
             {
-               /*RaycastHit hit;
-                if (Physics.Raycast(vision.position, vision.forward, out hit, 5f))
-                {
-                    if (hit.collider.gameObject.tag == "Barrier")
-                    {
-                        Debug.Log("SOmewhere else");
-                        state = "idle";
-                        return;
-                    }
-                }*/
+
                 state = "search";
                 waitSearch = 5f;
             }
@@ -162,7 +167,7 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "chase")
         {
-            agent.speed = 4.2f;
+            agent.speed = 3.5f;
             chaseTime -= Time.deltaTime;
             agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
@@ -179,17 +184,23 @@ public class EnemyAI : MonoBehaviour
                 {
                     if (hit.collider.gameObject.tag == "Player")
                     {
+                       
                         agent.isStopped = true;
                         agent.ResetPath();
                         GetComponent<Rigidbody>().freezeRotation = true;
                         BossRb.velocity = Vector3.zero;
                         BossRb.angularVelocity = Vector3.zero;
+                        PlayerRb.isKinematic = true; 
                         transform.LookAt(player.transform.position);
-            
                         state = "kill";
+                        player.GetComponent<FirstPersonAIO>()._crouchModifiers.crouchKey = KeyCode.None;
+                        player.GetComponent<FirstPersonAIO>().stopCrouching();
+                        player.GetComponent<FirstPersonAIO>().playerCanMove = false;
                         player.GetComponent<FirstPersonAIO>().enabled = false;
                         PlayerRb.velocity = Vector3.zero;
                         PlayerRb.angularVelocity = Vector3.zero;
+                        PlayerRb.isKinematic = true;
+                        GameManager.Instance.playerDead = true;
                         // deathcam.SetActive(true);
                         //deathcam.transform.position = Camera.main.transform.position;
                         //deathcam.transform.rotation = Camera.main.transform.rotation;
@@ -218,8 +229,6 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "kill")
         {
-            //deathcam.transform.position = Vector3.Slerp(deathcam.transform.position, camPos.position, 20f * Time.deltaTime);
-            //deathcam.transform.rotation = Quaternion.Slerp(deathcam.transform.rotation, camPos.rotation, 20f * Time.deltaTime);
             Quaternion lookOnLook = Quaternion.LookRotation(camPos.transform.position - player.transform.position);
             mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, lookOnLook, 5f * Time.deltaTime);
 
@@ -249,7 +258,10 @@ public class EnemyAI : MonoBehaviour
 
     void reset()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); //TODO: Change this to transition to game over scene, maybe???
+       
+        Time.timeScale = 0;
+        GameManager.Instance.fadeIn();
+        FindObjectOfType<SoundManager>().Play("BloodHit");
     }
 
     public void sight()
@@ -320,10 +332,13 @@ public class EnemyAI : MonoBehaviour
         return state;
     }
 
-    void OnDrawGizmosSelected()
-    {
-        // Draw a yellow sphere at the transform's position
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(transform.position + new Vector3(0, 1f, 0), 1.5f);
-    }
+  
+
+
+    /* void OnDrawGizmosSelected()
+     {
+         // Draw a yellow sphere at the transform's position
+         Gizmos.color = Color.yellow;
+         Gizmos.DrawSphere(transform.position + new Vector3(0, 1f, 0), 1.5f);
+     }*/
 }

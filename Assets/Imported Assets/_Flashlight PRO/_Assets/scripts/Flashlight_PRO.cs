@@ -7,66 +7,81 @@ using System.Collections.Generic;
 
 public class Flashlight_PRO : MonoBehaviour
 {
-	[Space(10)]
-	[SerializeField()] GameObject Lights; // all light effects and spotlight
-	[SerializeField()] AudioSource switch_sound; // audio of the switcher
-	[SerializeField()] ParticleSystem dust_particles; // dust particles
+    [Space(10)]
+    [SerializeField()] GameObject Lights; // all light effects and spotlight
+    [SerializeField()] AudioSource switch_sound; // audio of the switcher
+    [SerializeField()] ParticleSystem dust_particles; // dust particles
 
 
 
-	private Light spotlight;
-	private Material ambient_light_material;
-	private Color ambient_mat_color;
-	public bool is_enabled = false;
+    private Light spotlight;
+    private Material ambient_light_material;
+    private Color ambient_mat_color;
+    public bool is_enabled = false;
     public Transform shootRay;
     //Dictionary<string, GameObject> currentHits;
 
-   
+    public float maxEnergy;
+    public float currentEnergy;
+    public float usedEnergy;
+
+    public int batteries;
+
+    // Use this for initialization
+    void Start()
+    {
+        // cache components
+        spotlight = Lights.transform.Find("Spotlight").GetComponent<Light>();
+        ambient_light_material = Lights.transform.Find("ambient").GetComponent<Renderer>().material;
+        ambient_mat_color = ambient_light_material.GetColor("_TintColor");
+
+        currentEnergy = maxEnergy;
+        maxEnergy = 50 * batteries;
+
+    }
 
 
     void Update()
     {
-	if(Input.GetKeyDown("e"))
-	Switch();
+        if (GameManager.Instance.playerDead || GameManager.Instance.playerDead)
+            return;
 
-       /* RaycastHit[] hits =  Physics.SphereCastAll(shootRay.position, 5, shootRay.right,  6f);
-        foreach(RaycastHit hit in hits)
+        maxEnergy = 50 * batteries;
+		currentEnergy = maxEnergy;
+
+		if (Input.GetKeyDown("e"))
+			Switch();
+
+		if (is_enabled)
         {
-            if(hit.transform.gameObject.tag == "Bug" && is_enabled)
+			if (currentEnergy <= 0)
             {
-                if(currentHits.ContainsKey(hit.transform.gameObject.name))
-                {
-
-                }
-                hit.transform.gameObject.GetComponent<SmallAI>().setState("runAway");
-                Debug.Log("I hit the bug!");
+				Lights.SetActive(false);
+				batteries = 0;
             }
-        }*/
 
+			if(currentEnergy > 0)
+            {
+				Lights.SetActive(true);
+				currentEnergy -= 0.5f * Time.deltaTime;
+				usedEnergy += 0.5f * Time.deltaTime;
+			}
+
+            if (usedEnergy >= 50)
+            {
+				batteries -= 1;
+				usedEnergy = 0;
+            }
+
+		}
 	}
 
 
-
-
-
-
-	// Use this for initialization
-	void Start ()
-	{
-        //Dictionary<string, GameObject> currentHits = new Dictionary<string, GameObject>();
-        // cache components
-        spotlight = Lights.transform.Find ("Spotlight").GetComponent<Light> ();
-		ambient_light_material = Lights.transform.Find ("ambient").GetComponent<Renderer> ().material;
-		ambient_mat_color = ambient_light_material.GetColor ("_TintColor");
-	}
-
-
-
-    /// <summary>
-    /// changes the intensivity of lights from 0 to 100.
-    /// call this from other scripts.
-    /// </summary>
-    public void Change_Intensivity(float percentage)
+	/// <summary>
+	/// changes the intensivity of lights from 0 to 100.
+	/// call this from other scripts.
+	/// </summary>
+	public void Change_Intensivity(float percentage)
 	{
 		percentage = Mathf.Clamp (percentage, 0, 100);
 
@@ -75,8 +90,6 @@ public class Flashlight_PRO : MonoBehaviour
 
 		ambient_light_material.SetColor ("_TintColor", new Color(ambient_mat_color.r , ambient_mat_color.g , ambient_mat_color.b , percentage/2000));
 	}
-
-
 
 
 	/// <summary>
@@ -92,10 +105,6 @@ public class Flashlight_PRO : MonoBehaviour
 		if (switch_sound != null)
 			switch_sound.Play ();
 	}
-
-
-
-
 
 	/// <summary>
 	/// enables the particles.

@@ -48,6 +48,13 @@ public class Objectives : MonoBehaviour
         Go.transform.GetChild(index).GetComponent<Text>().color = temp;
     }
 
+    public int getLastChild()
+    {
+       GameObject Go = transform.GetChild(transform.childCount - 1).gameObject;
+        Debug.Log(Go.transform.childCount);
+        return Go.transform.childCount - 1;
+    }
+
     public void FadeOut()
     {
 

@@ -16,6 +16,10 @@ TagManager:
   - Blood
   - Bug
   - BugVision
+  - Battery
+  - Music
+  - GameUI
+  - door
   layers:
   - Default
   - TransparentFX
@@ -25,7 +29,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Item
   - 
   - 
   - 
