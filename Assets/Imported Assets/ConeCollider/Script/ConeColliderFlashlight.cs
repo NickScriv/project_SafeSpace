@@ -97,22 +97,18 @@ public class ConeColliderFlashlight : MonoBehaviour {
         
     }
 
-    /*void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Bug" && transform.GetComponentInParent<Flashlight_PRO>().is_enabled == true && other.gameObject.GetComponent<SmallAI>().getState() != "shouting" && other.gameObject.GetComponent<SmallAI>().getState() != "shout")
-        {
-            other.gameObject.GetComponent<SmallAI>().setState("runAway");
-        }
-    }*/
+
 
 
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.tag == "Bug" && transform.GetComponentInParent<Flashlight_PRO>().is_enabled == true && other.gameObject.GetComponent<SmallAI>().getState() != "shouting" && other.gameObject.GetComponent<SmallAI>().getState() != "shout" && GetComponentInParent<Flashlight_PRO>().currentEnergy > 0)
+        if (other.gameObject.tag == "Bug" && transform.GetComponentInParent<Flashlight_PRO>().is_enabled == true && other.gameObject.GetComponent<SmallAI>().getState() != "shouting" && other.gameObject.GetComponent<SmallAI>().getState() != "shout" && GetComponentInParent<Flashlight_PRO>().currentEnergy > 0 && other.gameObject.GetComponent<SmallAI>().getState() != "runAway2")
         {
+          
             Debug.Log("hit Bug!");
             other.gameObject.GetComponent<SmallAI>().setState("runAway");
             other.gameObject.GetComponent<SmallAI>().inFlashlightZone = true;
+        
         }
     }
 

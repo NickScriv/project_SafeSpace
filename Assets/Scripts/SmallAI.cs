@@ -36,6 +36,8 @@ public class SmallAI : MonoBehaviour
     public Transform [] runAwayPos;
     public bool inFlashlightZone = false;
     float attackRange = 1.3f;
+    bool runAway = false;
+    bool runAway2 = false;
 
 
     // Start is called before the first frame update
@@ -81,20 +83,12 @@ public class SmallAI : MonoBehaviour
 
         if (GameManager.Instance.isEnd)
         {
+            
             agent.enabled = false;
             gameObject.SetActive(false);
+            this.enabled = false;
         }
           
-        /* if(GetComponent<Rigidbody>().velocity.magnitude <= 0)
-         {
-             agent.updateRotation = false;
-
-         }
-         else
-         {
-             agent.updateRotation = true;
-
-         }*/
 
         if (state != "kill" && state != "DoNothing" && GameManager.Instance.playerDead)
         {
@@ -109,7 +103,7 @@ public class SmallAI : MonoBehaviour
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
 
-        if (!GameManager.Instance.playerDead && state != "kill" && state != "shouting" && state != "kill" && state != "shout")
+        if (!GameManager.Instance.playerDead && state != "kill" && state != "shouting" && state != "kill" && state != "shout" && state != "runAway")
         {
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20);
             int i = 0;
@@ -283,14 +277,19 @@ public class SmallAI : MonoBehaviour
                 {
                     Debug.Log("runnnnnnnnnnnnnnnnnnn");
                     state = "chase";
+                    runAway = false;
                     return;
 
 
                 }
                 else
                 {
-
-                    RunAway(null);
+                    //agent.Move(player.transform.forward * Time.deltaTime);
+                    if (!runAway)
+                    {
+                        RunAway(null);
+                        runAway = true;
+                    }
 
                 }
             }
@@ -300,6 +299,7 @@ public class SmallAI : MonoBehaviour
                 state = "idle";
                 searchRadius = 22f;
                 highAlert = false;
+                runAway = false;
 
 
 
@@ -307,23 +307,29 @@ public class SmallAI : MonoBehaviour
             
         }
 
+    
+
         if (state == "runAway2")
         {
             agent.speed = 3f;
             if (FlareBullet != null)
             {
-               //Vector3 runTo = transform.position + ((transform.position - FlareBullet.position) * multiplier);
                 float distance = Vector3.Distance(transform.position, FlareBullet.position);
                 if (distance < range)
                 {
-
-                    RunAway(FlareBullet);
+                    if(!runAway2)
+                    {
+                        RunAway(FlareBullet);
+                        runAway2 = true;
+                    }
+                    
 
                 }
 
                 if (distance >= range)
                 {
                     state = "idle";
+                    runAway2 = false;
                     searchRadius = 22f;
                     highAlert = false;
 
@@ -332,6 +338,7 @@ public class SmallAI : MonoBehaviour
             }
             else if (FlareBullet == null)
             {
+                runAway2 = false;
                 state = "idle";
                 searchRadius = 20f;
                 highAlert = false;
@@ -473,6 +480,7 @@ public class SmallAI : MonoBehaviour
             }
         }
         //Set the right destination for the furthest spot
+
         agent.SetDestination(runPosition);
     }
 

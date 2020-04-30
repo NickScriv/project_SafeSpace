@@ -24,7 +24,7 @@ public class BatteryPickup : MonoBehaviour
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
-            GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to pick up");
+            GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 175, 30), "Press 'F' to pick up battery");
         }
     }
 

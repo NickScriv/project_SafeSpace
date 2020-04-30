@@ -24,11 +24,18 @@ public class FlaregunAnims : MonoBehaviour
         }
 
         //Reload Animations 
-        if (Input.GetKeyDown("r"))
+        /*if (Input.GetKeyDown("r"))
         {
             anim.SetTrigger("Reload");
-        }
+        }*/
 
 
     }
+
+    public void reload()
+    {
+        anim.SetTrigger("Reload");
+    }
+
+
 }

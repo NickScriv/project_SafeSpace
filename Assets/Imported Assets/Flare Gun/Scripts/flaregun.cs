@@ -35,13 +35,13 @@ public class flaregun : MonoBehaviour {
 			if(currentRound > 0){
 				Shoot();
 			}else{
-				GetComponent<Animation>().Play("noAmmo");
+				//GetComponent<Animation>().Play("noAmmo");
 				GetComponent<AudioSource>().PlayOneShot(noAmmoSound);
 				anims.GetComponent<FlaregunAnims>().hasBullet = false;
 
 			}
 		}
-		if(Input.GetKeyDown(KeyCode.R) && !GetComponent<Animation>().isPlaying)
+		if(Input.GetKeyDown(KeyCode.R) && !GetComponent<Animation>().isPlaying && spareRounds > 0)
 		{
 			Reload();
 			
@@ -78,7 +78,8 @@ public class flaregun : MonoBehaviour {
 		if(spareRounds >= 1 && currentRound == 0){
 			GetComponent<AudioSource>().PlayOneShot(reloadSound);
 			anims.GetComponent<FlaregunAnims>().hasBullet = true;
-			spareRounds--;
+            anims.GetComponent<FlaregunAnims>().reload();
+            spareRounds--;
 			currentRound++;
 			//GetComponent<Animation>().CrossFade("Reload");
 		}

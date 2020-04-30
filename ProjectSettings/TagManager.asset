@@ -20,6 +20,7 @@ TagManager:
   - Music
   - GameUI
   - door
+  - stair
   layers:
   - Default
   - TransparentFX
@@ -30,7 +31,7 @@ TagManager:
   - 
   - 
   - Item
-  - 
+  - Stairs
   - 
   - 
   - 

@@ -26,7 +26,8 @@ public class WinScript : MonoBehaviour
             GameWinPanel.SetActive(true);
             Invoke("text1", 4f);
             //TODO: Disable music
-            FindObjectOfType<SoundManager>().Stop("Music");
+            FindObjectOfType<SoundManager>().StopFade("Music");
+            FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
             player.GetComponent<FirstPersonAIO>().enabled = false;
             Rigidbody PlayerRb = player.GetComponent<Rigidbody>();
             PlayerRb.velocity = Vector3.zero;

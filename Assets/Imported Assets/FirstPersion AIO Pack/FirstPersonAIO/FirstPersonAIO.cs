@@ -587,8 +587,9 @@ public class BETA_SETTINGS{
                         {
                             if(dynamicFootstep.currentClipSet.Any())
                             {
-                                audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
+                                //audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
                                 bossDetection.playerSound("foot");
+                                FindObjectOfType<SoundManager>().PlayFade("FootStep");
                             }
                             nextStepTime = headbobCycle + 0.5f;
                         } else
@@ -598,8 +599,9 @@ public class BETA_SETTINGS{
                                 nextStepTime = headbobCycle + 0.5f;
                                 if(dynamicFootstep.currentClipSet.Any())
                                 {
-                                    audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
+                                   // audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
                                     bossDetection.playerSound("foot");
+                                    FindObjectOfType<SoundManager>().PlayFade("FootStep");
                                 }
                             }
                         }
@@ -608,10 +610,11 @@ public class BETA_SETTINGS{
                     {
                         if(previousGrounded)
                         {
-                            if(dynamicFootstep.currentClipSet.Any())
+                            if (dynamicFootstep.currentClipSet.Any())
                             {
-                                audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
+                                //audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)], Volume / 10);
                                 bossDetection.playerSound("foot");
+                               FindObjectOfType<SoundManager>().PlayFade("FootStep");
                             }
                         }
                         previousGrounded = false;
@@ -635,7 +638,7 @@ public class BETA_SETTINGS{
                             {
                                 nextStepTime = headbobCycle + 0.5f;
                                 int n = Random.Range(0, footStepSounds.Count);
-                                //if(footStepSounds.Any()){ audioSource.PlayOneShot(footStepSounds[n],Volume/10); }
+                                if(footStepSounds.Any()){ audioSource.PlayOneShot(footStepSounds[n],Volume/10); }
                                 footStepSounds[n] = footStepSounds[0];
                             }
                         }
@@ -672,7 +675,7 @@ public class BETA_SETTINGS{
                         {
                             nextStepTime = headbobCycle + 0.5f;
                             int n = Random.Range(0, footStepSounds.Count);
-                            //if(footStepSounds.Any() && footStepSounds[n] != null){ audioSource.PlayOneShot(footStepSounds[n],Volume/10);}
+                            if(footStepSounds.Any() && footStepSounds[n] != null){ audioSource.PlayOneShot(footStepSounds[n],Volume/10);}
                             
                         }
                     }

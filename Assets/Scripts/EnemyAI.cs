@@ -75,10 +75,12 @@ public class EnemyAI : MonoBehaviour
 
         if(anim.GetCurrentAnimatorStateInfo(0).IsName("Dizzy"))
         {
-            
-            Vector3 p = this.transform.position;
-            p.y += 0.198122f;
-            this.transform.position = p;
+            if (!GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
+            { 
+                Vector3 p = this.transform.position;
+                p.y += 0.198122f;
+                this.transform.position = p;
+            }
         }
 
 
@@ -117,7 +119,13 @@ public class EnemyAI : MonoBehaviour
                 searchRadius += 2.5f;
 
                 if (searchRadius > 20f)
-                {
+                { 
+                    FindObjectOfType<SoundManager>().StopFade("ChaseMusic");                     
+                    if(!FindObjectOfType<SoundManager>().isPlaying("Music"))
+                    {
+                        FindObjectOfType<SoundManager>().PlayFade("Music");
+                    }
+                    
                     Debug.Log("WWWWWWWWWWWWWWWWWOOOOOOOOOOOOOOOOOOWWWWWWWWWWWWWWWW");
                     highAlert = false;
                     agent.speed = 1.2f;
@@ -298,6 +306,12 @@ public class EnemyAI : MonoBehaviour
     {
         chaseTime = 15f;
         state = "chase";
+        FindObjectOfType<SoundManager>().StopFade("Music");
+        if(!FindObjectOfType<SoundManager>().isPlaying("ChaseMusic"))
+        {
+            FindObjectOfType<SoundManager>().PlayFade("ChaseMusic");
+        }
+        
     }
 
     public void playScream(int num)
@@ -324,6 +338,13 @@ public class EnemyAI : MonoBehaviour
         Debug.Log("execute end hit");
         agent.isStopped = false;
         state = "idle";
+        highAlert = true;
+        searchRadius = 22;
+        FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
+        if (!FindObjectOfType<SoundManager>().isPlaying("Music"))
+        {
+            FindObjectOfType<SoundManager>().PlayFade("Music");
+        }
         anim.SetTrigger("backToIdle");
     }
 

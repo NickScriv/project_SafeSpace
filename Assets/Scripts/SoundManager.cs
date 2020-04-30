@@ -9,6 +9,8 @@ public class SoundManager : MonoBehaviour
     public Sound[] sounds;
 
     private bool stoppedMenuMusic = false;
+    bool keepFadingIn;
+    bool keepFadingOut;
 
     public static SoundManager instance;
 
@@ -16,12 +18,40 @@ public class SoundManager : MonoBehaviour
     public void Play(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
-        if(s == null)
+        if (s == null)
         {
             Debug.Log("Invalid Audio name");
             return;
         }
+
+        //if(!s.audioSource.isPlaying)
         s.audioSource.Play();
+    }
+
+    public void PlayFade(string name)
+    {
+        /*Sound s = Array.Find(sounds, sound => sound.name == name);
+        if (s == null)
+        {
+            Debug.Log("Invalid Audio name");
+            return;
+        }*/
+
+
+        Play(name);
+        //StartCoroutine(FadeIn(s, .01f, s.volume));
+    }
+
+    public bool isPlaying(string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        if (s == null)
+        {
+            Debug.Log("Invalid Audio name");
+            return false;
+        }
+        return s.audioSource.isPlaying;
+
     }
 
     public void Stop(string name)
@@ -32,15 +62,70 @@ public class SoundManager : MonoBehaviour
             Debug.Log("Invalid Audio name");
             return;
         }
+
+        if (s.audioSource.isPlaying)
+            s.audioSource.Stop();
+    }
+
+    public void StopFade(string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        if (s == null)
+        {
+            Debug.Log("Invalid Audio name");
+            return;
+        }
+
+        if (s.audioSource.isPlaying)
+            StartCoroutine(FadeOut(s, .005f));
+        
+    }
+
+    public IEnumerator FadeIn(Sound s, float speed, float maxVolume)
+    {
+  
+
+        s.audioSource.volume = 0;
+        float audioVol = s.audioSource.volume;
+        Debug.Log("S Volume: " + s.audioSource.volume);
+        s.audioSource.Play();
+        while (s.audioSource.volume < maxVolume)
+        {
+           
+            audioVol += speed;
+            s.audioSource.volume = audioVol;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+    }
+
+    public IEnumerator FadeOut(Sound s, float speed)
+    {
+     
+
+        float audioVol = s.audioSource.volume;
+
+        while (s.audioSource.volume > 0.01f)
+        {
+
+            audioVol -= 0.1f;
+            Debug.Log(audioVol);
+            s.audioSource.volume = audioVol;
+            yield return new WaitForSecondsRealtime(0.01f);
+        }
+        Debug.Log("stopppp");
+        s.audioSource.volume = 0;
         s.audioSource.Stop();
+        s.audioSource.volume = s.volume;
+
     }
 
 
     private void Start()
     {
-        Screen.SetResolution(1920, 1080, false);
+        //Screen.SetResolution(1920, 1080, false);
         stoppedMenuMusic = false;
-        
+
         if (instance == null)
         {
             instance = this;
@@ -50,11 +135,11 @@ public class SoundManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-    
+
 
 
         DontDestroyOnLoad(gameObject);
-        foreach(Sound clip in sounds)
+        foreach (Sound clip in sounds)
         {
             clip.audioSource = gameObject.AddComponent<AudioSource>();
             clip.audioSource.clip = clip.audioClip;
@@ -63,10 +148,7 @@ public class SoundManager : MonoBehaviour
             clip.audioSource.loop = clip.loop;
         }
 
-       
+
     }
-
- 
-
 
 }

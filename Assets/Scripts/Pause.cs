@@ -47,7 +47,8 @@ public class Pause : MonoBehaviour
         GameManager.Instance.isPaused = false;
         GameManager.Instance.playerDead = false;
         Time.timeScale = 1f;
-        FindObjectOfType<SoundManager>().Stop("Music");
+        FindObjectOfType<SoundManager>().StopFade("Music");
+        FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
         SceneManager.LoadScene(0);
         Debug.Log("quit game");
     }

@@ -20,6 +20,11 @@ public class PlayerInfo : MonoBehaviour
 
     private void Start()
     {
+
+        if (!FindObjectOfType<SoundManager>().isPlaying("Music"))
+        {
+            FindObjectOfType<SoundManager>().PlayFade("Music");
+        }
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         numberOfCards = 0;
@@ -35,8 +40,10 @@ public class PlayerInfo : MonoBehaviour
         GameManager.Instance.playerDead = false;
         Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        //FindObjectOfType<SoundManager>().Stop("Music");
-        FindObjectOfType<SoundManager>().Play("Music");
+        if (!FindObjectOfType<SoundManager>().isPlaying("Music"))
+        {
+            FindObjectOfType<SoundManager>().PlayFade("Music");
+        }
 
     }
 
@@ -45,7 +52,6 @@ public class PlayerInfo : MonoBehaviour
         GameManager.Instance.isPaused = false;
         GameManager.Instance.playerDead = false;
         Time.timeScale = 1;
-        //FindObjectOfType<SoundManager>().Stop("Music");
         SceneManager.LoadScene(0);
     }
 

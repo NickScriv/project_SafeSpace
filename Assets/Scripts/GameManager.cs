@@ -34,7 +34,8 @@ public class GameManager : MonoBehaviour
 
     public void fadeIn()
     {
-        FindObjectOfType<SoundManager>().Stop("Music");
+        FindObjectOfType<SoundManager>().StopFade("Music");
+        FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         if(panel == null)
@@ -61,7 +62,8 @@ public class GameManager : MonoBehaviour
 
     public void fadeInBug()
     {
-        FindObjectOfType<SoundManager>().Stop("Music");
+        FindObjectOfType<SoundManager>().StopFade("Music");
+        FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         if (panel2 == null)
