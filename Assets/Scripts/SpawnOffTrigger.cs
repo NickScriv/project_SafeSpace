@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class SpawnOffTrigger : MonoBehaviour
 {
-  public GameObject spawn;
+    public GameObject spawn;
 
-  private void OnTriggerEnter(){
-    spawn.SetActive(false);
-  }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.name == "Player")
+            spawn.SetActive(false);
+    }
+    
 
 }

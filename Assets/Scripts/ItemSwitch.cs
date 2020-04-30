@@ -4,33 +4,39 @@ using UnityEngine;
 
 public class ItemSwitch : MonoBehaviour
 {
-    ItemPickup script;
-
     public int currentItem = 0;
-    public int maxItems = 3;
+    public int maxItems = 2;
     Animator animator;
+    public GameObject flashlight;
 
     // Start is called before the first frame update
     void Awake()
     {
-        SelectItem(3);
+        //Auto starts the character with the flashlight & the animation of him pulling it out
+        transform.GetChild(0).gameObject.GetComponent<ItemPlayer>().pickedUp = true;
+        SelectItem(0);
     }
 
+ 
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.isPaused || GameManager.Instance.playerDead)
+            return;
 
         //Updating item choosen with scroll wheel
-        if (Input.GetAxis("Mouse ScrollWheel") > 0)
+        if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
             if (currentItem + 1 <= maxItems)
                 currentItem++;
             else
                 currentItem = 0;
-
+        
             SelectItem(currentItem);
         }
-        else if(Input.GetAxis("Mouse ScrollWheel") < 0)
+
+         //Commented out due to there being a glitch - Won't show flare arm for some reason.
+        /*else if(Input.GetAxis("Mouse ScrollWheel") > 0)
         {
             if (currentItem - 1 <= maxItems)
                 currentItem--;
@@ -38,7 +44,7 @@ public class ItemSwitch : MonoBehaviour
                 currentItem = maxItems;
 
             SelectItem(currentItem);
-        }
+        }*/
 
 
         //Barrier to not go above or under
@@ -68,23 +74,29 @@ public class ItemSwitch : MonoBehaviour
             SelectItem(currentItem);
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            currentItem = 2;
-            SelectItem(currentItem);
-        }
 
     }
 
-    void SelectItem(int index)
+    public void SelectItem(int index)
     {
         for(int i = 0; i < transform.childCount; i++)
         {
             //Check if item is picked up & activate it
             if (i == index && transform.GetChild(i).gameObject.GetComponent<ItemPlayer>().pickedUp == true)
+            {
+               
                 transform.GetChild(i).gameObject.SetActive(true);
+               // transform.GetChild(i).gameObject.SetActive(true);
+            }
             else
+            {
+                if (transform.GetChild(i).gameObject.name == "FlashlightArms" && flashlight.GetComponent<Flashlight_PRO>().is_enabled)
+                {
+                    flashlight.GetComponent<Flashlight_PRO>().Switch();
+
+                }
                 transform.GetChild(i).gameObject.SetActive(false);
+            }
         }
     }
 }

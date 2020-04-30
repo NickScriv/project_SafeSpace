@@ -57,7 +57,7 @@ using System.Collections.Generic;
 
 public class FirstPersonAIO : MonoBehaviour {
 
-
+  
     #region Variables
 
     #region Input Settings
@@ -65,6 +65,7 @@ public class FirstPersonAIO : MonoBehaviour {
     #endregion
 
     #region Look Settings
+
     public bool enableCameraMovement = true;
     public enum InvertMouseInput{None,X,Y,Both}
     public InvertMouseInput mouseInputInversion = InvertMouseInput.None;
@@ -82,6 +83,7 @@ public class FirstPersonAIO : MonoBehaviour {
 
     public bool autoCrosshair = false;
     public bool drawStaminaMeter = true;
+
     float smoothRef;
     Image StaminaMeter;
     Image StaminaMeterBG;
@@ -119,7 +121,9 @@ public class FirstPersonAIO : MonoBehaviour {
         public KeyCode crouchKey = KeyCode.LeftControl;
         public float crouchWalkSpeedMultiplier = 0.5f;
         public float crouchJumpPowerMultiplier = 0f;
+        public float crouchHeight = 2f;
         public bool crouchOverride;
+        
         internal float colliderHeight;
         
     }
@@ -275,6 +279,7 @@ public class BETA_SETTINGS{
 
     private void Start()
     {
+        //DontDestroyOnLoad(gameObject);
         #region Look Settings - Start
 
         if(autoCrosshair || drawStaminaMeter){
@@ -310,7 +315,7 @@ public class BETA_SETTINGS{
         }
         mouseSensitivityInternal = mouseSensitivity;
         cameraStartingPosition = playerCamera.transform.localPosition;
-        if(lockAndHideCursor) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
+       // if(lockAndHideCursor) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
         baseCamFOV = playerCamera.fieldOfView;
         #endregion
 
@@ -472,7 +477,7 @@ public class BETA_SETTINGS{
         if(_crouchModifiers.useCrouch) {
             
             if(isCrouching) {
-                    capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight/1.5f, 5*Time.deltaTime);
+                    capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight/ _crouchModifiers.crouchHeight, 5*Time.deltaTime);
                         walkSpeedInternal = walkSpeed*_crouchModifiers.crouchWalkSpeedMultiplier;
                         jumpPowerInternal = jumpPower* _crouchModifiers.crouchJumpPowerMultiplier;
 
@@ -483,6 +488,8 @@ public class BETA_SETTINGS{
                 jumpPowerInternal = jumpPower;
             }
         }
+
+        
 
         #endregion
 
@@ -580,8 +587,9 @@ public class BETA_SETTINGS{
                         {
                             if(dynamicFootstep.currentClipSet.Any())
                             {
-                                audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
+                                //audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
                                 bossDetection.playerSound("foot");
+                                FindObjectOfType<SoundManager>().PlayFade("FootStep");
                             }
                             nextStepTime = headbobCycle + 0.5f;
                         } else
@@ -591,8 +599,9 @@ public class BETA_SETTINGS{
                                 nextStepTime = headbobCycle + 0.5f;
                                 if(dynamicFootstep.currentClipSet.Any())
                                 {
-                                    audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
+                                   // audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
                                     bossDetection.playerSound("foot");
+                                    FindObjectOfType<SoundManager>().PlayFade("FootStep");
                                 }
                             }
                         }
@@ -601,10 +610,11 @@ public class BETA_SETTINGS{
                     {
                         if(previousGrounded)
                         {
-                            if(dynamicFootstep.currentClipSet.Any())
+                            if (dynamicFootstep.currentClipSet.Any())
                             {
-                                audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
+                                //audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)], Volume / 10);
                                 bossDetection.playerSound("foot");
+                               FindObjectOfType<SoundManager>().PlayFade("FootStep");
                             }
                         }
                         previousGrounded = false;
@@ -628,7 +638,7 @@ public class BETA_SETTINGS{
                             {
                                 nextStepTime = headbobCycle + 0.5f;
                                 int n = Random.Range(0, footStepSounds.Count);
-                                //if(footStepSounds.Any()){ audioSource.PlayOneShot(footStepSounds[n],Volume/10); }
+                                if(footStepSounds.Any()){ audioSource.PlayOneShot(footStepSounds[n],Volume/10); }
                                 footStepSounds[n] = footStepSounds[0];
                             }
                         }
@@ -665,7 +675,7 @@ public class BETA_SETTINGS{
                         {
                             nextStepTime = headbobCycle + 0.5f;
                             int n = Random.Range(0, footStepSounds.Count);
-                            //if(footStepSounds.Any() && footStepSounds[n] != null){ audioSource.PlayOneShot(footStepSounds[n],Volume/10);}
+                            if(footStepSounds.Any() && footStepSounds[n] != null){ audioSource.PlayOneShot(footStepSounds[n],Volume/10);}
                             
                         }
                     }
@@ -689,28 +699,36 @@ public class BETA_SETTINGS{
 
     }
 
-/*     public IEnumerator FOVKickOut()
+    public void stopCrouching()
     {
-        float t = Mathf.Abs((playerCamera.fieldOfView - fOVKick.fovStart) / fOVKick.FOVKickAmount);
-        while(t < fOVKick.changeTime)
-        {
-            playerCamera.fieldOfView = fOVKick.fovStart + (fOVKick.KickCurve.Evaluate(t / fOVKick.changeTime) * fOVKick.FOVKickAmount);
-            t += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
+        capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight, 5 * Time.deltaTime);
+        walkSpeedInternal = walkSpeed;
+        sprintSpeedInternal = sprintSpeed;
+        jumpPowerInternal = jumpPower;
     }
 
-    public IEnumerator FOVKickIn()
-    {
-        float t = Mathf.Abs((playerCamera.fieldOfView - fOVKick.fovStart) / fOVKick.FOVKickAmount);
-        while(t > 0)
+    /*     public IEnumerator FOVKickOut()
         {
-            playerCamera.fieldOfView = fOVKick.fovStart + (fOVKick.KickCurve.Evaluate(t / fOVKick.changeTime) * fOVKick.FOVKickAmount);
-            t -= Time.deltaTime;
-            yield return new WaitForEndOfFrame();
+            float t = Mathf.Abs((playerCamera.fieldOfView - fOVKick.fovStart) / fOVKick.FOVKickAmount);
+            while(t < fOVKick.changeTime)
+            {
+                playerCamera.fieldOfView = fOVKick.fovStart + (fOVKick.KickCurve.Evaluate(t / fOVKick.changeTime) * fOVKick.FOVKickAmount);
+                t += Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
         }
-        playerCamera.fieldOfView = fOVKick.fovStart;
-    } */
+
+        public IEnumerator FOVKickIn()
+        {
+            float t = Mathf.Abs((playerCamera.fieldOfView - fOVKick.fovStart) / fOVKick.FOVKickAmount);
+            while(t > 0)
+            {
+                playerCamera.fieldOfView = fOVKick.fovStart + (fOVKick.KickCurve.Evaluate(t / fOVKick.changeTime) * fOVKick.FOVKickAmount);
+                t -= Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
+            playerCamera.fieldOfView = fOVKick.fovStart;
+        } */
 
     public IEnumerator CameraShake(float Duration, float Magnitude){
         float elapsed =0;
@@ -852,7 +870,7 @@ public class BETA_SETTINGS{
             t.playerCamera = (Camera)EditorGUILayout.ObjectField(new GUIContent("Player Camera", "Camera attached to this controller"),t.playerCamera,typeof(Camera),true);
             if(!t.playerCamera){EditorGUILayout.HelpBox("A Camera is required for operation.",MessageType.Error);}
             t.enableCameraShake = EditorGUILayout.ToggleLeft(new GUIContent("Enable Camera Shake?", "Call this Coroutine externally with duration ranging from 0.01 to 1, and a magnitude of 0.01 to 0.5."), t.enableCameraShake);
-            t.lockAndHideCursor = EditorGUILayout.ToggleLeft(new GUIContent("Lock and Hide Cursor","For debuging or if You don't plan on having a pause menu or quit button."),t.lockAndHideCursor);
+           // t.lockAndHideCursor = EditorGUILayout.ToggleLeft(new GUIContent("Lock and Hide Cursor","For debuging or if You don't plan on having a pause menu or quit button."),t.lockAndHideCursor);
             t.autoCrosshair = EditorGUILayout.ToggleLeft(new GUIContent("Auto Crosshair","Determines if a basic crosshair will be generated."),t.autoCrosshair);
             if(t.autoCrosshair){EditorGUI.indentLevel++; EditorGUILayout.BeginHorizontal(); EditorGUILayout.PrefixLabel(new GUIContent("Crosshair","Sprite to use as a crosshair."));t.Crosshair = (Sprite)EditorGUILayout.ObjectField(t.Crosshair,typeof(Sprite),false); EditorGUILayout.EndHorizontal(); EditorGUI.indentLevel--;}
             GUI.enabled = true;
@@ -885,7 +903,8 @@ public class BETA_SETTINGS{
                 t._crouchModifiers.toggleCrouch = EditorGUILayout.ToggleLeft(new GUIContent("Toggle Crouch?","Determines if the crouching behaviour is on a toggle or momentary basis."),t._crouchModifiers.toggleCrouch);
                 t._crouchModifiers.crouchWalkSpeedMultiplier = EditorGUILayout.Slider(new GUIContent("Crouch Movement Speed Multiplier","Determines how fast the player can move while crouching."),t._crouchModifiers.crouchWalkSpeedMultiplier,0.01f,1.5f);
                 t._crouchModifiers.crouchJumpPowerMultiplier = EditorGUILayout.Slider(new GUIContent("Crouching Jump Power Mult.","Determines how much the player's jumping power is increased or reduced while crouching."),t._crouchModifiers.crouchJumpPowerMultiplier,0,1.5f);
-                t._crouchModifiers.crouchOverride = EditorGUILayout.ToggleLeft(new GUIContent("Force Crouch Override","A Toggle that will override the crouch key to force player to crouch."),t._crouchModifiers.crouchOverride);
+            t._crouchModifiers.crouchHeight = EditorGUILayout.Slider(new GUIContent("Crouch Height", "Determines at which height the player crouches to"), t._crouchModifiers.crouchHeight, 0, 5f);
+            t._crouchModifiers.crouchOverride = EditorGUILayout.ToggleLeft(new GUIContent("Force Crouch Override","A Toggle that will override the crouch key to force player to crouch."),t._crouchModifiers.crouchOverride);
             }
             GUI.enabled = t.playerCanMove;
             EditorGUILayout.EndFoldoutHeaderGroup();      

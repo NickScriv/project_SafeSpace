@@ -14,10 +14,10 @@ public class pickupKey : MonoBehaviour
 
     // pick up keycard
 
-    public AudioSource source;
-    public AudioClip clip;
+    int numberOfCards = 0;
     public GameObject item;
     public GameObject itemPlayer;
+    public PlayerInfo playerInfo;
 
     bool enter = false;
 
@@ -25,18 +25,23 @@ public class pickupKey : MonoBehaviour
     // Main function
     void Update()
     {
-      if (Input.GetKeyDown(KeyCode.F) && enter)
+      if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
       {
+        
+        itemPlayer.GetComponent<ItemPlayer>().pickedUp = true;
         item.SetActive(false);
-        itemPlayer.SetActive(true);
-        source.PlayOneShot(clip);
-      }
+        numberOfCards++;
+        playerInfo.collectedKey();
+        //FindObjectOfType<SoundManager>().Play("PickUpKey");
+        FindObjectOfType<SoundManager>().Play("PickUp");
+
+        }
     }
 
     // Display a simple info message when player is inside the trigger area
     void OnGUI()
     {
-        if (enter)
+        if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
             GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to pick up");
         }

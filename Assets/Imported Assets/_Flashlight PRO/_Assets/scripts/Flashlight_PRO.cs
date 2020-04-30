@@ -7,42 +7,74 @@ using System.Collections.Generic;
 
 public class Flashlight_PRO : MonoBehaviour
 {
-	[Space(10)]
-	[SerializeField()] GameObject Lights; // all light effects and spotlight
-	[SerializeField()] AudioSource switch_sound; // audio of the switcher
-	[SerializeField()] ParticleSystem dust_particles; // dust particles
+    [Space(10)]
+    [SerializeField()] GameObject Lights; // all light effects and spotlight
+    [SerializeField()] AudioSource switch_sound; // audio of the switcher
+    [SerializeField()] ParticleSystem dust_particles; // dust particles
 
 
 
-	private Light spotlight;
-	private Material ambient_light_material;
-	private Color ambient_mat_color;
-	public bool is_enabled = false;
+    private Light spotlight;
+    private Material ambient_light_material;
+    private Color ambient_mat_color;
+    public bool is_enabled = false;
+    public Transform shootRay;
+    //Dictionary<string, GameObject> currentHits;
+
+    public float maxEnergy;
+    public float currentEnergy;
+    public float usedEnergy;
+
+    public int batteries;
+
+    // Use this for initialization
+    void Start()
+    {
+        // cache components
+        spotlight = Lights.transform.Find("Spotlight").GetComponent<Light>();
+        ambient_light_material = Lights.transform.Find("ambient").GetComponent<Renderer>().material;
+        ambient_mat_color = ambient_light_material.GetColor("_TintColor");
+
+        currentEnergy = maxEnergy;
+        maxEnergy = 50 * batteries;
+
+    }
 
 
-	void Update(){
-	if(Input.GetKeyDown("e"))
-	Switch();
+    void Update()
+    {
+        if (GameManager.Instance.playerDead || GameManager.Instance.playerDead)
+            return;
 
+        maxEnergy = 50 * batteries;
+		currentEnergy = maxEnergy;
+
+		if (Input.GetKeyDown("e"))
+			Switch();
+
+		if (is_enabled)
+        {
+			if (currentEnergy <= 0)
+            {
+				Lights.SetActive(false);
+				batteries = 0;
+            }
+
+			if(currentEnergy > 0)
+            {
+				Lights.SetActive(true);
+				currentEnergy -= 0.5f * Time.deltaTime;
+				usedEnergy += 0.5f * Time.deltaTime;
+			}
+
+            if (usedEnergy >= 50)
+            {
+				batteries -= 1;
+				usedEnergy = 0;
+            }
+
+		}
 	}
-
-
-
-
-
-
-	// Use this for initialization
-	void Start ()
-	{
-		// cache components
-		spotlight = Lights.transform.Find ("Spotlight").GetComponent<Light> ();
-		ambient_light_material = Lights.transform.Find ("ambient").GetComponent<Renderer> ().material;
-		ambient_mat_color = ambient_light_material.GetColor ("_TintColor");
-	}
-
-
-
-
 
 
 	/// <summary>
@@ -60,8 +92,6 @@ public class Flashlight_PRO : MonoBehaviour
 	}
 
 
-
-
 	/// <summary>
 	/// switch current state  ON / OFF.
 	/// call this from other scripts.
@@ -75,10 +105,6 @@ public class Flashlight_PRO : MonoBehaviour
 		if (switch_sound != null)
 			switch_sound.Play ();
 	}
-
-
-
-
 
 	/// <summary>
 	/// enables the particles.
@@ -99,6 +125,7 @@ public class Flashlight_PRO : MonoBehaviour
 			}
 		}
 	}
+
 
 
 }

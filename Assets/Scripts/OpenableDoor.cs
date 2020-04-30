@@ -18,7 +18,7 @@ public class OpenableDoor : MonoBehaviour
     public AudioSource source;
     public AudioClip clip;
 
-    bool open = false;
+    public bool open = false;
     bool enter = false;
 
     float defaultRotationAngle;
@@ -40,19 +40,27 @@ public class OpenableDoor : MonoBehaviour
         }
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, Mathf.LerpAngle(currentRotationAngle, defaultRotationAngle + (open ? doorOpenAngle : 0), openTime), transform.localEulerAngles.z);
 
-        if (Input.GetKeyDown(KeyCode.F) && enter)
+        if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
             open = !open;
             currentRotationAngle = transform.localEulerAngles.y;
             openTime = 0;
-	    source.PlayOneShot(clip);
+	         source.PlayOneShot(clip);
         }
+    }
+
+    public void openDoor()
+    {
+        open = !open;
+        currentRotationAngle = transform.localEulerAngles.y;
+        openTime = 0;
+        source.PlayOneShot(clip);
     }
 
     // Display a simple info message when player is inside the trigger area
     void OnGUI()
     {
-        if (enter)
+        if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
             GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to interact");
         }

@@ -4,12 +4,23 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - FlareBullet
-  - Interact
-  - Boss
-  - Item
   - Barrier
+  - Key1
+  - Item
+  - FlareBullet
+  - Boss
+  - Arms
+  - Flesh
+  - Interact
+  - Notification
   - Blood
+  - Bug
+  - BugVision
+  - Battery
+  - Music
+  - GameUI
+  - door
+  - stair
   layers:
   - Default
   - TransparentFX
@@ -19,8 +30,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Item
+  - Stairs
   - 
   - 
   - 

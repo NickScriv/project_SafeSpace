@@ -13,29 +13,35 @@ public class flaregun : MonoBehaviour {
 	public int maxSpareRounds = 5;
 	public int spareRounds = 3;
 	public int currentRound = 0;
-	
+	public GameObject anims;
+
 	
 
 
 	// Use this for initialization
-	void Start () {
-	
+	void Start () 
+	{
+
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		
-		if(Input.GetButtonDown("Fire1") && !GetComponent<Animation>().isPlaying)
+        if (GameManager.Instance.playerDead || GameManager.Instance.isPaused)
+            return;
+
+        if (Input.GetButtonDown("Fire1") && !GetComponent<Animation>().isPlaying)
 		{
 			if(currentRound > 0){
 				Shoot();
 			}else{
-				GetComponent<Animation>().Play("noAmmo");
+				//GetComponent<Animation>().Play("noAmmo");
 				GetComponent<AudioSource>().PlayOneShot(noAmmoSound);
+				anims.GetComponent<FlaregunAnims>().hasBullet = false;
+
 			}
 		}
-		if(Input.GetKeyDown(KeyCode.R) && !GetComponent<Animation>().isPlaying)
+		if(Input.GetKeyDown(KeyCode.R) && !GetComponent<Animation>().isPlaying && spareRounds > 0)
 		{
 			Reload();
 			
@@ -52,7 +58,7 @@ public class flaregun : MonoBehaviour {
 		
 		
 		
-			GetComponent<Animation>().CrossFade("Shoot");
+			//GetComponent<Animation>().CrossFade("Shoot");
 			GetComponent<AudioSource>().PlayOneShot(flareShotSound);
 		
 			
@@ -70,10 +76,12 @@ public class flaregun : MonoBehaviour {
 	void Reload()
 	{
 		if(spareRounds >= 1 && currentRound == 0){
-			GetComponent<AudioSource>().PlayOneShot(reloadSound);			
-			spareRounds--;
+			GetComponent<AudioSource>().PlayOneShot(reloadSound);
+			anims.GetComponent<FlaregunAnims>().hasBullet = true;
+            anims.GetComponent<FlaregunAnims>().reload();
+            spareRounds--;
 			currentRound++;
-			GetComponent<Animation>().CrossFade("Reload");
+			//GetComponent<Animation>().CrossFade("Reload");
 		}
 		
 	}
