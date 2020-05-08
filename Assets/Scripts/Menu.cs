@@ -21,16 +21,17 @@ public class Menu : MonoBehaviour
 
     public void play()
     {
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
         SceneManager.LoadScene(1);
-        audio.PlayOneShot(press);
+       
     }
 
     public void Instructions()
     {
-
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
         main.gameObject.SetActive(false);
         cameraAnim.SetTrigger("Instructions");
-        audio.PlayOneShot(press);
+        
 
     }
 
@@ -42,9 +43,10 @@ public class Menu : MonoBehaviour
 
     public void backToMenuFromInstructions()
     {
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
         instructions.gameObject.SetActive(false);
         cameraAnim.SetTrigger("InstructToMain");
-        audio.PlayOneShot(press);
+       
 
     }
 
@@ -55,9 +57,10 @@ public class Menu : MonoBehaviour
 
     public void Credits()
     {
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
         main.gameObject.SetActive(false);
         cameraAnim.SetTrigger("Credits");
-        audio.PlayOneShot(press);
+    
 
     }
 
@@ -68,16 +71,17 @@ public class Menu : MonoBehaviour
 
     public void backToMenuFromCredits()
     {
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
         credits.gameObject.SetActive(false);
         cameraAnim.SetTrigger("CreditsToMain");
-        audio.PlayOneShot(press);
+      
 
     }
 
 
     public void exit()
     {
-        audio.PlayOneShot(press);
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
         Application.Quit();
     }
 

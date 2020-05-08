@@ -65,7 +65,7 @@ public class Objectives : MonoBehaviour
 
     public void diabaleNotification()
     {
-        Debug.Log("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+       
         notification.SetActive(false);
 
     }

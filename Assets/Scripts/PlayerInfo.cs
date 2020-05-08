@@ -16,11 +16,12 @@ public class PlayerInfo : MonoBehaviour
     public GameObject overlay3;
     public GameObject exitDoorTrigger;
     int numberOfCards = 0;
+    
 
-
+   
     private void Start()
     {
-
+       
         if (!FindObjectOfType<SoundManager>().isPlaying("Music"))
         {
             FindObjectOfType<SoundManager>().PlayFade("Music");
@@ -31,6 +32,7 @@ public class PlayerInfo : MonoBehaviour
         currentHealth = maxHealth;
         objectiveScript = objective.GetComponent<Objectives>();
         Invoke("escapeNotify", 5f);
+       
         
     }
 
@@ -44,8 +46,10 @@ public class PlayerInfo : MonoBehaviour
         {
             FindObjectOfType<SoundManager>().PlayFade("Music");
         }
-
+        GameManager.Instance.eventNumber++;
     }
+
+
 
     public void BackToMenu()
     {
@@ -53,6 +57,7 @@ public class PlayerInfo : MonoBehaviour
         GameManager.Instance.playerDead = false;
         Time.timeScale = 1;
         SceneManager.LoadScene(0);
+        GameManager.Instance.eventNumber = 1;
     }
 
     void escapeNotify()
@@ -91,8 +96,8 @@ public class PlayerInfo : MonoBehaviour
     void Update()
     {
 
-      
-      
+        Debug.Log("Event Number: " + GameManager.Instance.eventNumber);
+
 
         if (currentHealth <= maxHealth)
         {

@@ -57,7 +57,7 @@ using System.Collections.Generic;
 
 public class FirstPersonAIO : MonoBehaviour {
 
-  
+
     #region Variables
 
     #region Input Settings
@@ -65,7 +65,7 @@ public class FirstPersonAIO : MonoBehaviour {
     #endregion
 
     #region Look Settings
-
+    public bool above = false;
     public bool enableCameraMovement = true;
     public enum InvertMouseInput{None,X,Y,Both}
     public InvertMouseInput mouseInputInversion = InvertMouseInput.None;
@@ -79,6 +79,7 @@ public class FirstPersonAIO : MonoBehaviour {
     public bool enableCameraShake=false;
     internal Vector3 cameraStartingPosition;
     float baseCamFOV;
+
     
 
     public bool autoCrosshair = false;
@@ -385,10 +386,20 @@ public class BETA_SETTINGS{
             if(advanced._maxSlopeAngle>0 && IsGrounded && SlopeCheck()<=0.25f){yVelocity *= SlopeCheck();}
         //if(){didJump = false;}
 
-        if(_crouchModifiers.useCrouch){
-            if(!_crouchModifiers.toggleCrouch){ isCrouching = _crouchModifiers.crouchOverride || Input.GetKey(_crouchModifiers.crouchKey);}
-            else{if(Input.GetKeyDown(_crouchModifiers.crouchKey)){isCrouching = !isCrouching || _crouchModifiers.crouchOverride;}}
+        if(_crouchModifiers.useCrouch)
+        {
+            if(!_crouchModifiers.toggleCrouch)
+            {
+                isCrouching = _crouchModifiers.crouchOverride || Input.GetKey(_crouchModifiers.crouchKey);
             }
+            else
+            {
+                if (Input.GetKeyDown(_crouchModifiers.crouchKey))
+                {
+                    isCrouching = !isCrouching || _crouchModifiers.crouchOverride;
+                }
+            }
+        }
         #endregion
 
         #region Movement Settings - Update
@@ -474,14 +485,37 @@ public class BETA_SETTINGS{
             StartCoroutine(wasWalking ? FOVKickOut() : FOVKickIn());
         } */
 
-        if(_crouchModifiers.useCrouch) {
-            
-            if(isCrouching) {
-                    capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight/ _crouchModifiers.crouchHeight, 5*Time.deltaTime);
-                        walkSpeedInternal = walkSpeed*_crouchModifiers.crouchWalkSpeedMultiplier;
-                        jumpPowerInternal = jumpPower* _crouchModifiers.crouchJumpPowerMultiplier;
+        RaycastHit hitCrouch;
+        if(Physics.SphereCast(transform.position, capsule.radius, transform.up, out hitCrouch, 1.0f))
+        {
+            if(hitCrouch.transform.gameObject.tag == "crouch")
+            {
+                Debug.Log("There is soemthing above the player!");
+                above = true;
+            }
+            else
+            {
+                above = false;
+            }
+           
+        }
+        else
+        {
+            above = false;
+        }
 
-                } else {
+        if(_crouchModifiers.useCrouch)
+        {
+            
+            if(isCrouching)
+            {
+                capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight/ _crouchModifiers.crouchHeight, 5*Time.deltaTime);
+                walkSpeedInternal = walkSpeed*_crouchModifiers.crouchWalkSpeedMultiplier;
+                jumpPowerInternal = jumpPower* _crouchModifiers.crouchJumpPowerMultiplier;
+
+            }
+            else if(!above)
+            {
                 capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight, 5*Time.deltaTime);    
                 walkSpeedInternal = walkSpeed;
                 sprintSpeedInternal = sprintSpeed;
@@ -730,9 +764,12 @@ public class BETA_SETTINGS{
             playerCamera.fieldOfView = fOVKick.fovStart;
         } */
 
-    public IEnumerator CameraShake(float Duration, float Magnitude){
+    public IEnumerator CameraShake(float Duration, float Magnitude)
+    {
         float elapsed =0;
-        while(elapsed<Duration && enableCameraShake){
+   
+        while(elapsed<Duration && enableCameraShake)
+        {
             playerCamera.transform.localPosition =Vector3.MoveTowards(playerCamera.transform.localPosition, new Vector3(cameraStartingPosition.x+ Random.Range(-1,1)*Magnitude,cameraStartingPosition.y+Random.Range(-1,1)*Magnitude,cameraStartingPosition.z), Magnitude*2);
             yield return new WaitForSecondsRealtime(0.001f);
             elapsed += Time.deltaTime;

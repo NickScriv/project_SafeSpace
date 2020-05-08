@@ -14,6 +14,10 @@ public class flaregun : MonoBehaviour {
 	public int spareRounds = 3;
 	public int currentRound = 0;
 	public GameObject anims;
+    public float widthOffset = 1.66f;
+    public float heightOffest = 1.41f;
+    public bool firing = false;
+    public bool reloading = false;
 
 	
 
@@ -21,8 +25,12 @@ public class flaregun : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
+        widthOffset = 1.66f;
+        heightOffest = 1.41f;
+        firing = false;
+        reloading = false;
 
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () 
@@ -30,36 +38,62 @@ public class flaregun : MonoBehaviour {
         if (GameManager.Instance.playerDead || GameManager.Instance.isPaused)
             return;
 
-        if (Input.GetButtonDown("Fire1") && !GetComponent<Animation>().isPlaying)
+        if (Input.GetButtonDown("Fire1") && !GetComponent<Animation>().isPlaying && Cursor.lockState == CursorLockMode.Locked && Cursor.visible == false &&  !firing && !reloading)
 		{
-			if(currentRound > 0){
-				Shoot();
-			}else{
-				//GetComponent<Animation>().Play("noAmmo");
+			if(currentRound > 0)
+            {
+                firing = true;
+                anims.GetComponent<FlaregunAnims>().shootAnim();
+            
+                Shoot();
+			}
+            else
+            {
 				GetComponent<AudioSource>().PlayOneShot(noAmmoSound);
 				anims.GetComponent<FlaregunAnims>().hasBullet = false;
 
 			}
 		}
-		if(Input.GetKeyDown(KeyCode.R) && !GetComponent<Animation>().isPlaying && spareRounds > 0)
+
+		if(Input.GetKeyDown(KeyCode.R) && !GetComponent<Animation>().isPlaying && spareRounds > 0 && !firing && !reloading)
 		{
-			Reload();
+            if (spareRounds >= 1 && currentRound == 0)
+            {
+                reloading = true;
+                anims.GetComponent<FlaregunAnims>().hasBullet = true;
+                anims.GetComponent<FlaregunAnims>().reload();
+                Invoke("Reload", 0.7f);
+              
+            }
 			
 		}
 	
 	}
+
+    public void endFiring()
+    {
+        Debug.Log("end firing");
+        firing = false;
+    }
+
+    public void endDrawing()
+    {
+        Debug.Log("end drawing");
+        reloading = false;
+    }
+
+
 	
 	void Shoot()
 	{
-			currentRound--;
+		currentRound--;
 		if(currentRound <= 0){
 			currentRound = 0;
 		}
-		
-		
-		
-			//GetComponent<Animation>().CrossFade("Shoot");
-			GetComponent<AudioSource>().PlayOneShot(flareShotSound);
+
+        
+
+            GetComponent<AudioSource>().PlayOneShot(flareShotSound);
 		
 			
 			Rigidbody bulletInstance;			
@@ -75,14 +109,29 @@ public class flaregun : MonoBehaviour {
 	
 	void Reload()
 	{
-		if(spareRounds >= 1 && currentRound == 0){
-			GetComponent<AudioSource>().PlayOneShot(reloadSound);
-			anims.GetComponent<FlaregunAnims>().hasBullet = true;
-            anims.GetComponent<FlaregunAnims>().reload();
-            spareRounds--;
-			currentRound++;
-			//GetComponent<Animation>().CrossFade("Reload");
-		}
+		
+		GetComponent<AudioSource>().PlayOneShot(reloadSound);
+		
+        spareRounds--;
+		currentRound++;
+		
 		
 	}
+
+    private void OnGUI()
+    {
+        if (spareRounds >= 1 && currentRound == 0 && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
+        {
+            GameManager.Instance.style2.normal.textColor = Color.yellow;
+            Rect label = new Rect((Screen.width - 210) / widthOffset, Screen.height / heightOffest, 210, 50);
+            GUI.Label(label, "Reload", GameManager.Instance.style2);
+        }
+
+        if (spareRounds < 1 && currentRound == 0 && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
+        {
+            GameManager.Instance.style2.normal.textColor = Color.red;
+             Rect label = new Rect((Screen.width - 210) / widthOffset, Screen.height/heightOffest, 210, 50);
+             GUI.Label(label, "No Ammo", GameManager.Instance.style2);
+        }
+    }
 }

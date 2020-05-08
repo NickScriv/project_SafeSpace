@@ -14,6 +14,11 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager instance;
 
+    private void Update()
+    {
+        if(GameManager.Instance != null)
+         Debug.Log(GameManager.Instance.isPaused);
+    }
 
     public void Play(string name)
     {
@@ -113,7 +118,6 @@ public class SoundManager : MonoBehaviour
             s.audioSource.volume = audioVol;
             yield return new WaitForSecondsRealtime(0.01f);
         }
-        Debug.Log("stopppp");
         s.audioSource.volume = 0;
         s.audioSource.Stop();
         s.audioSource.volume = s.volume;
@@ -142,6 +146,7 @@ public class SoundManager : MonoBehaviour
         foreach (Sound clip in sounds)
         {
             clip.audioSource = gameObject.AddComponent<AudioSource>();
+            clip.audioSource.spatialBlend = 0.0f;
             clip.audioSource.clip = clip.audioClip;
             clip.audioSource.volume = clip.volume;
             clip.audioSource.pitch = clip.pitch;

@@ -21,6 +21,7 @@ public class PlayerEnemyInteraction : MonoBehaviour
     {
         if(other.gameObject.name == "Vision")
         {
+            Debug.Log("sight!!!!!!!!!!!!!!!!");
             other.transform.parent.GetComponent<EnemyAI>().sight();
         }
 

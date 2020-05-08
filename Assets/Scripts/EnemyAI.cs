@@ -4,9 +4,12 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using EZCameraShake;
+using UnityStandardAssets.Characters.ThirdPerson;
 
 public class EnemyAI : MonoBehaviour
 {
+
     public AudioClip [] screams;
     public AudioClip[] footsteps;
     NavMeshAgent agent;
@@ -27,8 +30,14 @@ public class EnemyAI : MonoBehaviour
     Rigidbody BossRb;
     Rigidbody PlayerRb;
     float dizzyTime = 15f;
+    float rotationSpeed = 2.7f;
+    //public Text speed;
+    Vector3 previousPos;
+    Vector3 direction;
+    Vector3 prevDirection;
+    public LayerMask layerSightMask;
 
-    //TODO: Change tags of walls to "Barrier" in the final version of the maps
+
 
     // Start is called before the first frame update
     void Start()
@@ -38,12 +47,13 @@ public class EnemyAI : MonoBehaviour
         anim = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent.speed = 1.2f;
-        agent.updateRotation = true;
         BossRb = GetComponent<Rigidbody>();
         PlayerRb = player.GetComponent<Rigidbody>();
+        agent.updateRotation = false;
 
+      
 
-
+        previousPos = transform.position;
     }
 
 
@@ -51,19 +61,33 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //speed.text = state;
+       anim.SetFloat("velocity", agent.velocity.magnitude);
+
+         if (agent.desiredVelocity.magnitude > 0.005f)
+        {
+            anim.SetBool("isWalking", true);
+            RotateTowards(agent.steeringTarget);
+        }
+        else
+        {
+            anim.SetBool("isWalking", false);
+        }
+       
+
+
         if (GameManager.Instance.isEnd)
         {
             agent.enabled = false;
             gameObject.SetActive(false);
         }
 
-        //Debug.Log(waitSearch);
-
-        // Debug.Log(searchRadius);
-        //Debug.Log(state);
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
-        anim.SetFloat("velocity", agent.velocity.magnitude);
-        // Debug.Log(agent.velocity.magnitude);
+     
+
+       
+
+
 
 
         if (state != "kill" && state != "DoNothing" && GameManager.Instance.playerDead)
@@ -73,16 +97,7 @@ public class EnemyAI : MonoBehaviour
             agent.ResetPath();
         }
 
-        if(anim.GetCurrentAnimatorStateInfo(0).IsName("Dizzy"))
-        {
-            if (!GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
-            { 
-                Vector3 p = this.transform.position;
-                p.y += 0.198122f;
-                this.transform.position = p;
-            }
-        }
-
+    
 
         if ( (state == "idle" || state == "search"))
         {
@@ -97,6 +112,7 @@ public class EnemyAI : MonoBehaviour
                     agent.ResetPath();
                     Debug.Log("SOmewhere else");
                     state = "idle";
+                    anim.SetBool("isWalking", true);
                     break;
                 }
                 i++;
@@ -104,7 +120,7 @@ public class EnemyAI : MonoBehaviour
   
         }
 
-        
+    
 
 
         if (state == "idle")
@@ -126,12 +142,13 @@ public class EnemyAI : MonoBehaviour
                         FindObjectOfType<SoundManager>().PlayFade("Music");
                     }
                     
-                    Debug.Log("WWWWWWWWWWWWWWWWWOOOOOOOOOOOOOOOOOOWWWWWWWWWWWWWWWW");
+                
                     highAlert = false;
                     agent.speed = 1.2f;
                 }
             }
             agent.SetDestination(navHit.position);
+            anim.SetBool("isWalking", true);
             state = "walk";
         }
 
@@ -166,6 +183,9 @@ public class EnemyAI : MonoBehaviour
         if (state == "shout")
         {
             agent.ResetPath();
+  
+            StartCoroutine(CameraShaker.Instance.CameraShake(1.8f, .12f));
+
             anim.SetTrigger("scream");
             playScream(Random.Range(0, 4));
             state = "shouting";
@@ -185,34 +205,29 @@ public class EnemyAI : MonoBehaviour
                 state = "hunt";
             }
 
-            else if (distance <= 2.5f)//TODO: alter this number for refinment (or adjust camPos position) depending on how tall the player is and how far the boss can reach. Stopping distance too
+            else if (distance <= 2.5f && state != "stay")
             {
+                Debug.Log("Distance check!");
                 RaycastHit hit;
                 if (Physics.Linecast(vision.position, player.transform.position, out hit))
                 {
+
                     if (hit.collider.gameObject.tag == "Player")
                     {
-                       
+                        Debug.Log("kill now");
+                        GameManager.Instance.playerDead = true;
                         agent.isStopped = true;
                         agent.ResetPath();
                         GetComponent<Rigidbody>().freezeRotation = true;
                         BossRb.velocity = Vector3.zero;
                         BossRb.angularVelocity = Vector3.zero;
-                        PlayerRb.isKinematic = true; 
                         transform.LookAt(player.transform.position);
                         state = "kill";
-                        player.GetComponent<FirstPersonAIO>()._crouchModifiers.crouchKey = KeyCode.None;
-                        player.GetComponent<FirstPersonAIO>().stopCrouching();
                         player.GetComponent<FirstPersonAIO>().playerCanMove = false;
                         player.GetComponent<FirstPersonAIO>().enabled = false;
                         PlayerRb.velocity = Vector3.zero;
                         PlayerRb.angularVelocity = Vector3.zero;
                         PlayerRb.isKinematic = true;
-                        GameManager.Instance.playerDead = true;
-                        // deathcam.SetActive(true);
-                        //deathcam.transform.position = Camera.main.transform.position;
-                        //deathcam.transform.rotation = Camera.main.transform.rotation;
-                        //Camera.main.gameObject.SetActive(false);
                         anim.SetTrigger("AttackPlayer");
                         anim.speed = .8f;
                     }
@@ -237,6 +252,7 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "kill")
         {
+            Debug.Log("In kill state");
             Quaternion lookOnLook = Quaternion.LookRotation(camPos.transform.position - player.transform.position);
             mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, lookOnLook, 5f * Time.deltaTime);
 
@@ -254,15 +270,25 @@ public class EnemyAI : MonoBehaviour
             //Do Nothing
         }
 
+
     
-        
 
-
-        
 
 
     }
 
+    private void RotateTowards(Vector3 target)
+    {
+        if (GameManager.Instance.playerDead)
+            return;
+        prevDirection = direction;
+        direction = (target - transform.position).normalized;
+        if (direction != prevDirection)
+            anim.SetBool("isWalking", true);
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
+    }
 
     void reset()
     {
@@ -276,10 +302,10 @@ public class EnemyAI : MonoBehaviour
     {
         RaycastHit hit;
 
-        if(Physics.Linecast(vision.position, player.transform.position, out hit))
+        if(Physics.Linecast(vision.position, player.transform.position, out hit, layerSightMask))
         {
             //Debug.Log("Hit " + hit.collider.gameObject.name);
-
+            Debug.Log("Hit: " + hit.collider.gameObject.name);
             if(hit.collider.gameObject.tag == "Player")
             {
             
@@ -316,12 +342,14 @@ public class EnemyAI : MonoBehaviour
 
     public void playScream(int num)
     {
+        
         sound.clip = screams[num];
         sound.Play();
     }
 
     public void hitByFlare()
     {
+        state = "stay";
         anim.SetTrigger("hit");
         StopCoroutine("endHit");
         StartCoroutine("endHit", 15f);
@@ -329,7 +357,7 @@ public class EnemyAI : MonoBehaviour
         agent.isStopped = true;
         BossRb.velocity = Vector3.zero;
         BossRb.angularVelocity = Vector3.zero;
-        state = "stay";
+        
     }
 
     public IEnumerator endHit(float time)

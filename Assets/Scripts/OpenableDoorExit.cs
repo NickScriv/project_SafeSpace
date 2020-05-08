@@ -25,11 +25,19 @@ public class OpenableDoorExit : MonoBehaviour
     float defaultRotationAngle;
     float currentRotationAngle;
     float openTime = 0;
+    Vector3 closedSize;
+    public Vector3 openedSize;
+    Vector3 closedCenter;
+    public Vector3 openedCenter;
+    BoxCollider coll;
 
     void Start()
     {
+        coll = GetComponent<BoxCollider>();
         defaultRotationAngle = transform.localEulerAngles.y;
         currentRotationAngle = transform.localEulerAngles.y;
+        closedSize = coll.size;
+        closedCenter = coll.center;
     }
 
     // Main function
@@ -47,6 +55,17 @@ public class OpenableDoorExit : MonoBehaviour
             currentRotationAngle = transform.localEulerAngles.y;
             openTime = 0;
 	         source.PlayOneShot(clip);
+
+            if (open)
+            {
+                coll.size = openedSize;
+                coll.center = openedCenter;
+            }
+            else
+            {
+                coll.size = closedSize;
+                coll.center = closedCenter;
+            }
         }
     }
 
@@ -55,7 +74,18 @@ public class OpenableDoorExit : MonoBehaviour
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
-            GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 200, 50), "Swipe the keycard for access");
+            if(this.open)
+            {
+                Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+                GUI.Label(label, "Swipe the keycard to close door", GameManager.Instance.style);
+            }
+            else
+            {
+                Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+                GUI.Label(label, "Swipe the keycard to open door", GameManager.Instance.style);
+            }
+            
+   
         }
     }
 

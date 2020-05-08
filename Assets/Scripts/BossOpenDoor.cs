@@ -15,7 +15,7 @@ public class BossOpenDoor : MonoBehaviour
 
             if(!hinge.GetComponent<OpenableDoor>().open)
             {
-                Debug.Log("Open Door");
+                //Debug.Log("Open Door");
                 hinge.GetComponent<OpenableDoor>().openDoor();
             }
           

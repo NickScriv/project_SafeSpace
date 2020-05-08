@@ -22,7 +22,7 @@ public class Stairs : MonoBehaviour
             if(hit.collider.gameObject.tag == "stair")
             {
                 Debug.Log("ssssssssssssssss");
-                GetComponent<Rigidbody>().AddForce(-transform.up * 10);
+               // GetComponent<Rigidbody>().AddForce(-transform.up * 10);
             }
         }
     }

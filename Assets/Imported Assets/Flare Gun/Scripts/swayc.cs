@@ -32,7 +32,7 @@ public class swayc : MonoBehaviour {
 	void OnGUI()	
 	{
 		if(!GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
-		GUI.Label(new Rect(10,10,150,30),"Press 'R' to reload");
+		GUI.Label(new Rect(10,10,150,30),"Press 'R' to reload", GameManager.Instance.style);
 		
 		
 	}

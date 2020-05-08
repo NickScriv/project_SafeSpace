@@ -8,6 +8,8 @@ public class ItemSwitch : MonoBehaviour
     public int maxItems = 2;
     Animator animator;
     public GameObject flashlight;
+    public GameObject flareArms;
+    public GameObject flareGun;
 
     // Start is called before the first frame update
     void Awake()
@@ -25,7 +27,7 @@ public class ItemSwitch : MonoBehaviour
             return;
 
         //Updating item choosen with scroll wheel
-        if (Input.GetAxis("Mouse ScrollWheel") < 0)
+        if (Input.GetAxis("Mouse ScrollWheel") < 0 && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Hide") && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Draw") && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Fire") && !flareGun.GetComponent<flaregun>().reloading && !flareGun.GetComponent<flaregun>().firing)
         {
             if (currentItem + 1 <= maxItems)
                 currentItem++;
@@ -56,20 +58,38 @@ public class ItemSwitch : MonoBehaviour
 
 
         //Updating item with alpha numbers (Not numpad)
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1) && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Hide") && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Draw") && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Fire") && !flareGun.GetComponent<flaregun>().reloading && !flareGun.GetComponent<flaregun>().firing)
         {
+            if (currentItem + 1 <= maxItems)
+                currentItem++;
+            else
+                currentItem = 0;
+       
+        
             currentItem = 0;
             SelectItem(currentItem);
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
+        if (Input.GetKeyDown(KeyCode.Alpha2) && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Hide") && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Draw") && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Fire") && !flareGun.GetComponent<flaregun>().reloading && !flareGun.GetComponent<flaregun>().firing)
+            {
+                if (currentItem + 1 <= maxItems)
+                    currentItem++;
+                else
+                    currentItem = 0;
+       
+        
             currentItem = 1;
             SelectItem(currentItem);
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (Input.GetKeyDown(KeyCode.Alpha3) && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Hide") && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Draw") && !flareArms.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Glock18_Fire") && !flareGun.GetComponent<flaregun>().reloading && !flareGun.GetComponent<flaregun>().firing)
         {
+                    if (currentItem + 1 <= maxItems)
+                        currentItem++;
+                    else
+                        currentItem = 0;
+       
+        
             currentItem = 2;
             SelectItem(currentItem);
         }

@@ -73,6 +73,7 @@ public class WinScript : MonoBehaviour
         GameManager.Instance.isPaused = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        GameManager.Instance.eventNumber = 1;
         SceneManager.LoadScene(0);
     }
 

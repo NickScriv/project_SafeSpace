@@ -7,10 +7,12 @@ using UnityEngine.SceneManagement;
 public class sceneLoader : MonoBehaviour
 {
     public void loadScene(string sceneName){
-      SceneManager.LoadScene(sceneName);
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
+        SceneManager.LoadScene(sceneName);
     }
 
     public void quit(){
-      Application.Quit();
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
+        Application.Quit();
     }
 }

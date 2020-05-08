@@ -98,7 +98,7 @@ public class SmallAI : MonoBehaviour
         }
 
 
-        Debug.Log(state);
+        //Debug.Log(state);
         //stateText.text = state;
         Debug.DrawLine(vision.position, player.transform.position, Color.green);
         anim.SetFloat("velocity", agent.velocity.magnitude);
@@ -177,7 +177,7 @@ public class SmallAI : MonoBehaviour
             }
         }
 
-        //TODO: Implement a shout state
+        
         if (state == "shout")
         {
             if (state != "runAway" && state != "runAway2")

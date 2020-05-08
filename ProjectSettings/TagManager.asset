@@ -21,6 +21,9 @@ TagManager:
   - GameUI
   - door
   - stair
+  - Fire
+  - crouch
+  - InvisibleWall
   layers:
   - Default
   - TransparentFX
@@ -32,8 +35,8 @@ TagManager:
   - 
   - Item
   - Stairs
-  - 
-  - 
+  - Enemy
+  - InvisibleWall
   - 
   - 
   - 

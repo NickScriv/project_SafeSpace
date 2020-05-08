@@ -19,16 +19,25 @@ public class OpenableDoor : MonoBehaviour
     public AudioClip clip;
 
     public bool open = false;
-    bool enter = false;
+    public bool enter = false;
 
     float defaultRotationAngle;
     float currentRotationAngle;
     float openTime = 0;
+   Vector3 closedSize;
+    public Vector3 openedSize;
+     Vector3 closedCenter;
+    public Vector3 openedCenter;
+    BoxCollider coll;
+
 
     void Start()
     {
+        coll = GetComponent<BoxCollider>();
         defaultRotationAngle = transform.localEulerAngles.y;
         currentRotationAngle = transform.localEulerAngles.y;
+        closedSize = coll.size;
+        closedCenter = coll.center;
     }
 
     // Main function
@@ -42,19 +51,33 @@ public class OpenableDoor : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
-            open = !open;
-            currentRotationAngle = transform.localEulerAngles.y;
-            openTime = 0;
-	         source.PlayOneShot(clip);
+            openDoor();
         }
+
+       
+
     }
 
     public void openDoor()
     {
+       
         open = !open;
         currentRotationAngle = transform.localEulerAngles.y;
         openTime = 0;
         source.PlayOneShot(clip);
+
+        if(open)
+        {
+            //Debug.Log("Open door");
+            coll.size = openedSize;
+            coll.center = openedCenter;
+        }
+        else
+        {
+            Debug.Log("Close door");
+            coll.size = closedSize;
+            coll.center = closedCenter;
+        }
     }
 
     // Display a simple info message when player is inside the trigger area
@@ -62,14 +85,25 @@ public class OpenableDoor : MonoBehaviour
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
-            GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to interact");
+            if(open)
+            {
+                Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+                GUI.Label(label, "Press 'F' to close door", GameManager.Instance.style);
+
+            }
+            else
+            {
+                Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+                GUI.Label(label, "Press 'F' to open door", GameManager.Instance.style);
+            }
+
         }
     }
 
     // Activate the Main function when Player enter the trigger area
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") )
         {
             enter = true;
         }
