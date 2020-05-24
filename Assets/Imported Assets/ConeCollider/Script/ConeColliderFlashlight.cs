@@ -17,6 +17,7 @@ public class ConeColliderFlashlight : MonoBehaviour {
     [SerializeField]
     private bool m_isFixScale = true;
     public Transform collPos;
+    public Flashlight_PRO flashLightScript;
 
     void Awake()
     {
@@ -93,8 +94,9 @@ public class ConeColliderFlashlight : MonoBehaviour {
         
     }
 
-    private void Start() {
-        
+    private void Start()
+    {
+        flashLightScript = transform.GetComponentInParent<Flashlight_PRO>();
     }
 
 
@@ -102,19 +104,25 @@ public class ConeColliderFlashlight : MonoBehaviour {
 
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.tag == "Bug" && transform.GetComponentInParent<Flashlight_PRO>().is_enabled == true && other.gameObject.GetComponent<SmallAI>().getState() != "shouting" && other.gameObject.GetComponent<SmallAI>().getState() != "shout" && GetComponentInParent<Flashlight_PRO>().currentEnergy > 0 && other.gameObject.GetComponent<SmallAI>().getState() != "runAway2")
+        if (other.gameObject.CompareTag( "Bug"))
         {
-          
-            Debug.Log("hit Bug!");
-            other.gameObject.GetComponent<SmallAI>().setState("runAway");
-            other.gameObject.GetComponent<SmallAI>().inFlashlightZone = true;
-        
+            SmallAI bugScript = other.gameObject.GetComponent<SmallAI>();
+            if (flashLightScript.is_enabled == true && bugScript.getState() != "shouting" && bugScript.getState() != "shout" && flashLightScript.currentEnergy > 0 && bugScript.getState() != "runAway2" && bugScript.getState() != "kill")
+            {
+
+                //Debug.Log("hit Bug!");
+               // bugScript.playHiss();
+                bugScript.setState("runAway");
+                bugScript.inFlashlightZone = true;
+
+            }
         }
+        
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Bug")
+        if (other.gameObject.CompareTag("Bug"))
         {
             other.gameObject.GetComponent<SmallAI>().inFlashlightZone = false;
         }

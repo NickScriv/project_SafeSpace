@@ -13,6 +13,9 @@ public class EventController : MonoBehaviour
     public GameObject WallToAreaInCell;
     public GameObject hingeToCell;
 
+    [Header("Event 4")]
+    public GameObject hingeToSecondArea;
+    public GameObject battery;
 
 
     // [Header("Event 4")]
@@ -42,6 +45,7 @@ public class EventController : MonoBehaviour
                 exitWall.SetActive(true);
                 WallToAreaInCell.SetActive(false);
                 hingeToCell.GetComponent<OpenableDoor>().enabled = true;
+                hingeToSecondArea.GetComponent<DoorEvent>().enabled = true;
 
                 break;
 
@@ -51,6 +55,20 @@ public class EventController : MonoBehaviour
                 exitWall.SetActive(true);
                 WallToAreaInCell.SetActive(false);
                 hingeToCell.GetComponent<OpenableDoor>().enabled = true;
+                hingeToSecondArea.GetComponent<DoorEvent>().enabled = true;
+
+                break;
+
+            case 4:
+                EventTrigger1.SetActive(false);
+                WallRun.SetActive(false);
+                exitWall.SetActive(true);
+                WallToAreaInCell.SetActive(false);
+                hingeToCell.GetComponent<OpenableDoor>().enabled = true;
+                hingeToSecondArea.GetComponent<DoorEvent>().enabled = false;
+                hingeToSecondArea.GetComponent<OpenableDoor>().enabled = true;
+               // battery.SetActive(true);
+
 
                 break;
 
@@ -60,6 +78,7 @@ public class EventController : MonoBehaviour
                 exitWall.SetActive(false);
                 WallToAreaInCell.SetActive(true);
                 hingeToCell.GetComponent<OpenableDoor>().enabled = false;
+                battery.SetActive(false);
 
 
                 break;

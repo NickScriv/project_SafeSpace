@@ -18,7 +18,9 @@ public class flaregun : MonoBehaviour {
     public float heightOffest = 1.41f;
     public bool firing = false;
     public bool reloading = false;
-
+    public FirstPersonAIO firstPersonScript;
+    Animator anim;
+ 
 	
 
 
@@ -29,24 +31,34 @@ public class flaregun : MonoBehaviour {
         heightOffest = 1.41f;
         firing = false;
         reloading = false;
+        anim = anims.GetComponent<FlaregunAnims>().anim;
+       // barrelEnd.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane));
 
     }
 	
 	// Update is called once per frame
 	void Update () 
 	{
+
+        if(GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
         if (GameManager.Instance.playerDead || GameManager.Instance.isPaused)
             return;
 
-        if (Input.GetButtonDown("Fire1") && !GetComponent<Animation>().isPlaying && Cursor.lockState == CursorLockMode.Locked && Cursor.visible == false &&  !firing && !reloading)
+        if (Input.GetButtonDown("Fire1") && !firing && !reloading && anim.GetCurrentAnimatorStateInfo(0).IsName("Out"))
 		{
 			if(currentRound > 0)
             {
+               
                 firing = true;
                 anims.GetComponent<FlaregunAnims>().shootAnim();
             
                 Shoot();
-			}
+                Invoke("shootDone", 1f);
+            }
             else
             {
 				GetComponent<AudioSource>().PlayOneShot(noAmmoSound);
@@ -55,30 +67,43 @@ public class flaregun : MonoBehaviour {
 			}
 		}
 
-		if(Input.GetKeyDown(KeyCode.R) && !GetComponent<Animation>().isPlaying && spareRounds > 0 && !firing && !reloading)
+		if(Input.GetKeyDown(KeyCode.R)  && spareRounds > 0 && !firing && !reloading)
 		{
             if (spareRounds >= 1 && currentRound == 0)
             {
+                spareRounds--;
+                currentRound++;
                 reloading = true;
                 anims.GetComponent<FlaregunAnims>().hasBullet = true;
                 anims.GetComponent<FlaregunAnims>().reload();
                 Invoke("Reload", 0.7f);
-              
+                Invoke("ReloadDone", 2f);
+
             }
 			
 		}
 	
 	}
 
+    public void ReloadDone()
+    {
+        reloading = false;
+    }
+
+    public void shootDone()
+    {
+        firing= false;
+    }
+
     public void endFiring()
     {
-        Debug.Log("end firing");
+        
         firing = false;
     }
 
     public void endDrawing()
     {
-        Debug.Log("end drawing");
+      
         reloading = false;
     }
 
@@ -87,14 +112,16 @@ public class flaregun : MonoBehaviour {
 	void Shoot()
 	{
 		currentRound--;
-		if(currentRound <= 0){
+		if(currentRound <= 0)
+        {
 			currentRound = 0;
 		}
 
         
 
             GetComponent<AudioSource>().PlayOneShot(flareShotSound);
-		
+            //firstPersonScript.advanced.gravityMultiplier = 1;
+           // Invoke("ChangeGravity", 1f);
 			
 			Rigidbody bulletInstance;			
 			bulletInstance = Instantiate(flareBullet,barrelEnd.position,barrelEnd.rotation) as Rigidbody; //INSTANTIATING THE FLARE PROJECTILE
@@ -112,11 +139,16 @@ public class flaregun : MonoBehaviour {
 		
 		GetComponent<AudioSource>().PlayOneShot(reloadSound);
 		
-        spareRounds--;
-		currentRound++;
+       
 		
 		
 	}
+
+    void ChangeGravity()
+    {
+        firstPersonScript.advanced.gravityMultiplier = 3.5f;
+
+    }
 
     private void OnGUI()
     {

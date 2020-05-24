@@ -25,7 +25,12 @@ public class pickupKey : MonoBehaviour
     // Main function
     void Update()
     {
-      if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
+        if (GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
       {
         
         itemPlayer.GetComponent<ItemPlayer>().pickedUp = true;

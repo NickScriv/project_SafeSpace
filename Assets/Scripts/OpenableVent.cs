@@ -43,6 +43,11 @@ public class OpenableVent : MonoBehaviour
     // Main function
     void Update()
     {
+        if (GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
         if (openTime < 1)
         {
             openTime += Time.deltaTime * openSpeed;

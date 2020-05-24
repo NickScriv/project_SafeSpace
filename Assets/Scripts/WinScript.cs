@@ -7,6 +7,7 @@ public class WinScript : MonoBehaviour
 {
 
     public GameObject GameWinPanel;
+    public GameObject batteryPanel;
     public GameObject playerCam;
     GameObject player;
     public GameObject jumpCam;
@@ -18,14 +19,15 @@ public class WinScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.CompareTag("Player"))
         {
+            GameManager.Instance.killedBy = "nothing";
             GameManager.Instance.playerDead = true;
             GameManager.Instance.isPaused = true;
             GameManager.Instance.isEnd = true;
             GameWinPanel.SetActive(true);
             Invoke("text1", 4f);
-            //TODO: Disable music
+            batteryPanel.SetActive(false);
             FindObjectOfType<SoundManager>().StopFade("Music");
             FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
             player.GetComponent<FirstPersonAIO>().enabled = false;

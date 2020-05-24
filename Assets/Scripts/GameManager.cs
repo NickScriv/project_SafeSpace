@@ -10,11 +10,13 @@ public class GameManager : MonoBehaviour
     public bool isEnd = false;
     public  GUIStyle style;
     public GUIStyle style2;
-    public  int eventNumber = 1;
+    public int eventNumber = 1;
      GameObject panel;
     GameObject panel2;
     float virtualWidth = 1920.0f;
     float virtualHeight = 1080.0f;
+    public string killedBy;
+    public int nextScene = 2;
 
     public static GameManager Instance { get; private set; }
 
@@ -29,8 +31,9 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        killedBy = "nothing";
         Matrix4x4 matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity,new Vector3(Screen.width / virtualWidth, Screen.height / virtualHeight, 1.0f));
-        //font = Resources.Load();
+       
         Vector2 nativeSize = new Vector2(1920, 1080);
         isPaused = false;
         playerDead = false;
@@ -38,19 +41,20 @@ public class GameManager : MonoBehaviour
         GUIStyle style = new GUIStyle();
         GUIStyle style2 = new GUIStyle();
         GUI.matrix = matrix;
-        //style.fontSize = (int)(25.0f * ((float)Screen.width / (float)nativeSize.x));
+       
         style.normal.textColor = Color.white;
         style.alignment = TextAnchor.MiddleCenter;
         style2.normal.textColor = Color.white;
         style2.alignment = TextAnchor.MiddleCenter;
-        //panel = GameObject.FindGameObjectWithTag("GameUI").transform.GetChild(0).gameObject;
-        //panel2 = GameObject.FindGameObjectWithTag("GameUI").transform.GetChild(1).gameObject;
+    
+
         eventNumber = 1;
         DontDestroyOnLoad(gameObject);
     }
 
     public void fadeIn()
     {
+        
         FindObjectOfType<SoundManager>().StopFade("Music");
         FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
         Cursor.lockState = CursorLockMode.None;
@@ -79,6 +83,7 @@ public class GameManager : MonoBehaviour
 
     public void fadeInBug()
     {
+      
         FindObjectOfType<SoundManager>().StopFade("Music");
         FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
         Cursor.lockState = CursorLockMode.None;
@@ -94,15 +99,6 @@ public class GameManager : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //Debug.Log(isPaused || playerDead);
-    }
+   
+  
 }

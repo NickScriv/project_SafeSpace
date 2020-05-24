@@ -48,6 +48,11 @@ public class SpawnOffTriggerExit : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
          

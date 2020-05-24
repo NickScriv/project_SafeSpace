@@ -8,7 +8,7 @@ public class Flashlight_PRO : MonoBehaviour
     [Space(10)]
     [SerializeField()] GameObject Lights; // all light effects and spotlight
     [SerializeField()] AudioSource switch_sound; // audio of the switcher
-    [SerializeField()] ParticleSystem dust_particles; // dust particles
+ 
 
 
     
@@ -18,6 +18,7 @@ public class Flashlight_PRO : MonoBehaviour
     public bool is_enabled = false;
     public Transform shootRay;
     public Text batteryCount;
+    public GameObject terrain;
     //public Text batteryLife;
     //Dictionary<string, GameObject> currentHits;
 
@@ -67,7 +68,7 @@ public class Flashlight_PRO : MonoBehaviour
         if (Input.GetKeyDown("e"))
 			Switch();
 
-		if (is_enabled)
+		if (is_enabled && !terrain.activeInHierarchy)
         {
 
             
@@ -86,8 +87,8 @@ public class Flashlight_PRO : MonoBehaviour
                
                 Lights.SetActive(true);
              
-                currentEnergy -= 0.4f * Time.deltaTime;
-				usedEnergy += 0.4f * Time.deltaTime;
+                currentEnergy -= 0.3f * Time.deltaTime;
+				usedEnergy += 0.3f * Time.deltaTime;
 
                 energy = 50 - usedEnergy;
 
@@ -251,7 +252,7 @@ public class Flashlight_PRO : MonoBehaviour
 	/// <summary>
 	/// enables the particles.
 	/// </summary>
-	public void Enable_Particles(bool value)
+	/*public void Enable_Particles(bool value)
 	{
 		if(dust_particles != null)
 		{
@@ -266,7 +267,7 @@ public class Flashlight_PRO : MonoBehaviour
 				dust_particles.gameObject.SetActive(false);
 			}
 		}
-	}
+	}*/
 
 
 

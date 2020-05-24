@@ -36,6 +36,15 @@ public class EnemyAI : MonoBehaviour
     Vector3 direction;
     Vector3 prevDirection;
     public LayerMask layerSightMask;
+    public GameObject terrain;
+    public LayerMask hitLayerMask;
+    CapsuleCollider capsule;
+    public AudioClip[] gruntSounds;
+    public AudioSource gruntSource;
+    FirstPersonAIO firstPerson;
+    bool above = false;
+    public AudioClip monsterHurt;
+
 
 
 
@@ -50,8 +59,10 @@ public class EnemyAI : MonoBehaviour
         BossRb = GetComponent<Rigidbody>();
         PlayerRb = player.GetComponent<Rigidbody>();
         agent.updateRotation = false;
-
-      
+        capsule = player.GetComponent<CapsuleCollider>();
+        StartCoroutine(playGruntSound());
+        firstPerson = player.GetComponent<FirstPersonAIO>();
+        agent.updateRotation = true;
 
         previousPos = transform.position;
     }
@@ -64,10 +75,10 @@ public class EnemyAI : MonoBehaviour
         //speed.text = state;
        anim.SetFloat("velocity", agent.velocity.magnitude);
 
-         if (agent.desiredVelocity.magnitude > 0.005f)
+         if (agent.desiredVelocity.magnitude > 0.05f)
         {
             anim.SetBool("isWalking", true);
-            RotateTowards(agent.steeringTarget);
+            //RotateTowards(agent.steeringTarget);
         }
         else
         {
@@ -82,7 +93,7 @@ public class EnemyAI : MonoBehaviour
             gameObject.SetActive(false);
         }
 
-        Debug.DrawLine(vision.position, player.transform.position, Color.green);
+        
      
 
        
@@ -93,8 +104,13 @@ public class EnemyAI : MonoBehaviour
         if (state != "kill" && state != "DoNothing" && GameManager.Instance.playerDead)
         {
             state = "DoNothing";
-            agent.isStopped = true;
-            agent.ResetPath();
+            if (agent.isActiveAndEnabled)
+            {
+
+
+                agent.isStopped = true;
+                agent.ResetPath();
+            }
         }
 
     
@@ -106,11 +122,11 @@ public class EnemyAI : MonoBehaviour
             int i = 0;
             while (i < hitColliders.Length)
             {
-                if (hitColliders[i].gameObject.tag == "Barrier" && hitColliders[i].gameObject != null)
+                if (hitColliders[i].gameObject.CompareTag("Barrier") && hitColliders[i].gameObject != null)
                 {
 
                     agent.ResetPath();
-                    Debug.Log("SOmewhere else");
+                 
                     state = "idle";
                     anim.SetBool("isWalking", true);
                     break;
@@ -184,8 +200,8 @@ public class EnemyAI : MonoBehaviour
         {
             agent.ResetPath();
   
-            StartCoroutine(CameraShaker.Instance.CameraShake(1.8f, .12f));
-
+            StartCoroutine(CameraShaker.Instance.CameraShake(1.8f, .04f));
+            gruntSource.Stop();
             anim.SetTrigger("scream");
             playScream(Random.Range(0, 4));
             state = "shouting";
@@ -202,19 +218,25 @@ public class EnemyAI : MonoBehaviour
 
             if (distance > 25f || chaseTime <= 0)
             {
+               // Debug.Log("stop chasing");
                 state = "hunt";
             }
 
             else if (distance <= 2.5f && state != "stay")
             {
-                Debug.Log("Distance check!");
+              
                 RaycastHit hit;
-                if (Physics.Linecast(vision.position, player.transform.position, out hit))
+                if (Physics.Linecast(vision.position, player.transform.position, out hit, hitLayerMask))
                 {
-
-                    if (hit.collider.gameObject.tag == "Player")
+                   
+                    if (hit.collider.gameObject.CompareTag("Player"))
                     {
-                        Debug.Log("kill now");
+                        above = firstPerson.above;
+                        firstPerson._crouchModifiers.useCrouch = false;
+                        firstPerson.enableCameraMovement = false;
+                        firstPerson.playerCanMove = false;
+                        firstPerson.enabled = false;
+                        GameManager.Instance.killedBy = "mutant";
                         GameManager.Instance.playerDead = true;
                         agent.isStopped = true;
                         agent.ResetPath();
@@ -223,11 +245,10 @@ public class EnemyAI : MonoBehaviour
                         BossRb.angularVelocity = Vector3.zero;
                         transform.LookAt(player.transform.position);
                         state = "kill";
-                        player.GetComponent<FirstPersonAIO>().playerCanMove = false;
-                        player.GetComponent<FirstPersonAIO>().enabled = false;
+                       
                         PlayerRb.velocity = Vector3.zero;
                         PlayerRb.angularVelocity = Vector3.zero;
-                        PlayerRb.isKinematic = true;
+                        PlayerRb.useGravity = false;
                         anim.SetTrigger("AttackPlayer");
                         anim.speed = .8f;
                     }
@@ -252,13 +273,17 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "kill")
         {
-            Debug.Log("In kill state");
+            if(!above)
+            {
+                stopCrouching();
+            }
+           
             Quaternion lookOnLook = Quaternion.LookRotation(camPos.transform.position - player.transform.position);
             mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, lookOnLook, 5f * Time.deltaTime);
 
         }
 
-        if (state == "stay")
+      /*  if (state == "stay")
         {
 
             //Do Nothing
@@ -268,7 +293,7 @@ public class EnemyAI : MonoBehaviour
         {
 
             //Do Nothing
-        }
+        }*/
 
 
     
@@ -304,9 +329,8 @@ public class EnemyAI : MonoBehaviour
 
         if(Physics.Linecast(vision.position, player.transform.position, out hit, layerSightMask))
         {
-            //Debug.Log("Hit " + hit.collider.gameObject.name);
-            Debug.Log("Hit: " + hit.collider.gameObject.name);
-            if(hit.collider.gameObject.tag == "Player")
+            //Debug.Log(hit.collider.gameObject.name);
+            if(hit.collider.gameObject.CompareTag("Player"))
             {
             
 
@@ -321,8 +345,12 @@ public class EnemyAI : MonoBehaviour
 
     public void footstep(int num)
     {
-      
-       soundFoot.PlayOneShot(footsteps[Random.Range(0,5)]);
+        if (!terrain.activeInHierarchy)
+        {
+            
+            soundFoot.PlayOneShot(footsteps[Random.Range(0, 5)]);
+        }
+            
         
     }
 
@@ -362,8 +390,12 @@ public class EnemyAI : MonoBehaviour
 
     public IEnumerator endHit(float time)
     {
+        playHurtSound();
         yield return new WaitForSeconds(time);
-        Debug.Log("execute end hit");
+        if(gruntSource.isPlaying)
+        {
+            gruntSource.Stop();
+        }
         agent.isStopped = false;
         state = "idle";
         highAlert = true;
@@ -376,12 +408,52 @@ public class EnemyAI : MonoBehaviour
         anim.SetTrigger("backToIdle");
     }
 
+    public void playHurtSound()
+    {
+        if(sound.isPlaying || gruntSource.isPlaying)
+        {
+            Invoke("playHurtSound", 1f);
+        }
+        else
+        {
+            gruntSource.PlayOneShot(monsterHurt);
+        }
+    }
+
     public string getState()
     {
         return state;
     }
 
-  
+    public void setState(string stateSet)
+    {
+        state = stateSet;
+    }
+
+    void stopCrouching()
+    {
+        //capsule.height = player.GetComponent<FirstPersonAIO>()._crouchModifiers.colliderHeight;
+       capsule.height = Mathf.MoveTowards(capsule.height, player.GetComponent<FirstPersonAIO>()._crouchModifiers.colliderHeight, 6f * Time.deltaTime);
+
+    }
+
+    IEnumerator playGruntSound()
+    {
+        yield return new WaitForSeconds(Random.Range(7f, 15f));
+        int i = Random.Range(0, gruntSounds.Length);
+        if (!sound.isPlaying && (state == "walk" || state == "idle" || state == "search"))
+        {
+            //Debug.Log("play monster sound");
+            gruntSource.PlayOneShot(gruntSounds[i]);
+           
+        }
+
+        yield return new WaitForSeconds(gruntSounds[i].length);
+        StartCoroutine(playGruntSound());
+
+
+    }
+
 
 
     /* void OnDrawGizmosSelected()

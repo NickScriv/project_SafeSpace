@@ -12,6 +12,11 @@ public class BatteryPickup : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
         if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
             Destroy(battery);

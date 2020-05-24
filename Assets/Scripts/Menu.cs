@@ -15,8 +15,14 @@ public class Menu : MonoBehaviour
 
     void Start()
     {
+        if(GameManager.Instance != null)
+        {
+            GameManager.Instance.nextScene = 2;
+        }
+       
         cameraAnim = GetComponent<Animator>();
         audio = GetComponent<AudioSource>();
+        Time.fixedDeltaTime = 1/150f;
     }
 
     public void play()
@@ -85,8 +91,5 @@ public class Menu : MonoBehaviour
         Application.Quit();
     }
 
-    void Update()
-    {
-        
-    }
+ 
 }

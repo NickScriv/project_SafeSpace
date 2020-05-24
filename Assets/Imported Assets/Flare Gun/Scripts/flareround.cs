@@ -16,9 +16,14 @@ public class flareround : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
+        if (GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
 
-		if (Input.GetKeyDown(KeyCode.F) && enter && flare.spareRounds < flare.maxSpareRounds && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
+        if (Input.GetKeyDown(KeyCode.F) && enter && flare.spareRounds < flare.maxSpareRounds && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
 		{
             //GetComponent<AudioSource>().PlayOneShot(pickupSound);
            

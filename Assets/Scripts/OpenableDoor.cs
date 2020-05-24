@@ -7,6 +7,7 @@
 //Make sure the main Character is tagged "Player"
 //Upon walking into trigger area press "F" to open / close the door
 
+using System.Linq;
 using UnityEngine;
 
 public class OpenableDoor : MonoBehaviour
@@ -29,6 +30,7 @@ public class OpenableDoor : MonoBehaviour
      Vector3 closedCenter;
     public Vector3 openedCenter;
     BoxCollider coll;
+    GameObject terrain;
 
 
     void Start()
@@ -38,12 +40,29 @@ public class OpenableDoor : MonoBehaviour
         currentRotationAngle = transform.localEulerAngles.y;
         closedSize = coll.size;
         closedCenter = coll.center;
+        GameObject[] objs = Resources.FindObjectsOfTypeAll<GameObject>() as GameObject[];
+        for (int i = 0; i < objs.Length; i++)
+        {
+            if (objs[i].hideFlags == HideFlags.None)
+            {
+                if (objs[i].name == "Terrain")
+                {
+                    terrain = objs[i];
+                }
+            }
+        }
+
     }
 
     // Main function
     void Update()
     {
-        if(openTime < 1)
+        if (GameManager.Instance != null && GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
+        if (openTime < 1)
         {
             openTime += Time.deltaTime * openSpeed;
         }
@@ -64,17 +83,24 @@ public class OpenableDoor : MonoBehaviour
         open = !open;
         currentRotationAngle = transform.localEulerAngles.y;
         openTime = 0;
-        source.PlayOneShot(clip);
+
+    
+
+        if (!terrain.activeInHierarchy)
+        {
+            source.PlayOneShot(clip);
+        }
+       
 
         if(open)
         {
-            //Debug.Log("Open door");
+         
             coll.size = openedSize;
             coll.center = openedCenter;
         }
         else
         {
-            Debug.Log("Close door");
+           
             coll.size = closedSize;
             coll.center = closedCenter;
         }
@@ -96,7 +122,7 @@ public class OpenableDoor : MonoBehaviour
                 Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
                 GUI.Label(label, "Press 'F' to open door", GameManager.Instance.style);
             }
-
+            
         }
     }
 

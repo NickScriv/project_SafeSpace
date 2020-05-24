@@ -4,34 +4,32 @@ using UnityEngine;
 
 public class FlaregunAnims : MonoBehaviour
 {
-    Animator anim;
+    public Animator anim;
     public GameObject flareGun;
     public bool hasBullet = true;
+    public GameObject crossHair;
 
     // Start is called before the first frame update
     void Start()
     {
         anim = gameObject.GetComponent<Animator>();
+       //crossHair.SetActive(false);
 
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        //Shooting animations - WIP to make it not animate when gun has no rounds.
-        if (Input.GetMouseButtonDown(0) && hasBullet)
-        {
-           
-        }
-
-        //Reload Animations 
-        /*if (Input.GetKeyDown("r"))
-        {
-            anim.SetTrigger("Reload");
-        }*/
-
-
+       
+        crossHair.SetActive(true);
     }
+
+    private void OnDisable()
+    {
+        if(crossHair != null)
+         crossHair.SetActive(false);
+    }
+    // Update is called once per frame
+
     public void shootAnim()
     {
         anim.SetTrigger("Shoot");

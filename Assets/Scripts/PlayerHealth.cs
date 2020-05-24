@@ -13,14 +13,10 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        Debug.Log("Player took " + damage + " damage");
+        
         health -= damage;
-        Debug.Log("Player health: " + health);
+   
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+  
 }

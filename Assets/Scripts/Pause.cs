@@ -96,19 +96,21 @@ public class Pause : MonoBehaviour
         StopAudio();
         FindObjectOfType<SoundManager>().StopFade("Music");
         FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
-        SceneManager.LoadScene(0);
+        GameManager.Instance.killedBy = "nothing";
+        GameManager.Instance.nextScene = 0;
+        SceneManager.LoadScene(1);
         GameManager.Instance.eventNumber = 1;
-        Debug.Log("quit game");
+       
     }
 
     void PauseGame()
     {
-        Debug.Log("Pause1");
+     
         pauseAudio();
         
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        Debug.Log("Pause2");
+      
         pauseMenu.SetActive(true);
         Time.timeScale = 0;
         isPaused = true;
@@ -122,11 +124,9 @@ public class Pause : MonoBehaviour
         GameManager.Instance.playerDead = false;
         StopAudio();
         Time.timeScale = 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        if (!FindObjectOfType<SoundManager>().isPlaying("Music"))
-        {
-            FindObjectOfType<SoundManager>().PlayFade("Music");
-        }
+        GameManager.Instance.killedBy = "nothing";
+        GameManager.Instance.nextScene = 2;
+        SceneManager.LoadScene(1);
         GameManager.Instance.eventNumber++;
     }
 }

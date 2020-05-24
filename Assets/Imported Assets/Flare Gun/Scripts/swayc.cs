@@ -17,9 +17,14 @@ public class swayc : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
-		moveOnX = Input.GetAxis("Mouse X") * Time.deltaTime * moveAmount;
+	void Update ()
+    {
+        if (GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
+        moveOnX = Input.GetAxis("Mouse X") * Time.deltaTime * moveAmount;
  
 		moveOnY = Input.GetAxis("Mouse Y") * Time.deltaTime * moveAmount;
  

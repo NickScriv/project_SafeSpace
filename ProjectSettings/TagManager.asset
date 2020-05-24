@@ -24,6 +24,10 @@ TagManager:
   - Fire
   - crouch
   - InvisibleWall
+  - man
+  - grass
+  - wood
+  - concrete
   layers:
   - Default
   - TransparentFX
@@ -37,12 +41,12 @@ TagManager:
   - Stairs
   - Enemy
   - InvisibleWall
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Blood
+  - Hinge
+  - Ceiling
+  - Glow
+  - Flare
+  - Player
   - 
   - 
   - 
