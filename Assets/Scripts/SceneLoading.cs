@@ -55,9 +55,16 @@ public class SceneLoading : MonoBehaviour
         {
             background.texture = backgroundImages[Random.Range(0, backgroundImages.Length)];
         }
-        //start async operation
-        StartCoroutine(LoadSyncOperation());
+       
+        Invoke("startLoading", 2f);
+       
         
+    }
+
+    void startLoading()
+    {
+        
+        StartCoroutine(LoadSyncOperation());
     }
 
     IEnumerator LoadSyncOperation()
