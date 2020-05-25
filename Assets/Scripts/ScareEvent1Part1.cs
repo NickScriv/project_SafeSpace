@@ -5,7 +5,7 @@ using UnityEngine;
 public class ScareEvent1Part1 : MonoBehaviour
 {
     public AudioSource source;
-    public AudioClip clip;
+    public AudioClip [] clip;
     public GameObject spawnWall;
     public GameObject monster;
 
@@ -13,7 +13,8 @@ public class ScareEvent1Part1 : MonoBehaviour
     {
         if (coll.gameObject.CompareTag("Player"))
         {
-            source.PlayOneShot(clip);
+            int i =  Random.Range(0, clip.Length);
+            source.PlayOneShot(clip[i]);
             spawnWall.SetActive(true);
             monster.SetActive(true);
             GetComponent<BoxCollider>().enabled = false;

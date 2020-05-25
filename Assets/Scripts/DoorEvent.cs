@@ -79,13 +79,13 @@ public class DoorEvent : MonoBehaviour
             if (Physics.SphereCast(ray, 0.37f, out hitScare, 5f, scareMask))
             {
                 
-                if(hitScare.transform.gameObject.CompareTag( "Boss"))
-                {
+               /* if(hitScare.transform.gameObject.CompareTag( "Boss"))
+                {*/
                    
                     source.PlayOneShot(scareSound);
                     enter = false;
                     Invoke("scare", 0.75f);
-                }
+                /*}*/
                
               
 
