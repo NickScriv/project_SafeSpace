@@ -17,10 +17,17 @@ public class PlayerInfo : MonoBehaviour
     public GameObject exitDoorTrigger;
     int numberOfCards = 0;
 
+    public AudioClip[] concreteFootSteps;
+
+    public AudioClip[] grassFootSteps;
+
+    public AudioClip[] woodFootSteps;
+
+
 
     private void Start()
     {
-
+       
         if (!FindObjectOfType<SoundManager>().isPlaying("Music"))
         {
             FindObjectOfType<SoundManager>().PlayFade("Music");
@@ -30,29 +37,38 @@ public class PlayerInfo : MonoBehaviour
         numberOfCards = 0;
         currentHealth = maxHealth;
         objectiveScript = objective.GetComponent<Objectives>();
+        GetComponent<FirstPersonAIO>().concreteFootSteps = concreteFootSteps;
+        GetComponent<FirstPersonAIO>().grassFootSteps = grassFootSteps;
+        GetComponent<FirstPersonAIO>().woodFootSteps = woodFootSteps;
+
         Invoke("escapeNotify", 5f);
+       
         
     }
 
     public void Restart()
     {
+        GameManager.Instance.nextScene = 2;
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
         GameManager.Instance.isPaused = false;
         GameManager.Instance.playerDead = false;
         Time.timeScale = 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        if (!FindObjectOfType<SoundManager>().isPlaying("Music"))
-        {
-            FindObjectOfType<SoundManager>().PlayFade("Music");
-        }
-
+        SceneManager.LoadScene(1);
+      
+        GameManager.Instance.eventNumber++;
     }
+
+
 
     public void BackToMenu()
     {
+        GameManager.Instance.nextScene = 0;
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
         GameManager.Instance.isPaused = false;
         GameManager.Instance.playerDead = false;
         Time.timeScale = 1;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
+        GameManager.Instance.eventNumber = 1;
     }
 
     void escapeNotify()
@@ -91,8 +107,8 @@ public class PlayerInfo : MonoBehaviour
     void Update()
     {
 
-      
-      
+       
+
 
         if (currentHealth <= maxHealth)
         {
@@ -150,7 +166,7 @@ public class PlayerInfo : MonoBehaviour
 
     void Dead()
     {
-        Debug.Log("Player Dead.");
+       
         isDead = true;
     }
 }

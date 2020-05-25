@@ -8,18 +8,7 @@ public class Objectives : MonoBehaviour
     public GameObject itemPrefab;
     public GameObject notification;
     public Animator anim;
-    void Start()
-    {
-       // anim = GetComponent<Animator>();
-       
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 
   
 
@@ -51,7 +40,7 @@ public class Objectives : MonoBehaviour
     public int getLastChild()
     {
        GameObject Go = transform.GetChild(transform.childCount - 1).gameObject;
-        Debug.Log(Go.transform.childCount);
+       
         return Go.transform.childCount - 1;
     }
 
@@ -65,7 +54,7 @@ public class Objectives : MonoBehaviour
 
     public void diabaleNotification()
     {
-        Debug.Log("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+       
         notification.SetActive(false);
 
     }

@@ -5,22 +5,15 @@ using UnityEngine;
 public class PlayerEnemyInteraction : MonoBehaviour
 {
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+  
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.name == "Vision")
         {
+         
             other.transform.parent.GetComponent<EnemyAI>().sight();
         }
 
@@ -46,7 +39,7 @@ public class PlayerEnemyInteraction : MonoBehaviour
             }
             else
             {
-                dist = 5f;
+                dist = 4f;
             }
         }
         else if (type == "jump")
@@ -67,15 +60,17 @@ public class PlayerEnemyInteraction : MonoBehaviour
             int i = 0;
             while (i < hitColliders.Length)
             {
-                if (hitColliders[i].gameObject.name == "Vision")
+                if (hitColliders[i].gameObject.CompareTag("Boss"))
                 {
-                    hitColliders[i].transform.parent.GetComponent<EnemyAI>().sight();
+                   // Debug.Log("Hit Boss");
+                    hitColliders[i].transform.GetComponent<EnemyAI>().sight();
                     return;
                 }
 
-                if (hitColliders[i].gameObject.name == "BugVision")
+                if (hitColliders[i].CompareTag("Bug"))
                 {
-                    hitColliders[i].transform.parent.GetComponent<SmallAI>().sight();
+                   // Debug.Log("Hit bug");
+                    hitColliders[i].transform.GetComponent<SmallAI>().sight();
                     return;
                 }
                 i++;

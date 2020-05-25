@@ -12,13 +12,18 @@ public class flareround : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		flare =flaregun.GetComponent<flaregun>();
+		flare = flaregun.GetComponent<flaregun>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
+        if (GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
 
-		if (Input.GetKeyDown(KeyCode.F) && enter && flare.spareRounds < flare.maxSpareRounds && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
+        if (Input.GetKeyDown(KeyCode.F) && enter && flare.spareRounds < flare.maxSpareRounds && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
 		{
             //GetComponent<AudioSource>().PlayOneShot(pickupSound);
            
@@ -33,7 +38,7 @@ public class flareround : MonoBehaviour {
 	{
 		if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
 		{
-			GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to pick up");
+			GUI.Label(new Rect(Screen.width / 2 - 75f, Screen.height - 100, 150, 30), "Press 'F' to pick up flare", GameManager.Instance.style);
 		}
 	}
 

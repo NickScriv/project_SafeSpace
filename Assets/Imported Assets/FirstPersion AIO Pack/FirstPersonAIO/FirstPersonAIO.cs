@@ -57,7 +57,17 @@ using System.Collections.Generic;
 
 public class FirstPersonAIO : MonoBehaviour {
 
+    
+    public AudioClip[] concreteFootSteps;
+   
+    public AudioClip[] grassFootSteps;
+    
+    public AudioClip[] woodFootSteps;
+
+    public bool grass = false;
+    public bool wood = false;
   
+
     #region Variables
 
     #region Input Settings
@@ -65,7 +75,7 @@ public class FirstPersonAIO : MonoBehaviour {
     #endregion
 
     #region Look Settings
-
+    public bool above = false;
     public bool enableCameraMovement = true;
     public enum InvertMouseInput{None,X,Y,Both}
     public InvertMouseInput mouseInputInversion = InvertMouseInput.None;
@@ -79,6 +89,7 @@ public class FirstPersonAIO : MonoBehaviour {
     public bool enableCameraShake=false;
     internal Vector3 cameraStartingPosition;
     float baseCamFOV;
+
     
 
     public bool autoCrosshair = false;
@@ -89,9 +100,9 @@ public class FirstPersonAIO : MonoBehaviour {
     Image StaminaMeterBG;
     public Sprite Crosshair;
     public Vector3 targetAngles;
-    private Vector3 followAngles;
+    public Vector3 followAngles;
     private Vector3 followVelocity;
-    private Vector3 originalRotation;
+    public Vector3 originalRotation;
     #endregion
 
     #region Movement Settings
@@ -225,6 +236,7 @@ public class FirstPersonAIO : MonoBehaviour {
         public List<AudioClip> rockAndConcreteClipSet;
         public List<AudioClip> mudClipSet;
         public List<AudioClip> customClipSet;
+      
     }
     public DynamicFootStep dynamicFootstep = new DynamicFootStep();
 
@@ -351,9 +363,53 @@ public class BETA_SETTINGS{
 
     private void Update()
     {
+
+       /* RaycastHit floorHit;
+        if (Physics.SphereCast(transform.position, capsule.radius, -transform.up, out floorHit, 1.0f))
+        {
+            if (floorHit.transform.gameObject.CompareTag("grass"))
+            {
+                grass = true;
+                wood = false;
+            }
+            else if (floorHit.transform.gameObject.CompareTag("wood"))
+            {
+                grass = false;
+                wood = true;
+            }
+            else
+            {
+                grass = false;
+                wood = false;
+            }
+
+        }*/
+
+        RaycastHit hitCrouch;
+        if (Physics.SphereCast(transform.position, capsule.radius + .15f, Vector3.up, out hitCrouch, .7f))
+        {
+            if (hitCrouch.transform.gameObject.CompareTag( "crouch"))
+            {
+
+
+                above = true;
+            }
+            else
+            {
+
+                above = false;
+            }
+
+        }
+        else
+        {
+            above = false;
+        }
+
+
         #region Look Settings - Update
 
-            if(enableCameraMovement){
+        if (enableCameraMovement){
             float mouseYInput;
             float mouseXInput;
             float camFOV = playerCamera.fieldOfView;
@@ -385,10 +441,20 @@ public class BETA_SETTINGS{
             if(advanced._maxSlopeAngle>0 && IsGrounded && SlopeCheck()<=0.25f){yVelocity *= SlopeCheck();}
         //if(){didJump = false;}
 
-        if(_crouchModifiers.useCrouch){
-            if(!_crouchModifiers.toggleCrouch){ isCrouching = _crouchModifiers.crouchOverride || Input.GetKey(_crouchModifiers.crouchKey);}
-            else{if(Input.GetKeyDown(_crouchModifiers.crouchKey)){isCrouching = !isCrouching || _crouchModifiers.crouchOverride;}}
+        if(_crouchModifiers.useCrouch)
+        {
+            if(!_crouchModifiers.toggleCrouch)
+            {
+                isCrouching = _crouchModifiers.crouchOverride || Input.GetKey(_crouchModifiers.crouchKey);
             }
+            else
+            {
+                if (Input.GetKeyDown(_crouchModifiers.crouchKey))
+                {
+                    isCrouching = !isCrouching || _crouchModifiers.crouchOverride;
+                }
+            }
+        }
         #endregion
 
         #region Movement Settings - Update
@@ -406,12 +472,13 @@ public class BETA_SETTINGS{
 
     private void FixedUpdate()
     {
+       
         #region Look Settings - FixedUpdate
 
         #endregion
 
         #region Movement Settings - FixedUpdate
-        
+
         bool wasWalking = !isSprinting;
         if(useStamina){
             isSprinting = Input.GetKey(sprintKey) && !isCrouching && staminaInternal > 0 && (Mathf.Abs(fps_Rigidbody.velocity.x) > 0.01f || Mathf.Abs(fps_Rigidbody.velocity.x) > 0.01f);
@@ -469,19 +536,23 @@ public class BETA_SETTINGS{
         } else { capsule.sharedMaterial = advanced.highFrictionMaterial; }
 
         fps_Rigidbody.AddForce(Physics.gravity * (advanced.gravityMultiplier - 1));
-        /* if(fOVKick.useFOVKick && wasWalking == isSprinting && fps_Rigidbody.velocity.magnitude > 0.1f && !isCrouching){
-            StopAllCoroutines();
-            StartCoroutine(wasWalking ? FOVKickOut() : FOVKickIn());
-        } */
+    
 
-        if(_crouchModifiers.useCrouch) {
+    
+        if (_crouchModifiers.useCrouch)
+        {
             
-            if(isCrouching) {
-                    capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight/ _crouchModifiers.crouchHeight, 5*Time.deltaTime);
-                        walkSpeedInternal = walkSpeed*_crouchModifiers.crouchWalkSpeedMultiplier;
-                        jumpPowerInternal = jumpPower* _crouchModifiers.crouchJumpPowerMultiplier;
+            if(isCrouching)
+            {
+                snapHeadjointToCapsul = true;
+                capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight/ _crouchModifiers.crouchHeight, 5*Time.deltaTime);
+                walkSpeedInternal = walkSpeed*_crouchModifiers.crouchWalkSpeedMultiplier;
+                jumpPowerInternal = jumpPower* _crouchModifiers.crouchJumpPowerMultiplier;
 
-                } else {
+            }
+            else if(!above)
+            {
+                snapHeadjointToCapsul = false;
                 capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight, 5*Time.deltaTime);    
                 walkSpeedInternal = walkSpeed;
                 sprintSpeedInternal = sprintSpeed;
@@ -530,7 +601,10 @@ public class BETA_SETTINGS{
             yPos = 0;
             xPos = 0;
             zTilt = 0;
-            if(jumpLandIntensity>0 && !advanced.stairMiniHop){xTilt = -springPosition * (jumpLandIntensity*5.5f);}
+            if(jumpLandIntensity>0 && !advanced.stairMiniHop)
+            {
+                xTilt = -springPosition * (jumpLandIntensity*5.5f);
+            }
             else if(!advanced.stairMiniHop){xTilt = -springPosition;}
 
             if(IsGrounded){
@@ -588,34 +662,77 @@ public class BETA_SETTINGS{
                             if(dynamicFootstep.currentClipSet.Any())
                             {
                                 //audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
-                                bossDetection.playerSound("foot");
-                                FindObjectOfType<SoundManager>().PlayFade("FootStep");
+                                
+                               /* if(grass)
+                                {
+                                    audioSource.PlayOneShot(grassFootSteps[Random.Range(0, grassFootSteps.Length)]);
+                                
+                                }
+                                else if(wood)
+                                {
+                                    audioSource.PlayOneShot(woodFootSteps[Random.Range(0, woodFootSteps.Length)]);
+                              
+                                }
+                                else
+                                {
+                                    bossDetection.playerSound("foot");
+                                    audioSource.PlayOneShot(concreteFootSteps[Random.Range(0, concreteFootSteps.Length)]);
+                             
+                                }*/
+                                
                             }
                             nextStepTime = headbobCycle + 0.5f;
                         } else
                         {
-                            if(headbobCycle > nextStepTime)
+                           /* if(headbobCycle > nextStepTime)
                             {
-                                nextStepTime = headbobCycle + 0.5f;
-                                if(dynamicFootstep.currentClipSet.Any())
-                                {
-                                   // audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
-                                    bossDetection.playerSound("foot");
-                                    FindObjectOfType<SoundManager>().PlayFade("FootStep");
-                                }
-                            }
+                                    nextStepTime = headbobCycle + 0.5f;
+                                    if(dynamicFootstep.currentClipSet.Any())
+                                    {
+                                           // audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)],Volume/10);
+                                       
+                                        if (grass)
+                                        {
+                                            audioSource.PlayOneShot(grassFootSteps[Random.Range(0, grassFootSteps.Length)]);
+
+                                        }
+                                        else if (wood)
+                                        {
+                                            audioSource.PlayOneShot(woodFootSteps[Random.Range(0, woodFootSteps.Length)]);
+
+                                        }
+                                        else
+                                        {
+                                            bossDetection.playerSound("foot");
+                                            audioSource.PlayOneShot(concreteFootSteps[Random.Range(0, concreteFootSteps.Length)]);
+
+                                        }
+                                    }
+                            }*/
                         }
                         previousGrounded = true;
-                    } else
+                    }
+                    else
                     {
                         if(previousGrounded)
                         {
-                            if (dynamicFootstep.currentClipSet.Any())
-                            {
-                                //audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)], Volume / 10);
-                                bossDetection.playerSound("foot");
-                               FindObjectOfType<SoundManager>().PlayFade("FootStep");
-                            }
+                                if (dynamicFootstep.currentClipSet.Any())
+                                {
+                                    //audioSource.PlayOneShot(dynamicFootstep.currentClipSet[Random.Range(0, dynamicFootstep.currentClipSet.Count)], Volume / 10);
+                                       // bossDetection.playerSound("foot");
+                                   /* if (grass)
+                                    {
+                                        FindObjectOfType<SoundManager>().PlayOneShot("grassFoot");
+                                    }
+                                    else if (wood)
+                                    {
+                                        FindObjectOfType<SoundManager>().PlayOneShot("woodFoot");
+                                    }
+                                    else
+                                    {
+                                        FindObjectOfType<SoundManager>().PlayOneShot("FootStep");
+                                    }*/
+                                }
                         }
                         previousGrounded = false;
                     }
@@ -699,6 +816,14 @@ public class BETA_SETTINGS{
 
     }
 
+    public void damageJerk()
+    {
+        float xTilt = -springPosition * (jumpLandIntensity * 5.5f);
+        float bobSwayFactor = Mathf.Sin(Mathf.PI * (2 * headbobCycle + 0.5f));
+        float zTilt = bobSwayFactor * (headbobSwayAngle / 10) * headbobFade;
+        head.localRotation = Quaternion.Euler(xTilt, 0, zTilt);
+    }
+
     public void stopCrouching()
     {
         capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight, 5 * Time.deltaTime);
@@ -730,9 +855,12 @@ public class BETA_SETTINGS{
             playerCamera.fieldOfView = fOVKick.fovStart;
         } */
 
-    public IEnumerator CameraShake(float Duration, float Magnitude){
+    public IEnumerator CameraShake(float Duration, float Magnitude)
+    {
         float elapsed =0;
-        while(elapsed<Duration && enableCameraShake){
+   
+        while(elapsed<Duration && enableCameraShake)
+        {
             playerCamera.transform.localPosition =Vector3.MoveTowards(playerCamera.transform.localPosition, new Vector3(cameraStartingPosition.x+ Random.Range(-1,1)*Magnitude,cameraStartingPosition.y+Random.Range(-1,1)*Magnitude,cameraStartingPosition.z), Magnitude*2);
             yield return new WaitForSecondsRealtime(0.001f);
             elapsed += Time.deltaTime;

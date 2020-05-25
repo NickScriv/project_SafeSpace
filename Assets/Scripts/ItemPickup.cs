@@ -18,6 +18,11 @@ public class ItemPickup : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
         if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
             item.SetActive(false);
@@ -31,7 +36,9 @@ public class ItemPickup : MonoBehaviour
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
-            GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to pick up");
+            Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+            GUI.Label(label, "Press 'F' to pick up flare gun", GameManager.Instance.style);
+      
         }
     }
 

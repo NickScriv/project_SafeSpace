@@ -157,8 +157,8 @@ namespace Knife.RealBlood.SimpleController
 
         private void PausePlayer()
         {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            //Cursor.lockState = CursorLockMode.None;
+           // Cursor.visible = true;
             control.SetActive(true);
             Freeze(true);
             isPaused = true;

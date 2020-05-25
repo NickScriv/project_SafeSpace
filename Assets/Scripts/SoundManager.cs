@@ -14,6 +14,7 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager instance;
 
+  
 
     public void Play(string name)
     {
@@ -28,6 +29,19 @@ public class SoundManager : MonoBehaviour
         s.audioSource.Play();
     }
 
+    public void PlayOneShot(string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        if (s == null)
+        {
+            Debug.Log("Invalid Audio name");
+            return;
+        }
+
+        //if(!s.audioSource.isPlaying)
+        s.audioSource.PlayOneShot(s.audioClip);
+    }
+
     public void PlayFade(string name)
     {
         /*Sound s = Array.Find(sounds, sound => sound.name == name);
@@ -40,6 +54,32 @@ public class SoundManager : MonoBehaviour
 
         Play(name);
         //StartCoroutine(FadeIn(s, .01f, s.volume));
+    }
+
+    public void StopAllAudio()
+    {
+        AudioSource [] audioSources = FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
+        foreach (AudioSource audioS in audioSources)
+        {
+
+            audioS.Stop();
+
+        }
+    }
+
+    public void StopAllAudioFade(string name = "")
+    {
+        
+        foreach (Sound audioS in sounds)
+        {
+            if(audioS != null && audioS.audioClip.name != name)
+            {
+             
+                StartCoroutine(FadeOut(audioS, Time.deltaTime * 2f));
+            }
+               
+
+        }
     }
 
     public bool isPlaying(string name)
@@ -77,7 +117,7 @@ public class SoundManager : MonoBehaviour
         }
 
         if (s.audioSource.isPlaying)
-            StartCoroutine(FadeOut(s, .005f));
+            StartCoroutine(FadeOut(s, Time.deltaTime * 2f));
         
     }
 
@@ -87,7 +127,7 @@ public class SoundManager : MonoBehaviour
 
         s.audioSource.volume = 0;
         float audioVol = s.audioSource.volume;
-        Debug.Log("S Volume: " + s.audioSource.volume);
+      
         s.audioSource.Play();
         while (s.audioSource.volume < maxVolume)
         {
@@ -108,12 +148,10 @@ public class SoundManager : MonoBehaviour
         while (s.audioSource.volume > 0.01f)
         {
 
-            audioVol -= 0.1f;
-            Debug.Log(audioVol);
+            audioVol -= speed;
             s.audioSource.volume = audioVol;
             yield return new WaitForSecondsRealtime(0.01f);
         }
-        Debug.Log("stopppp");
         s.audioSource.volume = 0;
         s.audioSource.Stop();
         s.audioSource.volume = s.volume;
@@ -142,6 +180,7 @@ public class SoundManager : MonoBehaviour
         foreach (Sound clip in sounds)
         {
             clip.audioSource = gameObject.AddComponent<AudioSource>();
+            clip.audioSource.spatialBlend = 0.0f;
             clip.audioSource.clip = clip.audioClip;
             clip.audioSource.volume = clip.volume;
             clip.audioSource.pitch = clip.pitch;

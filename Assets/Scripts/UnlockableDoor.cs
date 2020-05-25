@@ -54,7 +54,9 @@ public class UnlockableDoor : MonoBehaviour
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
-            GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to interact");
+            Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+            GUI.Label(label, "Press 'F' to interact", GameManager.Instance.style);
+    
         }
     }
 

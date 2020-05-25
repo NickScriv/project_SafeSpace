@@ -25,7 +25,12 @@ public class pickupKey : MonoBehaviour
     // Main function
     void Update()
     {
-      if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
+        if (GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
       {
         
         itemPlayer.GetComponent<ItemPlayer>().pickedUp = true;
@@ -43,7 +48,9 @@ public class pickupKey : MonoBehaviour
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
-            GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to pick up");
+            Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+            GUI.Label(label, "Press 'F' to pick up keycard", GameManager.Instance.style);
+
         }
     }
 
