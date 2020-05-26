@@ -8,6 +8,7 @@
 //Upon walking into trigger area press "F" to open / close the door
 
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class OpenableDoor : MonoBehaviour
@@ -31,10 +32,15 @@ public class OpenableDoor : MonoBehaviour
     public Vector3 openedCenter;
     BoxCollider coll;
     GameObject terrain;
+    private TextMeshProUGUI interact;
+ 
+
 
 
     void Start()
     {
+       
+        interact = GameObject.FindGameObjectWithTag("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         coll = GetComponent<BoxCollider>();
         defaultRotationAngle = transform.localEulerAngles.y;
         currentRotationAngle = transform.localEulerAngles.y;
@@ -73,6 +79,8 @@ public class OpenableDoor : MonoBehaviour
             openDoor();
         }
 
+    
+
        
 
     }
@@ -81,6 +89,15 @@ public class OpenableDoor : MonoBehaviour
     {
        
         open = !open;
+        if (open)
+        {
+            interact.SetText("Press 'F' to close door");
+
+        }
+        else
+        {
+            interact.SetText("Press 'F' to open door");
+        }
         currentRotationAngle = transform.localEulerAngles.y;
         openTime = 0;
 
@@ -107,7 +124,7 @@ public class OpenableDoor : MonoBehaviour
     }
 
     // Display a simple info message when player is inside the trigger area
-    void OnGUI()
+  /*  void OnGUI()
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
@@ -124,13 +141,27 @@ public class OpenableDoor : MonoBehaviour
             }
             
         }
-    }
+    }*/
 
     // Activate the Main function when Player enter the trigger area
     void OnTriggerEnter(Collider other)
     {
+        if (!this.enabled)
+            return;
+
+
         if (other.CompareTag("Player") )
         {
+
+            if (open)
+            {
+                interact.SetText("Press 'F' to close door");
+
+            }
+            else
+            {
+                interact.SetText("Press 'F' to open door");
+            }
             enter = true;
         }
     }
@@ -138,9 +169,19 @@ public class OpenableDoor : MonoBehaviour
     // Deactivate the Main function when Player exit the trigger area
     void OnTriggerExit(Collider other)
     {
+        if (!this.enabled)
+            return;
+
         if (other.CompareTag("Player"))
         {
+            interact.SetText("");
             enter = false;
         }
     }
+
+    private void OnDisable()
+    {
+        interact.SetText("");
+    }
+
 }

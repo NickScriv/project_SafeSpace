@@ -21,8 +21,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		bool m_IsGrounded;
 		float m_OrigGroundCheckDistance;
 		const float k_Half = 0.5f;
-		public float m_TurnAmount;
-		public float m_ForwardAmount;
+		float m_TurnAmount;
+		float m_ForwardAmount;
 		Vector3 m_GroundNormal;
 		float m_CapsuleHeight;
 		Vector3 m_CapsuleCenter;
@@ -89,7 +89,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			{
 				Ray crouchRay = new Ray(m_Rigidbody.position + Vector3.up * m_Capsule.radius * k_Half, Vector3.up);
 				float crouchRayLength = m_CapsuleHeight - m_Capsule.radius * k_Half;
-				if (Physics.SphereCast(crouchRay, m_Capsule.radius * k_Half, crouchRayLength, Physics.AllLayers, QueryTriggerInteraction.Ignore))
+				if (Physics.SphereCast(crouchRay, m_Capsule.radius * k_Half, crouchRayLength))
 				{
 					m_Crouching = true;
 					return;
@@ -107,7 +107,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			{
 				Ray crouchRay = new Ray(m_Rigidbody.position + Vector3.up * m_Capsule.radius * k_Half, Vector3.up);
 				float crouchRayLength = m_CapsuleHeight - m_Capsule.radius * k_Half;
-				if (Physics.SphereCast(crouchRay, m_Capsule.radius * k_Half, crouchRayLength, Physics.AllLayers, QueryTriggerInteraction.Ignore))
+				if (Physics.SphereCast(crouchRay, m_Capsule.radius * k_Half, crouchRayLength))
 				{
 					m_Crouching = true;
 				}
@@ -115,9 +115,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		}
 
 
-        void UpdateAnimator(Vector3 move)
+		void UpdateAnimator(Vector3 move)
 		{
-            Debug.Log("Updateee");
 			// update the animator parameters
 			m_Animator.SetFloat("Forward", m_ForwardAmount, 0.1f, Time.deltaTime);
 			m_Animator.SetFloat("Turn", m_TurnAmount, 0.1f, Time.deltaTime);

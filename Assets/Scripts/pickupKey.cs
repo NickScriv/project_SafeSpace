@@ -7,6 +7,7 @@
 //Make sure the main Character is tagged "Player"
 //Upon walking into trigger area press "F" to open / close the door
 
+using TMPro;
 using UnityEngine;
 
 public class pickupKey : MonoBehaviour
@@ -18,8 +19,14 @@ public class pickupKey : MonoBehaviour
     public GameObject item;
     public GameObject itemPlayer;
     public PlayerInfo playerInfo;
+    private TextMeshProUGUI interact;
 
     bool enter = false;
+
+    private void Start()
+    {
+        interact = GameObject.Find("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+    }
 
 
     // Main function
@@ -30,21 +37,21 @@ public class pickupKey : MonoBehaviour
             this.enabled = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
+      if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
       {
         
         itemPlayer.GetComponent<ItemPlayer>().pickedUp = true;
         item.SetActive(false);
         numberOfCards++;
         playerInfo.collectedKey();
-        //FindObjectOfType<SoundManager>().Play("PickUpKey");
+    
         FindObjectOfType<SoundManager>().Play("PickUp");
 
         }
     }
 
     // Display a simple info message when player is inside the trigger area
-    void OnGUI()
+    /*void OnGUI()
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
@@ -52,13 +59,14 @@ public class pickupKey : MonoBehaviour
             GUI.Label(label, "Press 'F' to pick up keycard", GameManager.Instance.style);
 
         }
-    }
+    }*/
 
     // Activate the Main function when Player enter the trigger area
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            interact.SetText("Press 'F' to pick up keycard");
             enter = true;
         }
     }
@@ -68,7 +76,14 @@ public class pickupKey : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            interact.SetText("");
             enter = false;
         }
     }
+
+    private void OnDisable()
+    {
+        interact.SetText("");
+    }
+
 }

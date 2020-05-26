@@ -1,14 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class BatteryPickup : MonoBehaviour
 {
 
     public GameObject battery;
     public GameObject flashlight;
+    private TextMeshProUGUI interact;
 
     bool enter = false;
+
+    private void Start()
+    {
+        interact = GameObject.Find("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+    }
 
     void Update()
     {
@@ -26,15 +33,20 @@ public class BatteryPickup : MonoBehaviour
         }
     }
 
-    void OnGUI()
+    private void OnDisable()
     {
-        if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
-        {
-            Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
-            GUI.Label(label, "Press 'F' to pick up battery", GameManager.Instance.style);
-          
-        }
+        interact.SetText("");
     }
+
+    /* void OnGUI()
+     {
+         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
+         {
+             Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+             GUI.Label(label, "Press 'F' to pick up battery", GameManager.Instance.style);
+
+         }
+     }*/
 
     // Activate the Main function when Player enter the trigger area
     void OnTriggerEnter(Collider other)
@@ -42,6 +54,7 @@ public class BatteryPickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             enter = true;
+            interact.SetText("Press 'F' to pick up battery");
         }
     }
 
@@ -51,6 +64,7 @@ public class BatteryPickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             enter = false;
+            interact.SetText("");
         }
     }
 }

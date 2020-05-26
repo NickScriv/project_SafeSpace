@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class SpawnOffTriggerExit : MonoBehaviour
@@ -9,25 +10,29 @@ public class SpawnOffTriggerExit : MonoBehaviour
    Objectives objectiveScript;
    bool enter = false;
     bool first = true;
+    private TextMeshProUGUI interact;
 
     private void Start()
     {
         objectiveScript = objective.GetComponent<Objectives>();
+        interact = GameObject.Find("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-         if (other.gameObject.name == "Player" && first)
+        if (!this.enabled)
+            return;
+
+        if (other.gameObject.name == "Player" && first)
          {
-             first = false;
+            interact.SetText("This door requires 3 keys to unlock");
+            first = false;
              objectiveScript.objectiveCompleted(0);
              objectiveScript.popNotification("Find all 3 keys");
              objectiveScript.setObjective("Find all 3 keys");
              spawn.SetActive(false);
              enter = true;
          }
-     
-
 
     }
 
@@ -41,12 +46,13 @@ public class SpawnOffTriggerExit : MonoBehaviour
     {
         if (other.gameObject.name == "Player")
         {
+            interact.SetText("");
             enter = false;
             
         }
     }
 
-    void OnGUI()
+    /*void OnGUI()
     {
         if (GameManager.Instance.playerDead)
         {
@@ -60,6 +66,11 @@ public class SpawnOffTriggerExit : MonoBehaviour
             GUI.Label(label, "This door requires 3 keys to unlock", GameManager.Instance.style);
         }
       
+    }*/
+
+    private void OnDisable()
+    {
+        interact.SetText("");
     }
 
 

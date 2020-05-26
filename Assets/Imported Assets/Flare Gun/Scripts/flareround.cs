@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using TMPro;
 
 public class flareround : MonoBehaviour {
 	public GameObject flaregun;
 	public GameObject flareRound;
 	flaregun flare;
+    private TextMeshProUGUI interact;
 
 
 	bool enter = false;
@@ -12,6 +14,7 @@ public class flareround : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
+        interact = GameObject.Find("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 		flare = flaregun.GetComponent<flaregun>();
 	}
 	
@@ -34,29 +37,36 @@ public class flareround : MonoBehaviour {
 
 	}
 
-	void OnGUI()
+	/*void OnGUI()
 	{
 		if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
 		{
 			GUI.Label(new Rect(Screen.width / 2 - 75f, Screen.height - 100, 150, 30), "Press 'F' to pick up flare", GameManager.Instance.style);
 		}
-	}
+	}*/
 
 	// Activate the Main function when Player enter the trigger area
 	void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag("Player"))
 		{
-			enter = true;
+            interact.SetText("Press 'F' to pick up flare");
+            enter = true;
 		}
 	}
 
-	// Deactivate the Main function when Player exit the trigger area
-	void OnTriggerExit(Collider other)
+    private void OnDisable()
+    {
+        interact.SetText("");
+    }
+
+    // Deactivate the Main function when Player exit the trigger area
+    void OnTriggerExit(Collider other)
 	{
 		if (other.CompareTag("Player"))
 		{
-			enter = false;
+            interact.SetText("");
+            enter = false;
 		}
 	}
 }

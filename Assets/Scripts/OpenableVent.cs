@@ -7,6 +7,7 @@
 //Make sure the main Character is tagged "Player"
 //Upon walking into trigger area press "F" to open / close the door
 
+using TMPro;
 using UnityEngine;
 
 public class OpenableVent : MonoBehaviour
@@ -29,9 +30,11 @@ public class OpenableVent : MonoBehaviour
     Vector3 closedCenter;
     public Vector3 openedCenter;
     BoxCollider coll;
+    private TextMeshProUGUI interact;
 
     void Start()
     {
+        interact = GameObject.Find("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         coll = GetComponent<BoxCollider>();
         defaultRotationAngle = transform.localEulerAngles.x;
         currentRotationAngle = transform.localEulerAngles.x;
@@ -57,17 +60,20 @@ public class OpenableVent : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
             open = !open;
+           
             currentRotationAngle = transform.localEulerAngles.x;
             openTime = 0;
             source.PlayOneShot(clip);
 
             if (open)
             {
+                interact.SetText("Press 'F' to close vent");
                 coll.size = openedSize;
                 coll.center = openedCenter;
             }
             else
             {
+                interact.SetText("Press 'F' to open vent");
                 coll.size = closedSize;
                 coll.center = closedCenter;
             }
@@ -75,7 +81,7 @@ public class OpenableVent : MonoBehaviour
     }
 
     // Display a simple info message when player is inside the trigger area
-    void OnGUI()
+   /* void OnGUI()
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
@@ -92,13 +98,25 @@ public class OpenableVent : MonoBehaviour
 
 
         }
-    }
+    }*/
 
     // Activate the Main function when Player enter the trigger area
     void OnTriggerEnter(Collider other)
     {
+        if (!this.enabled)
+            return;
+
         if (other.CompareTag("Player"))
         {
+            if (open)
+            {
+                interact.SetText("Press 'F' to close vent");
+
+            }
+            else
+            {
+                interact.SetText("Press 'F' to open vent");
+            }
             enter = true;
         }
     }
@@ -106,9 +124,18 @@ public class OpenableVent : MonoBehaviour
     // Deactivate the Main function when Player exit the trigger area
     void OnTriggerExit(Collider other)
     {
+        if (!this.enabled)
+            return;
+
         if (other.CompareTag("Player"))
         {
+            interact.SetText("");
             enter = false;
         }
+    }
+
+    private void OnDisable()
+    {
+        interact.SetText("");
     }
 }
