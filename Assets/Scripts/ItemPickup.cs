@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ItemPickup : MonoBehaviour
 {
     public GameObject item;
     public GameObject itemPlayer;
+    private TextMeshProUGUI interact;
 
     ItemPlayer script;
 
@@ -13,6 +15,7 @@ public class ItemPickup : MonoBehaviour
 
     void Start()
     {
+        interact = GameObject.Find("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         script = itemPlayer.GetComponent<ItemPlayer>();
     }
 
@@ -32,7 +35,7 @@ public class ItemPickup : MonoBehaviour
         }
     }
 
-    void OnGUI()
+  /*  void OnGUI()
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
@@ -40,13 +43,14 @@ public class ItemPickup : MonoBehaviour
             GUI.Label(label, "Press 'F' to pick up flare gun", GameManager.Instance.style);
       
         }
-    }
+    }*/
 
     // Activate the Main function when Player enter the trigger area
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            interact.SetText("Press 'F' to pick up flare gun");
             enter = true;
         }
     }
@@ -56,7 +60,15 @@ public class ItemPickup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            interact.SetText("");
             enter = false;
         }
     }
+
+    private void OnDisable()
+    {
+        interact.SetText("");
+    }
+
+   
 }

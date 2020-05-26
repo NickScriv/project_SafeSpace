@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class DoorEvent : MonoBehaviour
@@ -17,11 +18,15 @@ public class DoorEvent : MonoBehaviour
     public AudioClip scareSound;
     AudioSource source;
     public Camera mainCamera;
-    
+    private TextMeshProUGUI interact;
+    bool scared = false;
+
 
     private void Start()
     {
+        scared = false;
         source = GetComponent<AudioSource>();
+        interact = GameObject.Find("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -35,10 +40,12 @@ public class DoorEvent : MonoBehaviour
             exitWall.SetActive(false);
             if (GameManager.Instance.eventNumber == 2)
             {
+                interact.SetText("Won't budge");
                 enter = true;
             }
             else if(GameManager.Instance.eventNumber == 3)
             {
+                interact.SetText("Still won't budge");
                 invisibleWall.SetActive(true);
                 RaycastHit hitScare;
                 Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
@@ -76,17 +83,16 @@ public class DoorEvent : MonoBehaviour
             
             RaycastHit hitScare;
             Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            if (Physics.SphereCast(ray, 0.37f, out hitScare, 5f, scareMask))
+            if (!scared && Physics.SphereCast(ray, 0.37f, out hitScare, 5f, scareMask))
             {
+
+
+                scared = true;  
+                source.PlayOneShot(scareSound);
+                enter = false;
+                interact.SetText("");
+                Invoke("scare", 0.75f);
                 
-               /* if(hitScare.transform.gameObject.CompareTag( "Boss"))
-                {*/
-                   
-                    source.PlayOneShot(scareSound);
-                    enter = false;
-                    Invoke("scare", 0.75f);
-                /*}*/
-               
               
 
             }
@@ -114,19 +120,28 @@ public class DoorEvent : MonoBehaviour
 
     }
 
+    private void OnDisable()
+    {
+        interact.SetText("");
+    }
+
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag( "Player") && GameManager.Instance.eventNumber == 2)
+        if (other.gameObject.CompareTag( "Player"))
         {
-
-            enter = false;
-            closeTrigger.SetActive(true);
-            GetComponent<BoxCollider>().enabled = false;
-            this.enabled = false;
+            if(GameManager.Instance.eventNumber == 2)
+            {
+                enter = false;
+                closeTrigger.SetActive(true);
+                GetComponent<BoxCollider>().enabled = false;
+                this.enabled = false;
+            }
+            interact.SetText("");
+           
         }
     }
 
-    void OnGUI()
+    /*void OnGUI()
     {
         if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
@@ -143,5 +158,5 @@ public class DoorEvent : MonoBehaviour
             }
 
         }
-    }
+    }*/
 }
