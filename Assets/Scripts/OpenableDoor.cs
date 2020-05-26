@@ -85,19 +85,23 @@ public class OpenableDoor : MonoBehaviour
 
     }
 
-    public void openDoor()
+    public void openDoor(bool eventDoor = false)
     {
        
         open = !open;
-        if (open)
+        if(!eventDoor)
         {
-            interact.SetText("Press 'F' to close door");
+            if (open)
+            {
+                interact.SetText("Press 'F' to close door");
 
+            }
+            else
+            {
+                interact.SetText("Press 'F' to open door");
+            }
         }
-        else
-        {
-            interact.SetText("Press 'F' to open door");
-        }
+        
         currentRotationAngle = transform.localEulerAngles.y;
         openTime = 0;
 
