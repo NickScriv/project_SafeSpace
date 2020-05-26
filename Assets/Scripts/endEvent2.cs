@@ -14,7 +14,7 @@ public class endEvent2 : MonoBehaviour
             wall.SetActive(true);
             if(hinge.GetComponent<OpenableDoor>().open)
             {
-                hinge.GetComponent<OpenableDoor>().openDoor();
+                hinge.GetComponent<OpenableDoor>().openDoor(true);
             }
           
             hinge.GetComponent<BoxCollider>().enabled = false;

@@ -23,7 +23,7 @@ public class MutentEvent4 : MonoBehaviour
     {
         if(hingeToSecondArea.GetComponent<OpenableDoor>().open)
         {
-            hingeToSecondArea.GetComponent<OpenableDoor>().openDoor();
+            hingeToSecondArea.GetComponent<OpenableDoor>().openDoor(true);
         }
 
         hingeToSecondArea.GetComponent<BoxCollider>().enabled = false;
