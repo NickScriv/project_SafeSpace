@@ -60,16 +60,17 @@ public class PlayerEnemyInteraction : MonoBehaviour
             int i = 0;
             while (i < hitColliders.Length)
             {
+                
                 if (hitColliders[i].gameObject.CompareTag("Boss"))
                 {
-                   // Debug.Log("Hit Boss");
+                   
                     hitColliders[i].transform.GetComponent<EnemyAI>().sight();
                     return;
                 }
 
                 if (hitColliders[i].CompareTag("Bug"))
                 {
-                   // Debug.Log("Hit bug");
+                 
                     hitColliders[i].transform.GetComponent<SmallAI>().sight();
                     return;
                 }

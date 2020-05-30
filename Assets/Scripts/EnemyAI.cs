@@ -44,6 +44,7 @@ public class EnemyAI : MonoBehaviour
     FirstPersonAIO firstPerson;
     bool above = false;
     public AudioClip monsterHurt;
+    
 
 
 
@@ -72,13 +73,14 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+      
         //speed.text = state;
        anim.SetFloat("velocity", agent.velocity.magnitude);
 
-         if (agent.desiredVelocity.magnitude > 0.05f)
+         if (agent.velocity.magnitude > 0.05f)
         {
             anim.SetBool("isWalking", true);
-            //RotateTowards(agent.steeringTarget);
+      
         }
         else
         {
@@ -200,7 +202,7 @@ public class EnemyAI : MonoBehaviour
         {
             agent.ResetPath();
   
-            StartCoroutine(CameraShaker.Instance.CameraShake(1.8f, .04f));
+            StartCoroutine(CameraShake(1.8f, .09f));
             gruntSource.Stop();
             anim.SetTrigger("scream");
             playScream(Random.Range(0, 4));
@@ -329,7 +331,7 @@ public class EnemyAI : MonoBehaviour
 
         if(Physics.Linecast(vision.position, player.transform.position, out hit, layerSightMask))
         {
-            //Debug.Log(hit.collider.gameObject.name);
+           
             if(hit.collider.gameObject.CompareTag("Player"))
             {
             
@@ -454,6 +456,24 @@ public class EnemyAI : MonoBehaviour
 
     }
 
+    IEnumerator CameraShake(float duration, float mag)
+    {
+        Vector3 originalPos = mainCamera.transform.localPosition;
+
+        float elapsed = 0.0f;
+
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * mag;
+            float y = Random.Range(-1f, 1f) * mag;
+
+            mainCamera.transform.localPosition = new Vector3(x, y, originalPos.z);
+            elapsed += Time.deltaTime;
+
+            yield return null;
+
+        }
+    }
 
 
     /* void OnDrawGizmosSelected()

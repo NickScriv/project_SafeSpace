@@ -67,7 +67,7 @@ public class TeleportMannaquin : MonoBehaviour
            
            
             agent.Warp(navHit.position);
-            // transform.position = ;
+       
             transform.LookAt(player.transform);
           
      

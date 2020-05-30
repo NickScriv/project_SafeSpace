@@ -13,6 +13,12 @@ public class Menu : MonoBehaviour
     AudioSource audio;
     public AudioClip press;
 
+    private void Awake()
+    {
+        credits.gameObject.SetActive(true);
+        credits.gameObject.SetActive(false);
+    }
+
     void Start()
     {
         if(GameManager.Instance != null)
@@ -22,7 +28,7 @@ public class Menu : MonoBehaviour
        
         cameraAnim = GetComponent<Animator>();
         audio = GetComponent<AudioSource>();
-        Time.fixedDeltaTime = 1/150f;
+        Time.fixedDeltaTime = 1/80f;
     }
 
     public void play()
