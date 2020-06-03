@@ -14,7 +14,7 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager instance;
 
-  
+
 
     public void Play(string name)
     {
@@ -158,15 +158,27 @@ public class SoundManager : MonoBehaviour
 
     }
 
+    private void Awake()
+    {
+        if (instance == null)
+        {
+         
+            PlayerPrefs.DeleteAll();
+          
+
+        }
+    }
 
     private void Start()
     {
-        //Screen.SetResolution(1920, 1080, false);
+        
         stoppedMenuMusic = false;
 
         if (instance == null)
         {
+           
             instance = this;
+            
         }
         else
         {
@@ -175,7 +187,7 @@ public class SoundManager : MonoBehaviour
         }
 
 
-
+       
         DontDestroyOnLoad(gameObject);
         foreach (Sound clip in sounds)
         {

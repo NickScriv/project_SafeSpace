@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
@@ -9,14 +10,21 @@ public class Menu : MonoBehaviour
     public Canvas main;
     public Canvas instructions;
     public Canvas credits;
+    public Canvas gammaCorrectionPanel;
     Animator cameraAnim;
-    AudioSource audio;
-    public AudioClip press;
+    public SetGamma gammaScript;
+    public ContrastBrightnessGammaCorrection gammaCorrectionScript;
+
+
 
     private void Awake()
     {
+        
         credits.gameObject.SetActive(true);
         credits.gameObject.SetActive(false);
+     
+
+
     }
 
     void Start()
@@ -27,13 +35,43 @@ public class Menu : MonoBehaviour
         }
        
         cameraAnim = GetComponent<Animator>();
-        audio = GetComponent<AudioSource>();
-        Time.fixedDeltaTime = 1/80f;
+
+        Time.fixedDeltaTime = 0.02f;
+        main.gameObject.SetActive(true);
+
+         if(PlayerPrefs.HasKey("GammaValue"))
+          {
+
+              gammaCorrectionPanel.gameObject.SetActive(false);
+              gammaCorrectionScript.enabled = false;
+              gammaScript.enabled = true;
+          }
+          else
+          {
+              gammaCorrectionPanel.gameObject.SetActive(true);
+              main.gameObject.SetActive(false);
+              gammaCorrectionScript.enabled = true;
+              gammaScript.enabled = false;
+
+          }
+    }
+
+    public void OnGammeConfirm()
+    {
+        FindObjectOfType<SoundManager>().Play("ButtonClick");
+        PlayerPrefs.SetFloat("GammaValue", gammaCorrectionScript.getGammaValue());
+        main.gameObject.SetActive(true);
+        gammaCorrectionPanel.gameObject.SetActive(false);
+        gammaCorrectionScript.enabled = false;
+        gammaScript.enabled = true;
+        FindObjectOfType<SoundManager>().Play("MenuMusic");
     }
 
     public void play()
     {
+
         FindObjectOfType<SoundManager>().Play("ButtonClick");
+        FindObjectOfType<SoundManager>().Stop("MenuMusic");
         SceneManager.LoadScene(1);
        
     }

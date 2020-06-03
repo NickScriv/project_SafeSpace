@@ -369,7 +369,8 @@ public class BETA_SETTINGS{
     private void Update()
     {
 
-        
+
+
         #region Look Settings - Update
 
         if (enableCameraMovement && !GameManager.Instance.isPaused)
@@ -395,7 +396,7 @@ public class BETA_SETTINGS{
         RaycastHit hitCrouch;
         if (Physics.SphereCast(transform.position, capsule.radius + .15f, Vector3.up, out hitCrouch, .7f))
         {
-            if (hitCrouch.transform.gameObject.CompareTag( "crouch"))
+            if (hitCrouch.transform.gameObject.CompareTag("crouch"))
             {
 
 
@@ -414,24 +415,25 @@ public class BETA_SETTINGS{
         }
 
 
-   
+
 
         #region  Input Settings - Update
-        didJump = canHoldJump? Input.GetButton("Jump"): Input.GetButtonDown("Jump");
-        if (!canJump){didJump = false;}
+        didJump = canHoldJump ? Input.GetButton("Jump") : Input.GetButtonDown("Jump");
+        if (!canJump) { didJump = false; }
         yVelocity = fps_Rigidbody.velocity.y;
-        if(IsGrounded && didJump && jumpPowerInternal > 0){
+        if (IsGrounded && didJump && jumpPowerInternal > 0)
+        {
             yVelocity += jumpPowerInternal;
             IsGrounded = false;
-            didJump=false;
-            if(playerCanMove){fps_Rigidbody.velocity = (Vector3.up * yVelocity);}
+            didJump = false;
+            if (playerCanMove) { fps_Rigidbody.velocity = (Vector3.up * yVelocity); }
         }
-            if(advanced._maxSlopeAngle>0 && IsGrounded && SlopeCheck()<=0.25f){yVelocity *= SlopeCheck();}
+        if (advanced._maxSlopeAngle > 0 && IsGrounded && SlopeCheck() <= 0.25f) { yVelocity *= SlopeCheck(); }
         //if(){didJump = false;}
 
-        if(_crouchModifiers.useCrouch)
+        if (_crouchModifiers.useCrouch)
         {
-            if(!_crouchModifiers.toggleCrouch)
+            if (!_crouchModifiers.toggleCrouch)
             {
                 isCrouching = _crouchModifiers.crouchOverride || Input.GetKey(_crouchModifiers.crouchKey);
             }
@@ -444,7 +446,7 @@ public class BETA_SETTINGS{
             }
         }
 
-        yVelocity = 0f;
+
         #endregion
 
         #region Movement Settings - Update
@@ -463,18 +465,16 @@ public class BETA_SETTINGS{
 
 
 
-        
-
-
-       
 
         //Debug.Log(dMove);
 
 
     }
 
-   private void FixedUpdate()
+    private void FixedUpdate()
     {
+
+
 
 
         #region Headbobbing Settings - FixedUpdate
@@ -574,7 +574,7 @@ public class BETA_SETTINGS{
             }
             if (drawStaminaMeter)
             {
-               
+
                 if (staminaInternal == staminaLevel)
                 {
                     StaminaMeterBG.color = Vector4.MoveTowards(StaminaMeterBG.color, new Vector4(0, 0, 0, 0), 0.15f);
@@ -621,7 +621,7 @@ public class BETA_SETTINGS{
         if (playerCanMove)
         {
             fps_Rigidbody.velocity = dMove;
-            //fps_Rigidbody.MovePosition(dMove);
+
         }
         else
         {
@@ -629,7 +629,7 @@ public class BETA_SETTINGS{
             fps_Rigidbody.velocity = Vector3.zero;
         }
 
-       if (dMove.magnitude > 0 || !IsGrounded)
+        if (dMove.magnitude > 0 || !IsGrounded)
         {
             capsule.sharedMaterial = advanced.zeroFrictionMaterial;
         }
@@ -644,7 +644,7 @@ public class BETA_SETTINGS{
 
             if (isCrouching)
             {
-                
+
                 capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight / _crouchModifiers.crouchHeight, 5 * Time.deltaTime);
                 walkSpeedInternal = walkSpeed * _crouchModifiers.crouchWalkSpeedMultiplier;
                 jumpPowerInternal = jumpPower * _crouchModifiers.crouchJumpPowerMultiplier;
@@ -652,7 +652,7 @@ public class BETA_SETTINGS{
             }
             else if (!above)
             {
-               
+
                 capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight, 5 * Time.deltaTime);
                 walkSpeedInternal = walkSpeed;
                 sprintSpeedInternal = sprintSpeed;
@@ -663,8 +663,6 @@ public class BETA_SETTINGS{
 
 
         #endregion
-
-
 
 
 

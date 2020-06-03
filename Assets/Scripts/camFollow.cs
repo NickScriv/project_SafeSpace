@@ -9,12 +9,14 @@ public class camFollow : MonoBehaviour
     Quaternion angle = Quaternion.identity;
 
 
+
     private void LateUpdate()
     {
         if(!GameManager.Instance.isPaused)
         {
-            
+
             transform.position = Vector3.SmoothDamp(transform.position, camPos.position , ref velocity, .05f);
+            //transform.position = camPos.position;
             transform.rotation = camPos.rotation;
             //transform.rotation = SmoothDamp(transform.rotation, camPos.rotation, ref angle, .05f);
         }
