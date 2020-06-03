@@ -9,6 +9,7 @@ public class sceneLoader : MonoBehaviour
     public void loadScene(string sceneName){
         FindObjectOfType<SoundManager>().Play("ButtonClick");
         SceneManager.LoadScene(sceneName);
+        FindObjectOfType<SoundManager>().Stop("MenuMusic");
     }
 
     public void quit(){

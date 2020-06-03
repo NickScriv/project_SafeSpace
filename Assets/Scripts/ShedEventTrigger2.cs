@@ -19,6 +19,7 @@ public class ShedEventTrigger2 : MonoBehaviour
     GameObject player;
     CapsuleCollider capsule;
     float colliderHeight;
+    public Camera playerCamera;
 
 
 
@@ -27,7 +28,7 @@ public class ShedEventTrigger2 : MonoBehaviour
     {
         if(other.gameObject.CompareTag( "Player"))
         {
-            mainCamera.GetComponent<AnalogGlitch>().enabled = true;
+            playerCamera.GetComponent<AnalogGlitch>().enabled = true;
             
             FindObjectOfType<SoundManager>().Play("glitch");
             Invoke("StopGlitch", .8f);
@@ -100,6 +101,6 @@ public class ShedEventTrigger2 : MonoBehaviour
 
     void StopGlitch()
     {
-        mainCamera.GetComponent<AnalogGlitch>().enabled = false;
+        playerCamera.GetComponent<AnalogGlitch>().enabled = false;
     }
 }

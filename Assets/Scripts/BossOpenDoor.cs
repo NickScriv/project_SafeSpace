@@ -4,19 +4,21 @@ using UnityEngine;
 
 public class BossOpenDoor : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             GetComponentInParent<EnemyAI>().sight();
         }
-        else if (other.gameObject.name == "door1" || other.gameObject.CompareTag( "door"))
+      
+        
+        if ( other.gameObject.CompareTag( "door"))
         {
 
-            GameObject door = other.gameObject;
-            GameObject hinge = door.transform.parent.gameObject;
+            GameObject hinge = other.gameObject;
+            
 
-
+          
             if(!hinge.GetComponent<OpenableDoor>().open)
             {
                

@@ -103,7 +103,7 @@ public class footsteps : MonoBehaviour
 
                 movementSource.clip = footstepWood[currentClip];
                 movementSource.volume = Random.Range(0.8f, 0.9f);
-                if ((Mathf.Abs(Input.GetAxis("Vertical")) == 1 || Mathf.Abs(Input.GetAxis("Horizontal")) == 1) && firstPersonScript.enabled && !firstPersonScript.isCrouching && firstPersonScript.playerCanMove && !playerRB.isKinematic)
+                if ((Mathf.Abs(Input.GetAxis("Vertical")) == 1 || Mathf.Abs(Input.GetAxis("Horizontal")) == 1) && firstPersonScript.enabled && !firstPersonScript.isCrouching && firstPersonScript.playerCanMove && !playerRB.isKinematic && playerRB.velocity.magnitude > 0.1f)
                 {
 
                     movementSource.PlayOneShot(movementSource.clip);
@@ -123,7 +123,7 @@ public class footsteps : MonoBehaviour
 
                 movementSource.clip = footstepGrass[currentClip];
                 movementSource.volume = Random.Range(0.8f, 0.9f);
-                if ((Mathf.Abs(Input.GetAxis("Vertical")) == 1 || Mathf.Abs(Input.GetAxis("Horizontal")) == 1) && firstPersonScript.enabled && !firstPersonScript.isCrouching && firstPersonScript.playerCanMove && !playerRB.isKinematic)
+                if ((Mathf.Abs(Input.GetAxis("Vertical")) == 1 || Mathf.Abs(Input.GetAxis("Horizontal")) == 1) && firstPersonScript.enabled && !firstPersonScript.isCrouching && firstPersonScript.playerCanMove && !playerRB.isKinematic && playerRB.velocity.magnitude > 0.1f)
                 {
 
                     movementSource.PlayOneShot(movementSource.clip);
@@ -139,7 +139,7 @@ public class footsteps : MonoBehaviour
                 }
                 movementSource.clip = footstepConcrete[currentClip];
                 movementSource.volume = Random.Range(0.8f, 0.9f);
-                if ((Mathf.Abs(Input.GetAxis("Vertical")) == 1 || Mathf.Abs(Input.GetAxis("Horizontal")) == 1) && firstPersonScript.enabled && !firstPersonScript.isCrouching && firstPersonScript.playerCanMove && !playerRB.isKinematic)
+                if ((Mathf.Abs(Input.GetAxis("Vertical")) == 1 || Mathf.Abs(Input.GetAxis("Horizontal")) == 1) && firstPersonScript.enabled && !firstPersonScript.isCrouching && firstPersonScript.playerCanMove && !playerRB.isKinematic && playerRB.velocity.magnitude > 0.1f)
                 {
 
                     movementSource.PlayOneShot(movementSource.clip);

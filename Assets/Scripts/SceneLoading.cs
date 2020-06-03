@@ -15,6 +15,7 @@ public class SceneLoading : MonoBehaviour
     public Transform spawnFlare;
     public Rigidbody flareBullet;
   
+  
     public GameObject muzzleParticles;
 
 
@@ -27,6 +28,7 @@ public class SceneLoading : MonoBehaviour
     {
         flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
         Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+     
 
         GUIStyle styleTest = new GUIStyle();
    

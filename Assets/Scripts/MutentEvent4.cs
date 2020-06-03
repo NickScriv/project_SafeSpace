@@ -34,7 +34,7 @@ public class MutentEvent4 : MonoBehaviour
         shedTrigger2.SetActive(false);
         FindObjectOfType<SoundManager>().Play("ScareEvent4");
         battery.SetActive(true);
-        
+    
         player.GetComponent<FirstPersonAIO>().playerCanMove = true;
         player.GetComponent<FirstPersonAIO>().enableCameraMovement = true;
         player.GetComponent<Rigidbody>().isKinematic = false;
@@ -61,9 +61,9 @@ public class MutentEvent4 : MonoBehaviour
     public void endScare()
     {
         scareScreen.SetActive(false);
-      
-        
 
+
+       
         FindObjectOfType<SoundManager>().Play("Music");
         shed.SetActive(false);
         terrain.SetActive(false);
