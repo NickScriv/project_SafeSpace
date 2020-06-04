@@ -1,0 +1,61 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Objectives : MonoBehaviour
+{
+    public GameObject itemPrefab;
+    public GameObject notification;
+    public Animator anim;
+   
+
+  
+
+    public void popNotification(string text)
+    {
+        FindObjectOfType<SoundManager>().Play("Objective");
+        notification.transform.GetChild(0).GetComponent<Text>().text = text;
+        notification.SetActive(true);
+        Invoke("FadeOut", 6f);
+
+       
+        
+    }
+    public void setObjective(string text)
+    {
+        GameObject item = Instantiate<GameObject>(itemPrefab);
+        item.transform.GetChild(0).GetComponent<Text>().text = "- " + text;
+        item.transform.SetParent(transform, false);
+    }
+
+    public void objectiveCompleted(int index)
+    {
+        GameObject Go = transform.GetChild(transform.childCount - 1).gameObject;
+        Color temp = Go.transform.GetChild(index).GetComponent<Text>().color;
+        temp.a = .35f;
+        Go.transform.GetChild(index).GetComponent<Text>().color = temp;
+    }
+
+    public int getLastChild()
+    {
+       GameObject Go = transform.GetChild(transform.childCount - 1).gameObject;
+       
+        return Go.transform.childCount - 1;
+    }
+
+    public void FadeOut()
+    {
+
+        anim.SetTrigger("FadeOut");
+        Invoke("diabaleNotification", 1.5f);
+
+    }
+
+    public void diabaleNotification()
+    {
+       
+        notification.SetActive(false);
+
+    }
+}

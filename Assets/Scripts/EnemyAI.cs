@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using EZCameraShake;
+using UnityStandardAssets.Characters.ThirdPerson;
 
 public class EnemyAI : MonoBehaviour
 {
+
     public AudioClip [] screams;
+    public AudioClip[] footsteps;
     NavMeshAgent agent;
     Transform player;
     Animator anim;
     public AudioClip footSounds;
-    AudioSource sound;
+    public AudioSource sound;
+    public AudioSource soundFoot;
     string state = "idle";
     public Transform vision;
     float waitSearch = 0f;
@@ -20,43 +26,123 @@ public class EnemyAI : MonoBehaviour
     float searchRadius = 20f;
     public GameObject deathcam;
     public Transform camPos;
-    //TODO: Change tags of walls to "Barrier"
+    public Camera mainCamera;
+    Rigidbody BossRb;
+    Rigidbody PlayerRb;
+    float dizzyTime = 15f;
+    float rotationSpeed = 2.7f;
+    //public Text speed;
+    Vector3 previousPos;
+    Vector3 direction;
+    Vector3 prevDirection;
+    public LayerMask layerSightMask;
+    public GameObject terrain;
+    public LayerMask hitLayerMask;
+    CapsuleCollider capsule;
+    public AudioClip[] gruntSounds;
+    public AudioSource gruntSource;
+    FirstPersonAIO firstPerson;
+    bool above = false;
+    public AudioClip monsterHurt;
+    
+
+
+
 
     // Start is called before the first frame update
     void Start()
     {
-
+       
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        sound = GetComponent<AudioSource>();
         agent.speed = 1.2f;
+        BossRb = GetComponent<Rigidbody>();
+        PlayerRb = player.GetComponent<Rigidbody>();
+        agent.updateRotation = false;
+        capsule = player.GetComponent<CapsuleCollider>();
+        StartCoroutine(playGruntSound());
+        firstPerson = player.GetComponent<FirstPersonAIO>();
         agent.updateRotation = true;
-      
 
+        previousPos = transform.position;
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
-        /* if(GetComponent<Rigidbody>().velocity.magnitude <= 0)
-         {
-             agent.updateRotation = false;
+      
+        //speed.text = state;
+       anim.SetFloat("velocity", agent.velocity.magnitude);
 
-         }
-         else
-         {
-             agent.updateRotation = true;
+         if (agent.velocity.magnitude > 0.05f)
+        {
+            anim.SetBool("isWalking", true);
+      
+        }
+        else
+        {
+            anim.SetBool("isWalking", false);
+        }
+       
 
-         }*/
 
-        Debug.Log(searchRadius);
-        Debug.Log(state);
-        Debug.DrawLine(vision.position, player.transform.position, Color.green);
-        anim.SetFloat("velocity", agent.velocity.magnitude);
+        if (GameManager.Instance.isEnd)
+        {
+            agent.enabled = false;
+            gameObject.SetActive(false);
+        }
+
+        
+     
+
+       
+
+
+
+
+        if (state != "kill" && state != "DoNothing" && GameManager.Instance.playerDead)
+        {
+            state = "DoNothing";
+            if (agent.isActiveAndEnabled)
+            {
+
+
+                agent.isStopped = true;
+                agent.ResetPath();
+            }
+        }
+
+    
+
+        if ( (state == "idle" || state == "search"))
+        {
+
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position + new Vector3(0, 1f, 0), 1.5f);
+            int i = 0;
+            while (i < hitColliders.Length)
+            {
+                if (hitColliders[i].gameObject.CompareTag("Barrier") && hitColliders[i].gameObject != null)
+                {
+
+                    agent.ResetPath();
+                 
+                    state = "idle";
+                    anim.SetBool("isWalking", true);
+                    break;
+                }
+                i++;
+            }
+  
+        }
+
+    
+
 
         if (state == "idle")
-        {
+            {
             Vector3 randomPos = Random.insideUnitSphere * searchRadius;
             NavMeshHit navHit;
             NavMesh.SamplePosition(transform.position + randomPos, out navHit, 20f, NavMesh.AllAreas);
@@ -67,12 +153,20 @@ public class EnemyAI : MonoBehaviour
                 searchRadius += 2.5f;
 
                 if (searchRadius > 20f)
-                {
+                { 
+                    FindObjectOfType<SoundManager>().StopFade("ChaseMusic");                     
+                    if(!FindObjectOfType<SoundManager>().isPlaying("Music"))
+                    {
+                        FindObjectOfType<SoundManager>().PlayFade("Music");
+                    }
+                    
+                
                     highAlert = false;
                     agent.speed = 1.2f;
                 }
             }
             agent.SetDestination(navHit.position);
+            anim.SetBool("isWalking", true);
             state = "walk";
         }
 
@@ -80,8 +174,9 @@ public class EnemyAI : MonoBehaviour
         {
             if (agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
             {
+
                 state = "search";
-                waitSearch = 4f;
+                waitSearch = 5f;
             }
 
 
@@ -89,15 +184,8 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "search")//How long he stops for and looks around
         {
-            RaycastHit hit;
-            if (Physics.Raycast(vision.position, vision.forward, out hit, 3.5f))
-            {
-                if(hit.collider.gameObject.tag == "Barrier")
-                {
-                    Debug.Log("SOmewhere else");
-                    state = "idle";
-                }
-            }
+            
+            
 
             if (waitSearch > 0f)
             {
@@ -106,13 +194,16 @@ public class EnemyAI : MonoBehaviour
             else
             {
                 state = "idle";
+                return;
             }
         }
 
-        //TODO: Implement a shout state
         if (state == "shout")
         {
             agent.ResetPath();
+  
+            StartCoroutine(CameraShake(1.8f, .09f));
+            gruntSource.Stop();
             anim.SetTrigger("scream");
             playScream(Random.Range(0, 4));
             state = "shouting";
@@ -122,32 +213,46 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "chase")
         {
-            agent.speed = 3f;
+            agent.speed = 3.5f;
             chaseTime -= Time.deltaTime;
             agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
 
             if (distance > 25f || chaseTime <= 0)
             {
+               // Debug.Log("stop chasing");
                 state = "hunt";
             }
 
-            else if (distance <= 1.7f)
+            else if (distance <= 2.5f && state != "stay")
             {
+              
                 RaycastHit hit;
-                if (Physics.Linecast(vision.position, player.transform.position, out hit))
+                if (Physics.Linecast(vision.position, player.transform.position, out hit, hitLayerMask))
                 {
-                    if (hit.collider.gameObject.tag == "Player")
+                   
+                    if (hit.collider.gameObject.CompareTag("Player"))
                     {
+                        above = firstPerson.above;
+                        firstPerson._crouchModifiers.useCrouch = false;
+                        firstPerson.enableCameraMovement = false;
+                        firstPerson.playerCanMove = false;
+                        firstPerson.enabled = false;
+                        GameManager.Instance.killedBy = "mutant";
+                        GameManager.Instance.playerDead = true;
                         agent.isStopped = true;
+                        agent.ResetPath();
                         GetComponent<Rigidbody>().freezeRotation = true;
+                        BossRb.velocity = Vector3.zero;
+                        BossRb.angularVelocity = Vector3.zero;
+                        transform.LookAt(player.transform.position);
                         state = "kill";
-                        player.GetComponent<FirstPersonAIO>().enabled = false;
-                        deathcam.SetActive(true);
-                        deathcam.transform.position = Camera.main.transform.position;
-                        deathcam.transform.rotation = Camera.main.transform.rotation;
-                        Camera.main.gameObject.SetActive(false);
+                       
+                        PlayerRb.velocity = Vector3.zero;
+                        PlayerRb.angularVelocity = Vector3.zero;
+                        PlayerRb.useGravity = false;
                         anim.SetTrigger("AttackPlayer");
+                        anim.speed = .8f;
                     }
                 }
             }
@@ -170,44 +275,66 @@ public class EnemyAI : MonoBehaviour
 
         if (state == "kill")
         {
-            deathcam.transform.position = Vector3.Slerp(deathcam.transform.position, camPos.position, 20f * Time.deltaTime);
-            deathcam.transform.rotation = Quaternion.Slerp(deathcam.transform.rotation, camPos.rotation, 20f * Time.deltaTime);
+            if(!above)
+            {
+                stopCrouching();
+            }
+           
+            Quaternion lookOnLook = Quaternion.LookRotation(camPos.transform.position - player.transform.position);
+            mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, lookOnLook, 5f * Time.deltaTime);
 
         }
 
+      /*  if (state == "stay")
+        {
+
+            //Do Nothing
+        }
+
+        if (state == "shouting")
+        {
+
+            //Do Nothing
+        }*/
+
+
+    
 
 
 
     }
 
-    private void LateUpdate()
+    private void RotateTowards(Vector3 target)
     {
-        /*if (agent.velocity.sqrMagnitude > Mathf.Epsilon)
-        {
-            transform.rotation = Quaternion.LookRotation(agent.velocity.normalized);
-        }*/
+        if (GameManager.Instance.playerDead)
+            return;
+        prevDirection = direction;
+        direction = (target - transform.position).normalized;
+        if (direction != prevDirection)
+            anim.SetBool("isWalking", true);
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
     }
 
     void reset()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); //TODO: Change this to transition to game over scene
+       
+        Time.timeScale = 0;
+        GameManager.Instance.fadeIn();
+        FindObjectOfType<SoundManager>().Play("BloodHit");
     }
 
     public void sight()
     {
         RaycastHit hit;
 
-        if(Physics.Linecast(vision.position, player.transform.position, out hit))
+        if(Physics.Linecast(vision.position, player.transform.position, out hit, layerSightMask))
         {
-            //Debug.Log("Hit " + hit.collider.gameObject.name);
-
-            if(hit.collider.gameObject.tag == "Player")
+           
+            if(hit.collider.gameObject.CompareTag("Player"))
             {
-               /* if(state != "chase" && state != "kill")//TODO: change this when I add a shout state
-                {
-                    scream.Play();
-
-                }*/
+            
 
                 if(state == "search" || state == "walk")
                 {
@@ -218,21 +345,141 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    public void footstep()
+    public void footstep(int num)
     {
-        /*sound.clip = footSounds;
-        sound.Play();*/
+        if (!terrain.activeInHierarchy)
+        {
+            
+            soundFoot.PlayOneShot(footsteps[Random.Range(0, 5)]);
+        }
+            
+        
     }
+
+
 
     public void endShout()
     {
         chaseTime = 15f;
         state = "chase";
+        FindObjectOfType<SoundManager>().StopFade("Music");
+        if(!FindObjectOfType<SoundManager>().isPlaying("ChaseMusic"))
+        {
+            FindObjectOfType<SoundManager>().PlayFade("ChaseMusic");
+        }
+        
     }
 
     public void playScream(int num)
     {
+        
         sound.clip = screams[num];
         sound.Play();
     }
+
+    public void hitByFlare()
+    {
+        state = "stay";
+        anim.SetTrigger("hit");
+        StopCoroutine("endHit");
+        StartCoroutine("endHit", 15f);
+        agent.ResetPath();
+        agent.isStopped = true;
+        BossRb.velocity = Vector3.zero;
+        BossRb.angularVelocity = Vector3.zero;
+        
+    }
+
+    public IEnumerator endHit(float time)
+    {
+        playHurtSound();
+        yield return new WaitForSeconds(time);
+        if(gruntSource.isPlaying)
+        {
+            gruntSource.Stop();
+        }
+        agent.isStopped = false;
+        state = "idle";
+        highAlert = true;
+        searchRadius = 22;
+        FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
+        if (!FindObjectOfType<SoundManager>().isPlaying("Music"))
+        {
+            FindObjectOfType<SoundManager>().PlayFade("Music");
+        }
+        anim.SetTrigger("backToIdle");
+    }
+
+    public void playHurtSound()
+    {
+        if(sound.isPlaying || gruntSource.isPlaying)
+        {
+            Invoke("playHurtSound", 1f);
+        }
+        else
+        {
+            gruntSource.PlayOneShot(monsterHurt);
+        }
+    }
+
+    public string getState()
+    {
+        return state;
+    }
+
+    public void setState(string stateSet)
+    {
+        state = stateSet;
+    }
+
+    void stopCrouching()
+    {
+        //capsule.height = player.GetComponent<FirstPersonAIO>()._crouchModifiers.colliderHeight;
+       capsule.height = Mathf.MoveTowards(capsule.height, player.GetComponent<FirstPersonAIO>()._crouchModifiers.colliderHeight, 6f * Time.deltaTime);
+
+    }
+
+    IEnumerator playGruntSound()
+    {
+        yield return new WaitForSeconds(Random.Range(7f, 15f));
+        int i = Random.Range(0, gruntSounds.Length);
+        if (!sound.isPlaying && (state == "walk" || state == "idle" || state == "search"))
+        {
+            //Debug.Log("play monster sound");
+            gruntSource.PlayOneShot(gruntSounds[i]);
+           
+        }
+
+        yield return new WaitForSeconds(gruntSounds[i].length);
+        StartCoroutine(playGruntSound());
+
+
+    }
+
+    IEnumerator CameraShake(float duration, float mag)
+    {
+        Vector3 originalPos = mainCamera.transform.localPosition;
+
+        float elapsed = 0.0f;
+
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * mag;
+            float y = Random.Range(-1f, 1f) * mag;
+
+            mainCamera.transform.localPosition = new Vector3(x, y, originalPos.z);
+            elapsed += Time.deltaTime;
+
+            yield return null;
+
+        }
+    }
+
+
+    /* void OnDrawGizmosSelected()
+     {
+         // Draw a yellow sphere at the transform's position
+         Gizmos.color = Color.yellow;
+         Gizmos.DrawSphere(transform.position + new Vector3(0, 1f, 0), 1.5f);
+     }*/
 }

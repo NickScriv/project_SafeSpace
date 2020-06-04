@@ -1,0 +1,5 @@
+Not: 8
+
+Barley: 25
+
+Visible: 110

@@ -7,6 +7,8 @@
 //Make sure the main Character is tagged "Player"
 //Upon walking into trigger area press "F" to open / close the door
 
+using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class OpenableDoor : MonoBehaviour
@@ -18,51 +20,152 @@ public class OpenableDoor : MonoBehaviour
     public AudioSource source;
     public AudioClip clip;
 
-    bool open = false;
-    bool enter = false;
+    public bool open = false;
+    public bool enter = false;
 
     float defaultRotationAngle;
     float currentRotationAngle;
     float openTime = 0;
+   Vector3 closedSize;
+    public Vector3 openedSize;
+     Vector3 closedCenter;
+    public Vector3 openedCenter;
+    BoxCollider coll;
+    GameObject terrain;
+    private TextMeshProUGUI interact;
+ 
+
+
 
     void Start()
     {
+       
+        interact = GameObject.FindGameObjectWithTag("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        coll = GetComponent<BoxCollider>();
         defaultRotationAngle = transform.localEulerAngles.y;
         currentRotationAngle = transform.localEulerAngles.y;
+        closedSize = coll.size;
+        closedCenter = coll.center;
+        GameObject[] objs = Resources.FindObjectsOfTypeAll<GameObject>() as GameObject[];
+        for (int i = 0; i < objs.Length; i++)
+        {
+            if (objs[i].hideFlags == HideFlags.None)
+            {
+                if (objs[i].name == "Terrain")
+                {
+                    terrain = objs[i];
+                }
+            }
+        }
+
     }
 
     // Main function
     void Update()
     {
-        if(openTime < 1)
+        if (GameManager.Instance != null && GameManager.Instance.playerDead)
+        {
+            this.enabled = false;
+        }
+
+        if (openTime < 1)
         {
             openTime += Time.deltaTime * openSpeed;
         }
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, Mathf.LerpAngle(currentRotationAngle, defaultRotationAngle + (open ? doorOpenAngle : 0), openTime), transform.localEulerAngles.z);
 
-        if (Input.GetKeyDown(KeyCode.F) && enter)
+        if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
-            open = !open;
-            currentRotationAngle = transform.localEulerAngles.y;
-            openTime = 0;
-	    source.PlayOneShot(clip);
+            openDoor();
+        }
+
+    
+
+       
+
+    }
+
+    public void openDoor(bool eventDoor = false)
+    {
+       
+        open = !open;
+        if(!eventDoor)
+        {
+            if (open)
+            {
+                interact.SetText("Press 'F' to close door");
+
+            }
+            else
+            {
+                interact.SetText("Press 'F' to open door");
+            }
+        }
+        
+        currentRotationAngle = transform.localEulerAngles.y;
+        openTime = 0;
+
+    
+
+        if (!terrain.activeInHierarchy)
+        {
+            source.PlayOneShot(clip);
+        }
+       
+
+        if(open)
+        {
+         
+            coll.size = openedSize;
+            coll.center = openedCenter;
+        }
+        else
+        {
+           
+            coll.size = closedSize;
+            coll.center = closedCenter;
         }
     }
 
     // Display a simple info message when player is inside the trigger area
-    void OnGUI()
+  /*  void OnGUI()
     {
-        if (enter)
+        if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
         {
-            GUI.Label(new Rect(Screen.width / 2 - 75, Screen.height - 100, 150, 30), "Press 'F' to interact");
+            if(open)
+            {
+                Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+                GUI.Label(label, "Press 'F' to close door", GameManager.Instance.style);
+
+            }
+            else
+            {
+                Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
+                GUI.Label(label, "Press 'F' to open door", GameManager.Instance.style);
+            }
+            
         }
-    }
+    }*/
 
     // Activate the Main function when Player enter the trigger area
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (!this.enabled)
+            return;
+
+
+        if (other.CompareTag("Player") )
         {
+
+            if (open)
+            {
+                interact.SetText("Press 'F' to close door");
+
+            }
+            else
+            {
+                interact.SetText("Press 'F' to open door");
+            }
             enter = true;
         }
     }
@@ -70,9 +173,19 @@ public class OpenableDoor : MonoBehaviour
     // Deactivate the Main function when Player exit the trigger area
     void OnTriggerExit(Collider other)
     {
+        if (!this.enabled)
+            return;
+
         if (other.CompareTag("Player"))
         {
+            interact.SetText("");
             enter = false;
         }
     }
+
+    private void OnDisable()
+    {
+        interact.SetText("");
+    }
+
 }

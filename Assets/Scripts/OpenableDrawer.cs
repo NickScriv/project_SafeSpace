@@ -27,7 +27,7 @@
          {
              player_inrange = true;
              CancelInvoke("IdleCloseDoor");
-             Debug.Log("You entered the trigger");
+        
          }
      }
  
@@ -36,7 +36,7 @@
          if (other.name == "Player")
          {
              player_inrange = false;
-             Debug.Log("You left the trigger");
+          
              Invoke("IdleCloseDoor", 5f);
          }
      }
@@ -50,7 +50,7 @@
          {
              wanted_open = !wanted_open;
              CancelInvoke("IdleCloseDoor");
-             Debug.Log("You want to switch the door");
+             
          }
  
          //if they want to be open, but aren't (it should stop when it reaches state_open)
