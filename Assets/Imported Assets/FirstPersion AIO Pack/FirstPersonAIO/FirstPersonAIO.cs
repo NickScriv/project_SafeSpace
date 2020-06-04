@@ -399,19 +399,21 @@ public class BETA_SETTINGS{
             if (hitCrouch.transform.gameObject.CompareTag("crouch"))
             {
 
-
+                _crouchModifiers.crouchOverride = true;
                 above = true;
             }
             else
             {
 
                 above = false;
+                _crouchModifiers.crouchOverride = false;
             }
 
         }
         else
         {
             above = false;
+            _crouchModifiers.crouchOverride = false;
         }
 
 
@@ -644,7 +646,7 @@ public class BETA_SETTINGS{
 
             if (isCrouching)
             {
-
+                
                 capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight / _crouchModifiers.crouchHeight, 5 * Time.deltaTime);
                 walkSpeedInternal = walkSpeed * _crouchModifiers.crouchWalkSpeedMultiplier;
                 jumpPowerInternal = jumpPower * _crouchModifiers.crouchJumpPowerMultiplier;
@@ -652,7 +654,7 @@ public class BETA_SETTINGS{
             }
             else if (!above)
             {
-
+                
                 capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight, 5 * Time.deltaTime);
                 walkSpeedInternal = walkSpeed;
                 sprintSpeedInternal = sprintSpeed;
