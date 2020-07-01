@@ -34,16 +34,16 @@ public class MutentEvent4 : MonoBehaviour
         shedTrigger2.SetActive(false);
         FindObjectOfType<SoundManager>().Play("ScareEvent4");
         battery.SetActive(true);
-    
+        player.transform.position = playerSpawnBack.position;
+        player.transform.rotation = playerSpawnBack.rotation;
         player.GetComponent<FirstPersonAIO>().playerCanMove = true;
         player.GetComponent<FirstPersonAIO>().enableCameraMovement = true;
-        player.GetComponent<Rigidbody>().isKinematic = false;
+        //player.GetComponent<Rigidbody>().isKinematic = false;
         player.GetComponent<FirstPersonAIO>().originalRotation = playerSpawnBack.localRotation.eulerAngles;
         player.GetComponent<FirstPersonAIO>().followAngles = Vector3.zero;
         player.GetComponent<FirstPersonAIO>().targetAngles = playerSpawnBack.localRotation.eulerAngles;
-        player.transform.position = playerSpawnBack.position;
-        player.transform.rotation = playerSpawnBack.rotation;
-        mainCamera.transform.rotation = playerSpawnBack.rotation;
+       
+        //mainCamera.transform.rotation = playerSpawnBack.rotation;
 
 
 

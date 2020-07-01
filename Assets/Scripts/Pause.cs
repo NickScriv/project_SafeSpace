@@ -97,8 +97,8 @@ public class Pause : MonoBehaviour
         FindObjectOfType<SoundManager>().StopFade("Music");
         FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
         GameManager.Instance.killedBy = "nothing";
-        GameManager.Instance.nextScene = 0;
-        SceneManager.LoadScene(1);
+        GameManager.Instance.nextScene = 1;
+        SceneManager.LoadScene(2);
         GameManager.Instance.eventNumber = 1;
        
     }
@@ -125,8 +125,8 @@ public class Pause : MonoBehaviour
         StopAudio();
         Time.timeScale = 1;
         GameManager.Instance.killedBy = "nothing";
-        GameManager.Instance.nextScene = 2;
-        SceneManager.LoadScene(1);
+        GameManager.Instance.nextScene = 3;
+        SceneManager.LoadScene(2);
         GameManager.Instance.eventNumber++;
     }
 }

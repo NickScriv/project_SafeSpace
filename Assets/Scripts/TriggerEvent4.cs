@@ -14,6 +14,7 @@ public class TriggerEvent4 : MonoBehaviour
     public Camera cameraMain;
     public Material sky;
     public GameObject battery;
+    public FirstPersonAIO firstPerson;
 
 
     private void OnTriggerEnter(Collider other)
@@ -23,12 +24,9 @@ public class TriggerEvent4 : MonoBehaviour
             exitWall.SetActive(false);
            
             FindObjectOfType<SoundManager>().StopAllAudioFade("forest");
-            player.GetComponent<Rigidbody>().isKinematic = true;
-            player.GetComponent<FirstPersonAIO>().playerCanMove = false;
-            player.GetComponent<FirstPersonAIO>().enableCameraMovement = false;
-            //Cursor.lockState = CursorLockMode.None;
+            firstPerson.playerCanMove = false;
+            firstPerson.enableCameraMovement = false;
        
-            // player.GetComponent<FirstPersonAIO>().enabled = false;
             terrain.SetActive(true);
             shed.SetActive(true);
             transitionScreen.SetActive(true);
@@ -43,15 +41,16 @@ public class TriggerEvent4 : MonoBehaviour
         
         DirLight.SetActive(true);
         battery.SetActive(false);
-        player.GetComponent<FirstPersonAIO>().playerCanMove = true;
-        player.GetComponent<Rigidbody>().isKinematic = false;
-        player.GetComponent<FirstPersonAIO>().enableCameraMovement = true;
-        player.GetComponent<FirstPersonAIO>().originalRotation = SpawnToLocation.localRotation.eulerAngles;
-        player.GetComponent<FirstPersonAIO>().followAngles = Vector3.zero;
-        player.GetComponent<FirstPersonAIO>().targetAngles = SpawnToLocation.localRotation.eulerAngles;
         player.transform.position = SpawnToLocation.position;
         player.transform.rotation = SpawnToLocation.rotation;
-        cameraMain.transform.rotation = SpawnToLocation.rotation;
+        //cameraMain.transform.rotation = SpawnToLocation.rotation;
+        firstPerson.playerCanMove = true;
+        firstPerson.enableCameraMovement = true;
+        firstPerson.originalRotation = SpawnToLocation.localRotation.eulerAngles;
+        firstPerson.followAngles = Vector3.zero;
+        firstPerson.targetAngles = SpawnToLocation.localRotation.eulerAngles;
+
+      
 
         transitionScreen.GetComponent<Animator>().SetTrigger("FadeOut");
         FindObjectOfType<SoundManager>().Play("forest");

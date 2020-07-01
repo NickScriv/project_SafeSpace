@@ -20,6 +20,7 @@ public class ShedEventTrigger2 : MonoBehaviour
     CapsuleCollider capsule;
     float colliderHeight;
     public Camera playerCamera;
+    public Camera itemCamera;
 
 
 
@@ -29,7 +30,8 @@ public class ShedEventTrigger2 : MonoBehaviour
         if(other.gameObject.CompareTag( "Player"))
         {
             playerCamera.GetComponent<AnalogGlitch>().enabled = true;
-            
+            itemCamera.GetComponent<AnalogGlitch>().enabled = true;
+
             FindObjectOfType<SoundManager>().Play("glitch");
             Invoke("StopGlitch", .8f);
             player = other.gameObject;
@@ -41,7 +43,8 @@ public class ShedEventTrigger2 : MonoBehaviour
             //Do Jump scare
             player.GetComponent<FirstPersonAIO>().enableCameraMovement = false;
             player.GetComponent<FirstPersonAIO>().playerCanMove = false;
-            player.GetComponent<Rigidbody>().isKinematic = true;
+           // player.GetComponent<CharacterController>().stepOffset = 0f;
+            //player.GetComponent<Rigidbody>().isKinematic = true;
             Vector3 dir = (camPos1.position - player.transform.position).normalized;
             float dot = Vector3.Dot(dir, player.transform.forward);
             if(dot < 0)
@@ -80,8 +83,8 @@ public class ShedEventTrigger2 : MonoBehaviour
 
     void stopCrouching()
     {
-        capsule.height = colliderHeight;
-        //capsule.height = Mathf.MoveTowards(capsule.height, colliderHeight, 5f * Time.deltaTime);
+      
+        capsule.height = Mathf.MoveTowards(capsule.height, 2, 5f * Time.deltaTime);
 
     }
 
@@ -95,6 +98,7 @@ public class ShedEventTrigger2 : MonoBehaviour
             
             Quaternion lookOnLook = Quaternion.LookRotation(camPos.transform.position - playerTrans.position);
             mainCamera.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, lookOnLook, 5f * Time.deltaTime);
+            stopCrouching();
         }
         
     }
@@ -102,5 +106,6 @@ public class ShedEventTrigger2 : MonoBehaviour
     void StopGlitch()
     {
         playerCamera.GetComponent<AnalogGlitch>().enabled = false;
+        itemCamera.GetComponent<AnalogGlitch>().enabled = false;
     }
 }

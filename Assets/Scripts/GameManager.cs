@@ -54,8 +54,9 @@ public class GameManager : MonoBehaviour
 
     public void fadeIn()
     {
-        
+        FindObjectOfType<SoundManager>().Play("BloodHit");
         FindObjectOfType<SoundManager>().StopFade("Music");
+       
         FindObjectOfType<SoundManager>().StopFade("ChaseMusic");
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

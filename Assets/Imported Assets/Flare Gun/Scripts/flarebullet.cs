@@ -37,7 +37,7 @@ public class flarebullet : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (SceneManager.GetActiveScene().buildIndex == 1)
+        if (SceneManager.GetActiveScene().buildIndex == 2)
         {
             return;
         }

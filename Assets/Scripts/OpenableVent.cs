@@ -31,9 +31,12 @@ public class OpenableVent : MonoBehaviour
     public Vector3 openedCenter;
     BoxCollider coll;
     private TextMeshProUGUI interact;
+    bool playerUnder = false;
+    FirstPersonAIO firstPersonScript;
 
     void Start()
     {
+        playerUnder = false;
         interact = GameObject.Find("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         coll = GetComponent<BoxCollider>();
         defaultRotationAngle = transform.localEulerAngles.x;
@@ -41,6 +44,7 @@ public class OpenableVent : MonoBehaviour
         closedSize = coll.size;
         closedCenter = coll.center;
         source = GetComponent<AudioSource>();
+        firstPersonScript = GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonAIO>();
     }
 
     // Main function
@@ -78,6 +82,8 @@ public class OpenableVent : MonoBehaviour
                 coll.center = closedCenter;
             }
         }
+
+       
     }
 
     // Display a simple info message when player is inside the trigger area

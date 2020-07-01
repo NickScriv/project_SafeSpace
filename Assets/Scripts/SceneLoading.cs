@@ -35,6 +35,8 @@ public class SceneLoading : MonoBehaviour
 
         styleTest.normal.textColor = Color.white;
         styleTest.alignment = TextAnchor.MiddleCenter;
+
+     
        
 
         if (GameManager.Instance == null)
@@ -73,7 +75,7 @@ public class SceneLoading : MonoBehaviour
     {
         if(GameManager.Instance == null)
         {
-             gameLevel = SceneManager.LoadSceneAsync(2);
+             gameLevel = SceneManager.LoadSceneAsync(3);
         }
         else
         {

@@ -72,6 +72,7 @@ public class OpenableDoor : MonoBehaviour
         {
             openTime += Time.deltaTime * openSpeed;
         }
+
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, Mathf.LerpAngle(currentRotationAngle, defaultRotationAngle + (open ? doorOpenAngle : 0), openTime), transform.localEulerAngles.z);
 
         if (Input.GetKeyDown(KeyCode.F) && enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
@@ -84,6 +85,8 @@ public class OpenableDoor : MonoBehaviour
        
 
     }
+
+   
 
     public void openDoor(bool eventDoor = false)
     {
@@ -127,25 +130,6 @@ public class OpenableDoor : MonoBehaviour
         }
     }
 
-    // Display a simple info message when player is inside the trigger area
-  /*  void OnGUI()
-    {
-        if (enter && !GameManager.Instance.isPaused && !GameManager.Instance.playerDead)
-        {
-            if(open)
-            {
-                Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
-                GUI.Label(label, "Press 'F' to close door", GameManager.Instance.style);
-
-            }
-            else
-            {
-                Rect label = new Rect((Screen.width - 210) / 2, Screen.height - 100, 210, 50);
-                GUI.Label(label, "Press 'F' to open door", GameManager.Instance.style);
-            }
-            
-        }
-    }*/
 
     // Activate the Main function when Player enter the trigger area
     void OnTriggerEnter(Collider other)

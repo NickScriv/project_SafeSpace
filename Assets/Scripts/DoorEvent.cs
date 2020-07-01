@@ -47,7 +47,7 @@ public class DoorEvent : MonoBehaviour
             {
                 interact.SetText("Still won't budge");
                 invisibleWall.SetActive(true);
-                RaycastHit hitScare;
+                /*RaycastHit hitScare;
                 Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
                 if (Physics.SphereCast(ray, 0.4f, out hitScare, 5f, scareMaskTurnCheck))
                 {
@@ -59,9 +59,9 @@ public class DoorEvent : MonoBehaviour
                  
                 }
                 else
-                {
+                {*/
                     enableMonster();
-                }
+               // }
                 
 
             }
@@ -73,7 +73,7 @@ public class DoorEvent : MonoBehaviour
     {
         monster.SetActive(true);
         enter = true;
-       // playerScript.enableCameraMovement = true;
+     
     }
 
     private void Update()

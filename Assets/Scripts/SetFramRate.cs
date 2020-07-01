@@ -8,7 +8,7 @@ public class SetFramRate : MonoBehaviour
     public int target = 10;
    void Awake()
     {
-        //QualitySettings.vSyncCount = 0;  
+        QualitySettings.vSyncCount = 1;  
         Application.targetFrameRate = 1000;
       
     

@@ -11,7 +11,7 @@ public class Stairs : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics.Raycast(transform.position, -Vector3.up, out hit))
+       /* if (Physics.Raycast(transform.position, -Vector3.up, out hit))
         {
            
          
@@ -20,6 +20,6 @@ public class Stairs : MonoBehaviour
                
                // GetComponent<Rigidbody>().AddForce(-transform.up * 10);
             }
-        }
+        }*/
     }
 }

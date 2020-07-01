@@ -202,7 +202,7 @@ public class EnemyAI : MonoBehaviour
         {
             agent.ResetPath();
   
-            StartCoroutine(CameraShake(1.8f, .09f));
+            StartCoroutine(CameraShake(1.8f, .05f));
             gruntSource.Stop();
             anim.SetTrigger("scream");
             playScream(Random.Range(0, 4));
@@ -224,20 +224,20 @@ public class EnemyAI : MonoBehaviour
                 state = "hunt";
             }
 
-            else if (distance <= 2.5f && state != "stay")
+            else if (distance <= 2.5f && state != "stay" && !firstPerson.above)
             {
               
                 RaycastHit hit;
                 if (Physics.Linecast(vision.position, player.transform.position, out hit, hitLayerMask))
                 {
                    
-                    if (hit.collider.gameObject.CompareTag("Player"))
+                    if (hit.collider.gameObject.CompareTag("Player") )
                     {
                         above = firstPerson.above;
-                        firstPerson._crouchModifiers.useCrouch = false;
+                        //firstPerson._crouchModifiers.useCrouch = false;
                         firstPerson.enableCameraMovement = false;
                         firstPerson.playerCanMove = false;
-                        firstPerson.enabled = false;
+                        //firstPerson.enabled = false;
                         GameManager.Instance.killedBy = "mutant";
                         GameManager.Instance.playerDead = true;
                         agent.isStopped = true;
@@ -320,9 +320,9 @@ public class EnemyAI : MonoBehaviour
     void reset()
     {
        
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
         GameManager.Instance.fadeIn();
-        FindObjectOfType<SoundManager>().Play("BloodHit");
+       
     }
 
     public void sight()
@@ -434,8 +434,8 @@ public class EnemyAI : MonoBehaviour
 
     void stopCrouching()
     {
-        //capsule.height = player.GetComponent<FirstPersonAIO>()._crouchModifiers.colliderHeight;
-       capsule.height = Mathf.MoveTowards(capsule.height, player.GetComponent<FirstPersonAIO>()._crouchModifiers.colliderHeight, 6f * Time.deltaTime);
+   
+       capsule.height = Mathf.MoveTowards(capsule.height, 2, 5f * Time.deltaTime);
 
     }
 
@@ -476,10 +476,5 @@ public class EnemyAI : MonoBehaviour
     }
 
 
-    /* void OnDrawGizmosSelected()
-     {
-         // Draw a yellow sphere at the transform's position
-         Gizmos.color = Color.yellow;
-         Gizmos.DrawSphere(transform.position + new Vector3(0, 1f, 0), 1.5f);
-     }*/
+  
 }

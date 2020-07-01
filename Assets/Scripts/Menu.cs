@@ -31,10 +31,12 @@ public class Menu : MonoBehaviour
     {
         if(GameManager.Instance != null)
         {
-            GameManager.Instance.nextScene = 2;
+            GameManager.Instance.nextScene = 3;
         }
+
        
-        cameraAnim = GetComponent<Animator>();
+
+       cameraAnim = GetComponent<Animator>();
 
         Time.fixedDeltaTime = 0.02f;
         main.gameObject.SetActive(true);
@@ -54,6 +56,11 @@ public class Menu : MonoBehaviour
               gammaScript.enabled = false;
 
           }
+
+        if (!gammaCorrectionPanel.gameObject.activeInHierarchy)
+        {
+            FindObjectOfType<SoundManager>().Play("MenuMusic");
+        }
     }
 
     public void OnGammeConfirm()
@@ -69,10 +76,15 @@ public class Menu : MonoBehaviour
 
     public void play()
     {
-
+        if(GameManager.Instance != null)
+        {
+            GameManager.Instance.killedBy = "nothing";
+            Debug.Log(GameManager.Instance.killedBy);
+        }
+      
         FindObjectOfType<SoundManager>().Play("ButtonClick");
         FindObjectOfType<SoundManager>().Stop("MenuMusic");
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
        
     }
 
