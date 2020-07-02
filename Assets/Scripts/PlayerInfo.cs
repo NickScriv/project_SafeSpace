@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class PlayerInfo : MonoBehaviour
 {
     public float maxHealth = 100f;
@@ -16,6 +17,11 @@ public class PlayerInfo : MonoBehaviour
     public GameObject overlay3;
     public GameObject exitDoorTrigger;
     int numberOfCards = 0;
+    //public Transform feet;
+    public LayerMask discludePlayer;
+
+
+    FirstPersonAIO firstScript;
 
     public AudioClip[] concreteFootSteps;
 
@@ -32,14 +38,17 @@ public class PlayerInfo : MonoBehaviour
         {
             FindObjectOfType<SoundManager>().PlayFade("Music");
         }
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         numberOfCards = 0;
         currentHealth = maxHealth;
         objectiveScript = objective.GetComponent<Objectives>();
-        GetComponent<FirstPersonAIO>().concreteFootSteps = concreteFootSteps;
-        GetComponent<FirstPersonAIO>().grassFootSteps = grassFootSteps;
-        GetComponent<FirstPersonAIO>().woodFootSteps = woodFootSteps;
+        firstScript = GetComponent<FirstPersonAIO>();
+        firstScript.concreteFootSteps = concreteFootSteps;
+        firstScript.grassFootSteps = grassFootSteps;
+        firstScript.woodFootSteps = woodFootSteps;
+       
 
         Invoke("escapeNotify", 5f);
        
@@ -48,12 +57,12 @@ public class PlayerInfo : MonoBehaviour
 
     public void Restart()
     {
-        GameManager.Instance.nextScene = 2;
+        GameManager.Instance.nextScene = 3;
         FindObjectOfType<SoundManager>().Play("ButtonClick");
         GameManager.Instance.isPaused = false;
         GameManager.Instance.playerDead = false;
         Time.timeScale = 1;
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
       
         GameManager.Instance.eventNumber++;
     }
@@ -62,12 +71,12 @@ public class PlayerInfo : MonoBehaviour
 
     public void BackToMenu()
     {
-        GameManager.Instance.nextScene = 0;
+        GameManager.Instance.nextScene = 1;
         FindObjectOfType<SoundManager>().Play("ButtonClick");
         GameManager.Instance.isPaused = false;
         GameManager.Instance.playerDead = false;
         Time.timeScale = 1;
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
         GameManager.Instance.eventNumber = 1;
     }
 
@@ -106,8 +115,6 @@ public class PlayerInfo : MonoBehaviour
 
     void Update()
     {
-
-       
 
 
         if (currentHealth <= maxHealth)

@@ -34,7 +34,7 @@ public class WinScript : MonoBehaviour
             Rigidbody PlayerRb = player.GetComponent<Rigidbody>();
             PlayerRb.velocity = Vector3.zero;
             PlayerRb.angularVelocity = Vector3.zero;
-            PlayerRb.isKinematic = true;
+           // PlayerRb.isKinematic = true;
         }
     }
 
@@ -76,7 +76,7 @@ public class WinScript : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         GameManager.Instance.eventNumber = 1;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
 }

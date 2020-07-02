@@ -382,7 +382,7 @@ public class SmallAI : MonoBehaviour
 
     void reset()
     {
-        Time.timeScale = 0;
+       // Time.timeScale = 0;
         GameManager.Instance.fadeInBug();
     }
 
@@ -429,6 +429,7 @@ public class SmallAI : MonoBehaviour
 
     public void playScream(int num)
     {
+
         sound.clip = screams[num];
         sound.PlayOneShot(sound.clip);
 

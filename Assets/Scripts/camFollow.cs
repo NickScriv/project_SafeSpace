@@ -2,11 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class camFollow : MonoBehaviour
 {
     public Transform camPos;
     public Vector3 velocity = Vector3.one;
     Quaternion angle = Quaternion.identity;
+   // public NormalMovement moveScript;
+    Vector3 previousPos;
+    Vector3 currentPos;
+    Vector3 lerpPos;
+   
+
+    private void Start()
+    {
+
+        previousPos = transform.position;
+    }
 
 
 
@@ -14,10 +26,15 @@ public class camFollow : MonoBehaviour
     {
         if(!GameManager.Instance.isPaused)
         {
-
-            transform.position = Vector3.SmoothDamp(transform.position, camPos.position , ref velocity, .05f);
+            /*float alpha = (Time.time - Time.fixedTime) / Time.fixedDeltaTime;
+            currentPos = moveScript.getTargetPosition();
+            lerpPos = Vector3.Lerp(previousPos, currentPos, alpha);*/
+            transform.position = Vector3.SmoothDamp(transform.position, camPos.position, ref velocity, .025f);
+    
+            // previousPos = lerpPos;
             //transform.position = camPos.position;
             transform.rotation = camPos.rotation;
+
             //transform.rotation = SmoothDamp(transform.rotation, camPos.rotation, ref angle, .05f);
         }
      
@@ -25,6 +42,7 @@ public class camFollow : MonoBehaviour
 
 
     }
+
 
 
     public static Quaternion SmoothDamp(Quaternion rot, Quaternion target, ref Quaternion deriv, float time)

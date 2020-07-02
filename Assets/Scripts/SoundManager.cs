@@ -75,7 +75,7 @@ public class SoundManager : MonoBehaviour
             if(audioS != null && audioS.audioClip.name != name)
             {
              
-                StartCoroutine(FadeOut(audioS, Time.deltaTime * 2f));
+                StartCoroutine(FadeOut(audioS,  2f));
             }
                
 
@@ -109,6 +109,7 @@ public class SoundManager : MonoBehaviour
 
     public void StopFade(string name)
     {
+        
         Sound s = Array.Find(sounds, sound => sound.name == name);
         if (s == null)
         {
@@ -117,7 +118,7 @@ public class SoundManager : MonoBehaviour
         }
 
         if (s.audioSource.isPlaying)
-            StartCoroutine(FadeOut(s, Time.deltaTime * 2f));
+            StartCoroutine(FadeOut(s,  2f));
         
     }
 
@@ -141,15 +142,17 @@ public class SoundManager : MonoBehaviour
 
     public IEnumerator FadeOut(Sound s, float speed)
     {
-     
 
+        
         float audioVol = s.audioSource.volume;
 
         while (s.audioSource.volume > 0.01f)
         {
 
-            audioVol -= speed;
+            audioVol -= speed * Time.deltaTime;
+          
             s.audioSource.volume = audioVol;
+            
             yield return new WaitForSecondsRealtime(0.01f);
         }
         s.audioSource.volume = 0;

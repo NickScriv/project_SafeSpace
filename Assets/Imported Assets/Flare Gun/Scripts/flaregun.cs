@@ -18,7 +18,7 @@ public class flaregun : MonoBehaviour {
     public float heightOffest = 1.41f;
     public bool firing = false;
     public bool reloading = false;
-    public FirstPersonAIO firstPersonScript;
+    //public FirstPersonAIO firstPersonScript;
     Animator anim;
  
 	
@@ -146,7 +146,7 @@ public class flaregun : MonoBehaviour {
 
     void ChangeGravity()
     {
-        firstPersonScript.advanced.gravityMultiplier = 3.5f;
+        //firstPersonScript.advanced.gravityMultiplier = 3.5f;
 
     }
 

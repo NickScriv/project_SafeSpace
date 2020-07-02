@@ -26,15 +26,34 @@ public class SceneLoading : MonoBehaviour
 
     void Start()
     {
-        flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
-        Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
-     
+        if(GameManager.Instance == null)
+        {
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+        }
+    
+
 
         GUIStyle styleTest = new GUIStyle();
    
 
         styleTest.normal.textColor = Color.white;
         styleTest.alignment = TextAnchor.MiddleCenter;
+
+     
        
 
         if (GameManager.Instance == null)
@@ -73,7 +92,7 @@ public class SceneLoading : MonoBehaviour
     {
         if(GameManager.Instance == null)
         {
-             gameLevel = SceneManager.LoadSceneAsync(2);
+             gameLevel = SceneManager.LoadSceneAsync(3);
         }
         else
         {

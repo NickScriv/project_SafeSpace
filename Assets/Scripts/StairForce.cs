@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class StairForce : MonoBehaviour
 {
-    private void OnTriggerStay(Collider other)
+   private void OnTriggerStay(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
         {
             
-            other.gameObject.GetComponent<Rigidbody>().AddForce(0, -50, 0);
+            other.gameObject.GetComponent<Rigidbody>().AddForce(0, -200f, 0);
         }
     }
 }

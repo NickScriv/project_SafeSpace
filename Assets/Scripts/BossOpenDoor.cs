@@ -12,14 +12,15 @@ public class BossOpenDoor : MonoBehaviour
         }
       
         
-        if ( other.gameObject.CompareTag( "door"))
+        if ( other.gameObject.CompareTag( "door") && other.gameObject.name ==  "hinge")
         {
+           
 
             GameObject hinge = other.gameObject;
             
 
           
-            if(!hinge.GetComponent<OpenableDoor>().open)
+            if(hinge != null && !hinge.GetComponent<OpenableDoor>().open)
             {
                
                 hinge.GetComponent<OpenableDoor>().openDoor(true);
