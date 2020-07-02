@@ -26,9 +26,26 @@ public class SceneLoading : MonoBehaviour
 
     void Start()
     {
-        flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
-        Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
-     
+        if(GameManager.Instance == null)
+        {
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+            flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.AddForce(spawnFlare.forward * 10f);
+            Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
+        }
+    
+
 
         GUIStyle styleTest = new GUIStyle();
    

@@ -12,7 +12,7 @@ public class BossOpenDoor : MonoBehaviour
         }
       
         
-        if ( other.gameObject.CompareTag( "door"))
+        if ( other.gameObject.CompareTag( "door") && other.gameObject.name ==  "hinge")
         {
            
 

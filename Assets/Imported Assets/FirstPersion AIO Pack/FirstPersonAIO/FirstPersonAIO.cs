@@ -147,7 +147,7 @@ public class FirstPersonAIO : MonoBehaviour
     public bool useStamina = true;
     public float staminaDepletionSpeed = 5f;
     public float staminaLevel = 50;
-    private Vector3  forwardDir;
+    private Vector3 forwardDir;
     public float speed;
     public float staminaInternal;
     internal float walkSpeedInternal;
@@ -196,7 +196,7 @@ public class FirstPersonAIO : MonoBehaviour
     }
     public AdvancedSettings advanced = new AdvancedSettings();
     private CapsuleCollider capsule;
-  
+
     Vector2 inputXY;
     public bool isCrouching;
     float yVelocity;
@@ -232,7 +232,7 @@ public class FirstPersonAIO : MonoBehaviour
     bool previousGrounded;
     public Vector3 groundNormal;
     AudioSource audioSource;
-  
+
 
     #endregion
 
@@ -312,7 +312,7 @@ public class BETA_SETTINGS{
         curGrounded = footStep.curGrounded;
         fps_Rigidbody = GetComponent<Rigidbody>();
         move = Vector3.one;
-   
+
         playerInfoScript = GetComponent<PlayerInfo>();
         capsule = GetComponent<CapsuleCollider>();
 
@@ -422,8 +422,8 @@ public class BETA_SETTINGS{
 
     private void Update()
     {
-      
-    
+
+
 
         #region Look Settings - Update
 
@@ -451,8 +451,8 @@ public class BETA_SETTINGS{
 
         Vector3 Pos = transform.position;
         Pos.y += (capsule.height / 2);
-   
-        if (Physics.Raycast(Pos , Vector3.up, out hitCrouch, 3f, ventLayerMask))
+
+        if (Physics.Raycast(Pos, Vector3.up, out hitCrouch, 3f, ventLayerMask))
         {
             if (hitCrouch.transform.gameObject.CompareTag("crouch"))
             {
@@ -478,11 +478,11 @@ public class BETA_SETTINGS{
 
         #region  Input Settings - Update
 
-  if (_crouchModifiers.useCrouch)
+        if (_crouchModifiers.useCrouch)
         {
             if (!_crouchModifiers.toggleCrouch)
             {
-                isCrouching = _crouchModifiers.crouchOverride || Input.GetKey(_crouchModifiers.crouchKey) ;
+                isCrouching = _crouchModifiers.crouchOverride || Input.GetKey(_crouchModifiers.crouchKey);
 
 
             }
@@ -511,7 +511,7 @@ public class BETA_SETTINGS{
                     StaminaMeter.color = Vector4.MoveTowards(StaminaMeter.color, new Vector4(1, 1, 1, 1), 0.15f);
                 }
             }
-            else if ((!isSprinting || Mathf.Abs(fps_Rigidbody.velocity.x) < 0.01f || isCrouching) && staminaInternal < staminaLevel )
+            else if ((!isSprinting || Mathf.Abs(fps_Rigidbody.velocity.x) < 0.01f || isCrouching) && staminaInternal < staminaLevel)
             {
                 staminaInternal += staminaDepletionSpeed * Time.deltaTime;
             }
@@ -530,14 +530,14 @@ public class BETA_SETTINGS{
             staminaInternal = Mathf.Clamp(staminaInternal, 0, staminaLevel);
         }
         else { isSprinting = Input.GetKey(sprintKey); }
-        if(staminaInternal < 2f)
+        if (staminaInternal < 2f)
         {
             isSprinting = false;
         }
 
 
 
-   
+
 
 
 
@@ -581,7 +581,7 @@ public class BETA_SETTINGS{
 
             if (isCrouching)
             {
-               
+
                 capsule.height = Mathf.MoveTowards(capsule.height, 2 / _crouchModifiers.crouchHeight, 5 * Time.deltaTime);
                 walkSpeedInternal = walkSpeed * _crouchModifiers.crouchWalkSpeedMultiplier;
                 jumpPowerInternal = jumpPower * _crouchModifiers.crouchJumpPowerMultiplier;
@@ -603,7 +603,7 @@ public class BETA_SETTINGS{
         inputXY = new Vector2(horizontalInput, verticalInput);
         if (inputXY.magnitude > 1) { inputXY.Normalize(); }
 
-       
+
 
 
 
@@ -613,7 +613,7 @@ public class BETA_SETTINGS{
          last_pos = current_pos;*/
 
 
-      
+
 
     }
 
@@ -626,72 +626,9 @@ public class BETA_SETTINGS{
     {
         #region Headbobbing Settings - FixedUpdate
 
-        if (!GameManager.Instance.isPaused)
-        {
-            float yPos = 0;
-            float xPos = 0;
-            float zTilt = 0;
-            float xTilt = 0;
-            float bobSwayFactor = 0;
-            float bobFactor = 0;
-            float strideLangthen = 0;
-            float flatVel = 0;
-            //calculate headbob freq
-            if (useHeadbob == true || fsmode == FSMode.Dynamic)
-            {
-                Vector3 vel = (transform.position - previousPosition) / Time.deltaTime;
-                Vector3 velChange = vel - previousVelocity;
-                previousPosition = transform.position;
-                previousVelocity = vel;
-                springVelocity -= velChange.y;
-                springVelocity -= springPosition * springElastic;
-                springVelocity *= springDampen;
-                springPosition += springVelocity * Time.deltaTime;
-                springPosition = Mathf.Clamp(springPosition, -0.3f, 0.3f);
+     
 
-                if (Mathf.Abs(springVelocity) < springVelocityThreshold && Mathf.Abs(springPosition) < springPositionThreshold) { springPosition = 0; springVelocity = 0; }
-                flatVel = new Vector3(vel.x, 0.0f, vel.z).magnitude;
-                strideLangthen = 1 + (flatVel * ((headbobFrequency * 2) / 10));
-                headbobCycle += (flatVel / strideLangthen) * (Time.deltaTime / headbobFrequency);
-                bobFactor = Mathf.Sin(headbobCycle * Mathf.PI * 2);
-                bobSwayFactor = Mathf.Sin(Mathf.PI * (2 * headbobCycle + 0.5f));
-                bobFactor = 1 - (bobFactor * 0.5f + 1);
-                bobFactor *= bobFactor;
-
-                yPos = 0;
-                xPos = 0;
-                zTilt = 0;
-                if (jumpLandIntensity > 0 && !advanced.stairMiniHop)
-                {
-                    xTilt = -springPosition * (jumpLandIntensity * 5.5f);
-                }
-                else if (!advanced.stairMiniHop) { xTilt = -springPosition; }
-
-                if (IsGrounded)
-                {
-                    if (new Vector3(vel.x, 0.0f, vel.z).magnitude < 0.1f) { headbobFade = Mathf.MoveTowards(headbobFade, 0.0f, 0.5f); } else { headbobFade = Mathf.MoveTowards(headbobFade, 1.0f, Time.deltaTime); }
-                    float speedHeightFactor = 1 + (flatVel * 0.3f);
-                    xPos = -(headbobSideMovement / 10) * headbobFade * bobSwayFactor;
-                    yPos = springPosition * (jumpLandIntensity / 10) + bobFactor * (headbobHeight / 10) * headbobFade * speedHeightFactor;
-                    zTilt = bobSwayFactor * (headbobSwayAngle / 10) * headbobFade;
-                }
-            }
-            //apply headbob position
-            if (useHeadbob == true)
-            {
-                if (velocity2.magnitude > 0.1f)
-                {
-                    head.localPosition = Vector3.MoveTowards(head.localPosition, snapHeadjointToCapsul ? (new Vector3(originalLocalPosition.x, (capsule.height / 2) * head.localScale.y, originalLocalPosition.z) + new Vector3(xPos, yPos, 0)) : originalLocalPosition + new Vector3(xPos, yPos, 0), 0.5f);
-                }
-                else
-                {
-                    head.localPosition = Vector3.SmoothDamp(head.localPosition, snapHeadjointToCapsul ? (new Vector3(originalLocalPosition.x, (capsule.height / 2) * head.localScale.y, originalLocalPosition.z) + new Vector3(xPos, yPos, 0)) : originalLocalPosition + new Vector3(xPos, yPos, 0), ref miscRefVel, 0.15f);
-                }
-                head.localRotation = Quaternion.Euler(xTilt, 0, zTilt);
-
-
-            }
-        }
+        head.localPosition = Vector3.SmoothDamp(head.localPosition, new Vector3(originalLocalPosition.x, (capsule.height / 2) * head.localScale.y, originalLocalPosition.z) , ref miscRefVel, 0.15f);
 
         #endregion
         speed = walkByDefault ? isCrouching ? walkSpeedInternal : (isSprinting ? sprintSpeedInternal : walkSpeedInternal) : (isSprinting ? walkSpeedInternal : sprintSpeedInternal);
@@ -703,10 +640,10 @@ public class BETA_SETTINGS{
 
         curGrounded.localPosition = Vector3.zero;
         Vector3 Pos = curGrounded.localPosition;
-        Pos.y -= (capsule.height / 2 );
+        Pos.y -= (capsule.height / 2);
         Pos.y += 0.5f;
         curGrounded.localPosition = Pos;
-        Vector3 myDirection = transform.forward * inputXY.y  + transform.right * inputXY.x ;
+        Vector3 myDirection = transform.forward * inputXY.y + transform.right * inputXY.x;
         //Debug.Log(isSprinting);
 
         RaycastHit hit;
@@ -715,11 +652,11 @@ public class BETA_SETTINGS{
 
             IsGrounded = true;
 
-            if(hit.transform.CompareTag("concrete") || hit.transform.CompareTag("stair"))
+            if (hit.transform.CompareTag("concrete") || hit.transform.CompareTag("stair"))
             {
                 footStep.floorMaterialIndex = 0;
             }
-            else if(hit.transform.CompareTag("wood"))
+            else if (hit.transform.CompareTag("wood"))
             {
                 footStep.floorMaterialIndex = 2;
             }
@@ -728,10 +665,9 @@ public class BETA_SETTINGS{
                 footStep.floorMaterialIndex = 1;
             }
 
-                groundNormal = hit.normal;
-           
+            groundNormal = hit.normal;
 
-            //Debug.Log(slope);
+
             if (!terrain.activeInHierarchy)
             {
                 Vector3 slopeDirection = Vector3.Cross(Vector3.up, Vector3.Cross(Vector3.up, hit.normal));
@@ -756,8 +692,8 @@ public class BETA_SETTINGS{
                 }
             }
 
-            
-        }     
+
+        }
         else
         {
             IsGrounded = false;
@@ -780,7 +716,6 @@ public class BETA_SETTINGS{
 
 
 
-            // myDirection = Vector3.ProjectOnPlane(transform.forward, groundNormal).normalized;
 
 
 
@@ -806,20 +741,20 @@ public class BETA_SETTINGS{
 
         //dMove.y = fps_Rigidbody.velocity.y;
 
-       // Debug.Log(isCrouching);
+      
 
 
-        if (playerCanMove )
+        if (playerCanMove)
         {
-             Vector3 v = fps_Rigidbody.velocity;
-           
+            Vector3 v = fps_Rigidbody.velocity;
+
             v.x = dMove.x;
             v.z = dMove.z;
-            
-            
 
-             fps_Rigidbody.velocity = v;
-           
+
+
+            fps_Rigidbody.velocity = v;
+
 
 
         }
@@ -828,14 +763,14 @@ public class BETA_SETTINGS{
 
             fps_Rigidbody.velocity = Vector3.zero;
         }
-       //HandleGravity();
+        //HandleGravity();
 
         if (!IsGrounded)
         {
-            
-            fps_Rigidbody.AddForce(Physics.gravity * (11f- 1));
+
+            fps_Rigidbody.AddForce(Physics.gravity * (11f - 1));
         }
-        
+
 
         /* if(!onStair)
          {
@@ -848,20 +783,20 @@ public class BETA_SETTINGS{
         //HandleGravity();
 
 
-       
+
 
 
 
         if (fps_Rigidbody.velocity.magnitude > 0 || !IsGrounded)
         {
-                 capsule.sharedMaterial = advanced.zeroFrictionMaterial;
-          
-             }
-             else { capsule.sharedMaterial = advanced.highFrictionMaterial; }
+            capsule.sharedMaterial = advanced.zeroFrictionMaterial;
+
+        }
+        else { capsule.sharedMaterial = advanced.highFrictionMaterial; }
 
 
 
-      // fps_Rigidbody.AddForce(Physics.gravity * (advanced.gravityMultiplier - 1));
+        // fps_Rigidbody.AddForce(Physics.gravity * (advanced.gravityMultiplier - 1));
 
         /*  // fps_Rigidbody.AddForce(Physics.gravity * (advanced.gravityMultiplier - 1));
           if(footStepScript.IsGrounded)
@@ -886,7 +821,7 @@ public class BETA_SETTINGS{
 
         #endregion
 
-       
+
 
 
 
@@ -900,16 +835,16 @@ public class BETA_SETTINGS{
 
         RaycastHit hit;
 
-        if(Physics.Raycast(transform.position, Vector3.down, out hit, capsule.height/2 * 1.2f))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, capsule.height / 2 * 1.2f))
         {
-            if(hit.normal != Vector3.up)
+            if (hit.normal != Vector3.up)
             {
                 return true;
             }
         }
 
         return false;
-       
+
     }
 
     void HandleGravity()
@@ -923,16 +858,16 @@ public class BETA_SETTINGS{
         }
         else if (!IsGrounded)
         {
-           // Debug.Log("vcelocity");
+            // Debug.Log("vcelocity");
             currentVerticalSpeed -= 100f * Time.deltaTime; ;
         }
         Vector3 v = fps_Rigidbody.velocity;
         v.y = currentVerticalSpeed;
-    
+
 
         fps_Rigidbody.velocity = v;
 
-     
+
     }
 
     public void stopCrouching()
@@ -959,72 +894,9 @@ public class BETA_SETTINGS{
         targetAngles = Rotation;
         enableCameraMovement = !enableCameraMovement;
     }
+}
 
-    /* private void OnCollisionStay(Collision CollisionData)
-     {
-         if (IsGrounded || fps_Rigidbody.velocity.y < 0.1)
-         {
-             IsGrounded = false;
-             for (int i = 0; i < CollisionData.contactCount; i++)
-             {
-                
-                if (CollisionData.GetContact(i).point.y < (transform.position.y - (capsule.radius)))
-                 {
-                    
-                    IsGrounded = true;
-                    groundNormal = CollisionData.GetContact(i).normal;
-                    if (CollisionData.GetContact(i).thisCollider.transform.CompareTag("wood"))
-                    {
-                        footStepScript.floorMaterialIndex = 2;
-                      
-                    }
-                    else if (CollisionData.GetContact(i).thisCollider.transform.CompareTag("grass"))
-                    {
-                        footStepScript.floorMaterialIndex = 1;
-
-                    }
-                    else if (CollisionData.GetContact(i).thisCollider.transform.CompareTag("concrete") || CollisionData.GetContact(i).thisCollider.transform.CompareTag("stair"))
-                    {
-                        footStepScript.floorMaterialIndex = 1;
-
-                    }
-                    advanced.stairMiniHop = false;
-                 }
-             }
-         }
-
-      
-      
-
-    }
-
-    private void OnCollisionEnter(Collision CollisionData)
-    {
-        for (int i = 0; i < CollisionData.contactCount; i++)
-        {
-            float a = Vector3.Angle(CollisionData.GetContact(i).normal, Vector3.up);
-            if (CollisionData.GetContact(i).point.y < transform.position.y - ((capsule.height / 2) - capsule.radius * 0.95f))
-            {
-
-                if (!IsGrounded)
-                {
-                    IsGrounded = true;
-                    advanced.stairMiniHop = false;
-               
-                }
-
-            
-
-            }
-        }
-    }
-
-    void OnCollisionExit(Collision CollisionData)
-    {
-        IsGrounded = false;
-
-
-    }*/
+   
 
 
 #if UNITY_EDITOR
@@ -1784,7 +1656,7 @@ public class BETA_SETTINGS{
             }
         }
     }
-}
+
 
 #endif
 

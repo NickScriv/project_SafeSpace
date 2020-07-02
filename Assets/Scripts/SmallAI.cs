@@ -429,9 +429,9 @@ public class SmallAI : MonoBehaviour
 
     public void playScream(int num)
     {
-        sound.pitch = 1f + Random.Range(-0.2f, 0.2f);
+
         sound.clip = screams[num];
-        sound.PlayOneShot(sound.clip, Random.Range(0.8f, 1f));
+        sound.PlayOneShot(sound.clip);
 
         //sound.Play();
     }

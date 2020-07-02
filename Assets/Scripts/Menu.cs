@@ -79,7 +79,7 @@ public class Menu : MonoBehaviour
         if(GameManager.Instance != null)
         {
             GameManager.Instance.killedBy = "nothing";
-            Debug.Log(GameManager.Instance.killedBy);
+           
         }
       
         FindObjectOfType<SoundManager>().Play("ButtonClick");
