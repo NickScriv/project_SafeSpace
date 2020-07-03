@@ -19,7 +19,7 @@ public class OpenableVent : MonoBehaviour
      AudioSource source;
     public AudioClip clip;
 
-    bool open = false;
+    public bool open = false;
     bool enter = false;
 
     float defaultRotationAngle;
@@ -33,9 +33,11 @@ public class OpenableVent : MonoBehaviour
     private TextMeshProUGUI interact;
     bool playerUnder = false;
     FirstPersonAIO firstPersonScript;
+  
 
     void Start()
     {
+     
         playerUnder = false;
         interact = GameObject.Find("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         coll = GetComponent<BoxCollider>();
@@ -82,6 +84,7 @@ public class OpenableVent : MonoBehaviour
                 coll.center = closedCenter;
             }
         }
+
 
        
     }

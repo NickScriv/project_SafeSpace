@@ -24,9 +24,11 @@ public class TriggerEvent4 : MonoBehaviour
             exitWall.SetActive(false);
            
             FindObjectOfType<SoundManager>().StopAllAudioFade("forest");
-            firstPerson.playerCanMove = false;
             firstPerson.enableCameraMovement = false;
-       
+            firstPerson.playerCanMove = false;
+           
+            cameraMain.GetComponent<camFollow>().enabled = false;
+            player.GetComponent<Rigidbody>().isKinematic = true;
             terrain.SetActive(true);
             shed.SetActive(true);
             transitionScreen.SetActive(true);
@@ -46,6 +48,8 @@ public class TriggerEvent4 : MonoBehaviour
         //cameraMain.transform.rotation = SpawnToLocation.rotation;
         firstPerson.playerCanMove = true;
         firstPerson.enableCameraMovement = true;
+        cameraMain.GetComponent<camFollow>().enabled = true;
+        player.GetComponent<Rigidbody>().isKinematic = false;
         firstPerson.originalRotation = SpawnToLocation.localRotation.eulerAngles;
         firstPerson.followAngles = Vector3.zero;
         firstPerson.targetAngles = SpawnToLocation.localRotation.eulerAngles;
