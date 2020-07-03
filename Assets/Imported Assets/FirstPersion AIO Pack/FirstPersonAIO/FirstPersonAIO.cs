@@ -195,7 +195,7 @@ public class FirstPersonAIO : MonoBehaviour
         public float lastKnownSlopeAngle;
     }
     public AdvancedSettings advanced = new AdvancedSettings();
-    private CapsuleCollider capsule;
+    public CapsuleCollider capsule;
 
     Vector2 inputXY;
     public bool isCrouching;

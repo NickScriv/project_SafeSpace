@@ -11,6 +11,7 @@ public class EnemyAI : MonoBehaviour
 {
 
     public AudioClip [] screams;
+
     public AudioClip[] footsteps;
     NavMeshAgent agent;
     Transform player;
@@ -64,7 +65,7 @@ public class EnemyAI : MonoBehaviour
         StartCoroutine(playGruntSound());
         firstPerson = player.GetComponent<FirstPersonAIO>();
         agent.updateRotation = true;
-
+   
         previousPos = transform.position;
     }
 
@@ -215,7 +216,18 @@ public class EnemyAI : MonoBehaviour
         {
             agent.speed = 3.5f;
             chaseTime -= Time.deltaTime;
-            agent.destination = player.transform.position;
+            Vector3 Pos = player.transform.position;
+            Pos.y -= ((firstPerson.capsule.height / 2) + 0.2f);
+            NavMeshHit hitNav;
+            if (NavMesh.SamplePosition(Pos, out hitNav, 1.0f, NavMesh.AllAreas))
+            {
+               
+                agent.SetDestination(hitNav.position);
+            }
+         
+        
+          
+            //agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
 
             if (distance > 25f || chaseTime <= 0)
