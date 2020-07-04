@@ -75,7 +75,7 @@ public class SoundManager : MonoBehaviour
             if(audioS != null && audioS.audioClip.name != name)
             {
              
-                StartCoroutine(FadeOut(audioS,  2f));
+                StartCoroutine(FadeOut(audioS,  1.75f));
             }
                
 
@@ -118,7 +118,7 @@ public class SoundManager : MonoBehaviour
         }
 
         if (s.audioSource.isPlaying)
-            StartCoroutine(FadeOut(s,  2f));
+            StartCoroutine(FadeOut(s,  1.75f));
         
     }
 

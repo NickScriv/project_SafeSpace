@@ -200,12 +200,11 @@ public class SmallAI : MonoBehaviour
         {
             agent.speed = 3f;
             chaseTime -= Time.deltaTime;
-            Vector3 Pos = player.transform.position;
-            Pos.y -= ((firstPerson.capsule.height / 2) + 0.2f);
+        
             NavMeshHit hitNav;
-            if (NavMesh.SamplePosition(Pos, out hitNav, 1.0f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(player.transform.position, out hitNav, 3f, NavMesh.AllAreas))
             {
-
+               
                 agent.SetDestination(hitNav.position);
             }
             //agent.destination = player.transform.position;

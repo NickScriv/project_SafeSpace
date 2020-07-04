@@ -216,10 +216,10 @@ public class EnemyAI : MonoBehaviour
         {
             agent.speed = 3.5f;
             chaseTime -= Time.deltaTime;
-            Vector3 Pos = player.transform.position;
-            Pos.y -= ((firstPerson.capsule.height / 2) + 0.2f);
+            /*Vector3 Pos = player.transform.position;
+            Pos.y -= ((firstPerson.capsule.height / 2) + 0.2f);*/
             NavMeshHit hitNav;
-            if (NavMesh.SamplePosition(Pos, out hitNav, 1.0f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(player.transform.position, out hitNav, 3f, NavMesh.AllAreas))
             {
                
                 agent.SetDestination(hitNav.position);
