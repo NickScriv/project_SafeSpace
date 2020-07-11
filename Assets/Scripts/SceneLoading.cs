@@ -29,18 +29,23 @@ public class SceneLoading : MonoBehaviour
         if(GameManager.Instance == null)
         {
             flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.GetComponent<AudioSource>().volume = 0;
             flareBullet.AddForce(spawnFlare.forward * 10f);
             Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
             flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.GetComponent<AudioSource>().volume = 0;
             flareBullet.AddForce(spawnFlare.forward * 10f);
             Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
             flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.GetComponent<AudioSource>().volume = 0;
             flareBullet.AddForce(spawnFlare.forward * 10f);
             Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
             flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.GetComponent<AudioSource>().volume = 0;
             flareBullet.AddForce(spawnFlare.forward * 10f);
             Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
             flareBullet = Instantiate(flareBullet, spawnFlare.position, spawnFlare.rotation) as Rigidbody;
+            flareBullet.GetComponent<AudioSource>().volume = 0;
             flareBullet.AddForce(spawnFlare.forward * 10f);
             Instantiate(muzzleParticles, spawnFlare.position, spawnFlare.rotation);
         }

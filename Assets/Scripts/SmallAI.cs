@@ -40,6 +40,7 @@ public class SmallAI : MonoBehaviour
     bool runAway2 = false;
     PlayerInfo playerInfoScript;
     Flashlight_PRO flashlightScript;
+    public FirstPersonAIO firstPerson;
     
     public LayerMask sightMask;
     public AudioClip flashHiss;
@@ -199,7 +200,14 @@ public class SmallAI : MonoBehaviour
         {
             agent.speed = 3f;
             chaseTime -= Time.deltaTime;
-            agent.destination = player.transform.position;
+        
+            NavMeshHit hitNav;
+            if (NavMesh.SamplePosition(player.transform.position, out hitNav, 3f, NavMesh.AllAreas))
+            {
+               
+                agent.SetDestination(hitNav.position);
+            }
+            //agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
             
             if (distance > 10f || chaseTime <= 0)

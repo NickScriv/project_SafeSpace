@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BossOpenDoor : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class BossOpenDoor : MonoBehaviour
           
             if(hinge != null && !hinge.GetComponent<OpenableDoor>().open)
             {
-               
+                GetComponentInParent<NavMeshAgent>().ResetPath();
                 hinge.GetComponent<OpenableDoor>().openDoor(true);
             }
           

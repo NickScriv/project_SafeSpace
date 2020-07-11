@@ -195,7 +195,7 @@ public class FirstPersonAIO : MonoBehaviour
         public float lastKnownSlopeAngle;
     }
     public AdvancedSettings advanced = new AdvancedSettings();
-    private CapsuleCollider capsule;
+    public CapsuleCollider capsule;
 
     Vector2 inputXY;
     public bool isCrouching;
@@ -449,31 +449,30 @@ public class BETA_SETTINGS{
 
         RaycastHit hitCrouch;
 
-        Vector3 Pos = transform.position;
-        Pos.y += (capsule.height / 2);
-
-        if (Physics.Raycast(Pos, Vector3.up, out hitCrouch, 3f, ventLayerMask))
-        {
-            if (hitCrouch.transform.gameObject.CompareTag("crouch"))
-            {
+         Vector3 Pos = transform.position;
+         Pos.y += (capsule.height / 2) - 0.5f;
+         //Debug.DrawRay(Pos, Vector3.up, Color.yellow);
+         if (Physics.SphereCast(Pos, capsule.radius/1.85f,  Vector3.up, out hitCrouch, 3f, ventLayerMask))
+         {
 
 
-                above = true;
-            }
-            else
-            {
+                 above = true;
+           
 
-                above = false;
 
-            }
+         }
+         else
+         {
+             above = false;
 
-        }
-        else
-        {
-            above = false;
+         }
 
-        }
+    
 
+
+
+
+ 
 
 
         #region  Input Settings - Update
@@ -614,7 +613,7 @@ public class BETA_SETTINGS{
 
 
 
-
+        above = false;
     }
 
 
@@ -647,7 +646,7 @@ public class BETA_SETTINGS{
         //Debug.Log(isSprinting);
 
         RaycastHit hit;
-        if (Physics.SphereCast(curGrounded.position, capsule.radius, Vector3.down, out hit, 0.08f, footStep.crouchMask))
+        if (Physics.SphereCast(curGrounded.position, capsule.radius, Vector3.down, out hit, 0.055f, footStep.crouchMask))
         {
 
             IsGrounded = true;
@@ -674,23 +673,22 @@ public class BETA_SETTINGS{
                 float slope = Vector3.Dot((transform.forward * inputXY.y + transform.right * inputXY.x), slopeDirection);
                 if (slope <= -0.2f || slope >= 0.2f)
                 {
-
-
+                   
 
                     if (isSprinting)
                     {
-                        speed += 2.3f;
+                        speed -= 1.5f;
                     }
                     else if (isCrouching)
                     {
-                        speed += 0.9f;
+                        speed -= 0.3f;
                     }
                     else
                     {
-                        speed += 1.35f;
+                        speed -= 0.75f;
                     }
                 }
-            }
+            }  
 
 
         }
@@ -700,8 +698,8 @@ public class BETA_SETTINGS{
         }
 
         myDirection = transform.forward * inputXY.y * speed + transform.right * inputXY.x * walkSpeedInternal;
-        Vector3 temp = Vector3.Cross(groundNormal, myDirection);
-        myDirection = Vector3.Cross(temp, groundNormal);
+       /* Vector3 temp = Vector3.Cross(groundNormal, myDirection);
+        myDirection = Vector3.Cross(temp, groundNormal);*/
         //Debug.DrawRay(transform.position, myDirection, Color.yellow);
 
 

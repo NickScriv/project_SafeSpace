@@ -10,6 +10,7 @@
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class OpenableDoor : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class OpenableDoor : MonoBehaviour
 
     public bool open = false;
     public bool enter = false;
+    public OffMeshLink offMeshLink;
 
     float defaultRotationAngle;
     float currentRotationAngle;
@@ -39,8 +41,10 @@ public class OpenableDoor : MonoBehaviour
 
     void Start()
     {
-       
-        interact = GameObject.FindGameObjectWithTag("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        if (offMeshLink != null)
+            offMeshLink.activated = true; 
+
+         interact = GameObject.FindGameObjectWithTag("GameUI").transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         coll = GetComponent<BoxCollider>();
         defaultRotationAngle = transform.localEulerAngles.y;
         currentRotationAngle = transform.localEulerAngles.y;
@@ -90,7 +94,9 @@ public class OpenableDoor : MonoBehaviour
 
     public void openDoor(bool eventDoor = false)
     {
-       
+      if(offMeshLink != null)
+        offMeshLink.activated = !offMeshLink.activated;
+
         open = !open;
         if(!eventDoor)
         {
@@ -171,5 +177,8 @@ public class OpenableDoor : MonoBehaviour
     {
         interact.SetText("");
     }
+
+
+ 
 
 }

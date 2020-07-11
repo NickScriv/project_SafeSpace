@@ -38,7 +38,7 @@ public class Menu : MonoBehaviour
 
        cameraAnim = GetComponent<Animator>();
 
-        Time.fixedDeltaTime = 0.02f;
+        //Time.fixedDeltaTime = 0.02f;
         main.gameObject.SetActive(true);
 
          if(PlayerPrefs.HasKey("GammaValue"))

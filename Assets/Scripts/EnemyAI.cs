@@ -11,6 +11,7 @@ public class EnemyAI : MonoBehaviour
 {
 
     public AudioClip [] screams;
+
     public AudioClip[] footsteps;
     NavMeshAgent agent;
     Transform player;
@@ -64,7 +65,7 @@ public class EnemyAI : MonoBehaviour
         StartCoroutine(playGruntSound());
         firstPerson = player.GetComponent<FirstPersonAIO>();
         agent.updateRotation = true;
-
+   
         previousPos = transform.position;
     }
 
@@ -149,10 +150,10 @@ public class EnemyAI : MonoBehaviour
 
             if (highAlert)
             {
-                NavMesh.SamplePosition(player.transform.position + randomPos, out navHit, 20f, NavMesh.AllAreas);
-                searchRadius += 2.5f;
+                NavMesh.SamplePosition(player.transform.position + randomPos, out navHit, 3f, NavMesh.AllAreas);
+                searchRadius += 0.3f;
 
-                if (searchRadius > 20f)
+                if (searchRadius > 3f)
                 { 
                     FindObjectOfType<SoundManager>().StopFade("ChaseMusic");                     
                     if(!FindObjectOfType<SoundManager>().isPlaying("Music"))
@@ -215,7 +216,18 @@ public class EnemyAI : MonoBehaviour
         {
             agent.speed = 3.5f;
             chaseTime -= Time.deltaTime;
-            agent.destination = player.transform.position;
+            /*Vector3 Pos = player.transform.position;
+            Pos.y -= ((firstPerson.capsule.height / 2) + 0.2f);*/
+            NavMeshHit hitNav;
+            if (NavMesh.SamplePosition(player.transform.position, out hitNav, 3f, NavMesh.AllAreas))
+            {
+                
+                agent.SetDestination(hitNav.position);
+            }
+         
+        
+          
+            //agent.destination = player.transform.position;
             float distance = Vector3.Distance(player.transform.position, transform.position);
 
             if (distance > 25f || chaseTime <= 0)
@@ -268,7 +280,7 @@ public class EnemyAI : MonoBehaviour
                 state = "search";
                 waitSearch = 5f;
                 highAlert = true;
-                searchRadius = 5f;
+                searchRadius = 1f;
                 sight();
             }
         }
