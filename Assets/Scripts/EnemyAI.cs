@@ -150,10 +150,10 @@ public class EnemyAI : MonoBehaviour
 
             if (highAlert)
             {
-                NavMesh.SamplePosition(player.transform.position + randomPos, out navHit, 20f, NavMesh.AllAreas);
-                searchRadius += 2.5f;
+                NavMesh.SamplePosition(player.transform.position + randomPos, out navHit, 3f, NavMesh.AllAreas);
+                searchRadius += 0.3f;
 
-                if (searchRadius > 20f)
+                if (searchRadius > 3f)
                 { 
                     FindObjectOfType<SoundManager>().StopFade("ChaseMusic");                     
                     if(!FindObjectOfType<SoundManager>().isPlaying("Music"))
@@ -221,7 +221,7 @@ public class EnemyAI : MonoBehaviour
             NavMeshHit hitNav;
             if (NavMesh.SamplePosition(player.transform.position, out hitNav, 3f, NavMesh.AllAreas))
             {
-               
+                
                 agent.SetDestination(hitNav.position);
             }
          
@@ -280,7 +280,7 @@ public class EnemyAI : MonoBehaviour
                 state = "search";
                 waitSearch = 5f;
                 highAlert = true;
-                searchRadius = 5f;
+                searchRadius = 1f;
                 sight();
             }
         }
